@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Simulation from './pages/Simulation';
+import Registration from './pages/Registration';
 import Login from './pages/Login';
 import SuperAdminDashboard from './pages/SuperAdminDashboard.jsx/SuperAdminDashboard';
 import Licenses from './pages/Licenses';
@@ -62,6 +63,7 @@ function App() {
         {/* Public Routes */}
         <Route path="/" element={<><Navbar /><Home /></>} />
         <Route path="/about" element={<><Navbar /><About /></>} />
+        <Route path="/registration" element={<><Navbar /><Registration /></>} />
         <Route path="/contact" element={<><Navbar /><Contact /></>} />
         <Route path="/simulation" element={<><Navbar /><Simulation /></>} />
         <Route path="/login" element={<Login />} />
