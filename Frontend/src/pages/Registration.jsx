@@ -191,9 +191,9 @@ const Registration = () => {
       </section>
 
       {/* Footer */}
-      <footer className="text-center py-6 sm:py-8 text-xs sm:text-sm text-gray-600 border-t border-gray-200 bg-white/50">
-        © 2025 atkind. All rights reserved. <br />
-        Powered by <a href="https://atkind.com" className="text-blue-600 font-medium hover:text-blue-800">atkind.com</a>
+      <footer className="footer">
+        <p>© 2025 atkind. All rights reserved.</p>
+        <p>Powered by <a href="https://atkind.com" style={{ color: '#4285f4', fontWeight: '500' }}>atkind.com</a></p>
       </footer>
 
       <style jsx>{`
