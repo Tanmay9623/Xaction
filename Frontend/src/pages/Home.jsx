@@ -12,7 +12,7 @@ const Home = () => {
         <div className="hero-container">
           <div className="hero-content">
             <h1 className="main-title">
-              Demo Video and Brief about the simulation
+              Demo Video and brief about the Simulation
             </h1>
             
             {/* Video Card */}

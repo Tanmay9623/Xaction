@@ -151,7 +151,7 @@ const Registration = () => {
                   </div>
 
                   <button 
-                    onClick={() => window.open('https://forms.gle/NNwkRWc4QpoVQpCL9', '_blank')}
+                    onClick={() => window.open('https://docs.google.com/forms/d/e/1FAIpQLSeWAYY5iu_ULUFJN30e1b6Oqe1oWieXKULVR0WVaDc3uUVHtA/viewform?usp=publish-editor', '_blank')}
                     className="register-btn"
                   >
                     Start Registration Now
@@ -169,22 +169,41 @@ const Registration = () => {
           <h2>Awards & Recognition</h2>
           <div className="awards-grid">
             <div className="award-card">
-              <h3 className="award-heading-lower">Top 10 Teams</h3>
+              <h3>Top 10 Teams</h3>
               <div className="award-content-center">
-                <p><strong>National Recognition</strong> & <strong>Certificates of Excellence</strong></p>
+                <div>
+                  <p style={{ fontSize: '1.15rem', marginBottom: '0.5rem' }}><strong>National Recognition</strong></p>
+                  <p style={{ fontSize: '1.15rem', marginTop: '0', marginBottom: '0.5rem' }}>&</p>
+                  <p style={{ fontSize: '1.15rem', marginTop: '0' }}><strong>Certificates of Excellence</strong></p>
+                </div>
               </div>
             </div>
             
-            <div className="award-card">
-              <h3 className="award-heading-lower">Top 5 Teams</h3>
+            <div className="award-card award-card-highlighted">
+              <h3>Top 5 Teams</h3>
               <div className="award-content-center">
-                <p>Receive a <strong>"Tales of Sales"</strong> by <strong>Priyaranjan Kumar</strong></p>
+                <div className="award-with-image">
+                  <img 
+                    src="https://omgrhnknkcpnlsxklvzy.supabase.co/storage/v1/object/sign/summitintro%20videp/WhatsApp%20Image%202025-11-16%20at%2022.38.56_e182b1f6.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV82MWQ0OGEwMS1iOGUwLTQ0NjYtODc0Mi1hY2I1NWY3MzFjYzMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzdW1taXRpbnRybyB2aWRlcC9XaGF0c0FwcCBJbWFnZSAyMDI1LTExLTE2IGF0IDIyLjM4LjU2X2UxODJiMWY2LmpwZyIsImlhdCI6MTc2MzQ0OTc5MCwiZXhwIjoxNzk0OTg1NzkwfQ.YMX-5l8fdMuBAGKH9qxiPr5en3fC7ehNzyBk-bB0Sp8" 
+                    alt="Tales of Sales Book"
+                    className="book-image"
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                  <p>Receive <strong>"Tales of Sales"</strong> by <strong>Priyaranjan Kumar</strong></p>
+                </div>
               </div>
             </div>
             
             <div className="award-card">
               <h3>Top 3 B-School Teams/Individuals</h3>
-              <p>Receive personal mentoring by <strong>Priyaranjan Kumar</strong> for Placement Interview Preparation & Career Readiness</p>
+              <div className="award-content-center">
+                <div>
+                  <p style={{ fontSize: '1.15rem', marginBottom: '0.5rem' }}>Receive personal mentoring by</p>
+                  <p style={{ fontSize: '1.15rem', marginTop: '0', marginBottom: '0.5rem' }}><strong>Priyaranjan Kumar</strong></p>
+                  <p style={{ fontSize: '1.15rem', marginTop: '0', marginBottom: '0.5rem' }}>for Placement Interview Preparation</p>
+                  <p style={{ fontSize: '1.15rem', marginTop: '0' }}>& Career Readiness</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -475,7 +494,7 @@ const Registration = () => {
         }
 
         .register-btn {
-          background: #4285f4;
+          background: linear-gradient(135deg, #4285f4 0%, #1e88e5 100%);
           color: white;
           padding: 1rem 2rem;
           border: none;
@@ -484,17 +503,55 @@ const Registration = () => {
           font-weight: 600;
           cursor: pointer;
           width: 100%;
-          transition: background 0.3s ease;
+          transition: all 0.4s ease;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 4px 15px rgba(66, 133, 244, 0.4);
+        }
+
+        .register-btn::before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 0;
+          height: 0;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.3);
+          transform: translate(-50%, -50%);
+          transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .register-btn:hover::before {
+          width: 300px;
+          height: 300px;
         }
 
         .register-btn:hover {
-          background: #3367d6;
+          transform: translateY(-3px);
+          box-shadow: 0 8px 25px rgba(66, 133, 244, 0.6);
+        }
+
+        .register-btn:active {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 15px rgba(66, 133, 244, 0.4);
         }
 
         /* Awards Section */
         .awards-section {
-          background: #f5f5f5;
-          padding: 4rem 0;
+          background: linear-gradient(180deg, #f8f9fc 0%, #ffffff 100%);
+          padding: 5rem 0;
+          position: relative;
+        }
+
+        .awards-section::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
         }
 
         .awards-container {
@@ -505,28 +562,73 @@ const Registration = () => {
 
         .awards-section h2 {
           color: #1a237e;
-          font-size: 2rem;
-          font-weight: 700;
+          font-size: 2.5rem;
+          font-weight: 800;
           text-align: center;
-          margin-bottom: 3rem;
+          margin-bottom: 1rem;
+          position: relative;
+          display: inline-block;
+          width: 100%;
+        }
+
+        .awards-section h2::after {
+          content: '';
+          position: absolute;
+          bottom: -0.5rem;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 80px;
+          height: 4px;
+          background: linear-gradient(90deg, #4285f4, #1e88e5);
+          border-radius: 2px;
         }
 
         .awards-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           gap: 2rem;
+          margin-top: 3.5rem;
         }
 
         .award-card {
           background: white;
           padding: 2rem;
-          border-radius: 12px;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-          border: 1px solid #e0e0e0;
+          border-radius: 16px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+          border: 1px solid rgba(66, 133, 244, 0.1);
           text-align: center;
           display: flex;
           flex-direction: column;
-          justify-content: center;
+          min-height: 450px;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+        }
+
+        .award-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 4px;
+          background: linear-gradient(90deg, #4285f4, #1e88e5);
+        }
+
+        .award-card:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 12px 40px rgba(66, 133, 244, 0.15);
+          border-color: rgba(66, 133, 244, 0.3);
+        }
+
+        .award-card-highlighted {
+          background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+          border: 2px solid rgba(66, 133, 244, 0.2);
+        }
+
+        .award-card-highlighted::before {
+          height: 5px;
+          background: linear-gradient(90deg, #4285f4, #1e88e5, #4285f4);
         }
 
         .award-content-center {
@@ -534,26 +636,43 @@ const Registration = () => {
           align-items: center;
           justify-content: center;
           flex-grow: 1;
-          min-height: 80px;
-          margin-top: -0.5rem;
+          margin-top: 1rem;
+        }
+
+        .award-with-image {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1.25rem;
+        }
+
+        .book-image {
+          width: 150px;
+          height: auto;
+          border-radius: 12px;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .book-image:hover {
+          transform: scale(1.08) rotate(2deg);
+          box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
         }
 
         .award-card h3 {
-          color: #4285f4;
-          font-size: 1.25rem;
-          font-weight: 600;
-          margin-bottom: 0.5rem;
-        }
-
-        .award-heading-lower {
-          margin-top: 1rem;
-          margin-bottom: 0.25rem;
+          color: #1a237e;
+          font-size: 1.5rem;
+          font-weight: 700;
+          margin-bottom: 0;
+          padding-top: 0.5rem;
+          line-height: 1.3;
         }
 
         .award-card p {
           color: #424242;
-          line-height: 1.5;
-          font-size: 1rem;
+          line-height: 1.7;
+          font-size: 1.05rem;
         }
 
         /* Footer */

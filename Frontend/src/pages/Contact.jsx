@@ -152,7 +152,7 @@ ${formData.message}
                 <p>Fill out the form below and we'll get back to you shortly</p>
                 {submitStatus === 'success' && (
                   <div className="status-message success">
-                    Message sent successfully! Your email client should open shortly.
+                    Message sent successfully!
                   </div>
                 )}
                 {submitStatus === 'error' && (

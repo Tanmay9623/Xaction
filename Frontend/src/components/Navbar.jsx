@@ -30,7 +30,7 @@ const Navbar = () => {
         <ul className="navbar-desktop">
           <li><Link to="/" className="navbar-link">Home</Link></li>
           <li><Link to="/about" className="navbar-link">About</Link></li>
-          <li><Link to="/registration" className="navbar-link">Registration</Link></li>
+          <li><Link to="/registration" className="navbar-link special-registration-link">Registration</Link></li>
           <li><Link to="/simulation" className="navbar-link">Simulation</Link></li>
           <li><Link to="/contact" className="navbar-link">Contact</Link></li>
 
@@ -74,7 +74,7 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link to="/registration" className="navbar-mobile-link" onClick={closeMobileMenu}>
+            <Link to="/registration" className="navbar-mobile-link special-registration-link-mobile" onClick={closeMobileMenu}>
               Registration
             </Link>
           </li>
@@ -178,6 +178,23 @@ const Navbar = () => {
 
         .navbar-link:hover::after {
           width: 100%;
+        }
+
+        /* Special Registration Link - Desktop */
+        .special-registration-link {
+          color: #2563eb;
+          font-weight: 600;
+        }
+
+        .special-registration-link::after {
+          background: #2563eb;
+          height: 2px;
+        }
+
+        /* Special Registration Link - Mobile */
+        .special-registration-link-mobile {
+          color: #2563eb;
+          font-weight: 600;
         }
 
         .navbar-logout-btn {
