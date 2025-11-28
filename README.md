@@ -242,7 +242,4 @@ Quiz/
 
 For support, email [your-email] or open an issue in the repository.
 
-## Contributors
-
-[List your contributors here]
-
+ 
