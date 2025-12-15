@@ -450,7 +450,11 @@ const LearningSection = () => {
               <video
                 autoPlay
                 loop
+                muted
                 playsInline
+                controls
+                preload="auto"
+                crossOrigin="anonymous"
                 style={{
                   width: "100%",
                   height: "100%",
