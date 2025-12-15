@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Monitor,
   ShoppingCart,
@@ -369,6 +369,39 @@ const IndustryCard = ({ industry }) => {
 
 const LearningSection = () => {
   const [ctaHovered, setCtaHovered] = useState(false);
+  const videoRef = useRef(null);
+  const [showPlayOverlay, setShowPlayOverlay] = useState(false);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+
+    // Try to play unmuted; if autoplay with sound is blocked by browser,
+    // mute playback and show an overlay so the user can enable audio.
+    v.muted = false;
+    const p = v.play();
+    if (p !== undefined) {
+      p
+        .then(() => {
+          setShowPlayOverlay(false);
+        })
+        .catch(() => {
+          v.muted = true;
+          setShowPlayOverlay(true);
+        });
+    }
+  }, []);
+
+  const handleEnableAudio = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = false;
+    v
+      .play()
+      .then(() => setShowPlayOverlay(false))
+      .catch(() => setShowPlayOverlay(true));
+  };
+
   return (
     <div
       style={{
@@ -440,6 +473,7 @@ const LearningSection = () => {
             <div
               className="video-container-wrapper"
               style={{
+                position: "relative",
                 background: "rgba(0, 0, 0, 0.3)",
                 borderRadius: "16px",
                 overflow: "hidden",
@@ -448,19 +482,21 @@ const LearningSection = () => {
               }}
             >
               <video
+                ref={videoRef}
                 autoPlay
                 loop
-                muted
                 playsInline
                 controls
                 preload="auto"
                 crossOrigin="anonymous"
+                controlsList="nodownload"
+                disablePictureInPicture
                 style={{
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
                   display: "block",
-                  pointerEvents: "none",
+                  pointerEvents: "auto",
                 }}
                 onContextMenu={(e) => e.preventDefault()}
               >
@@ -470,6 +506,35 @@ const LearningSection = () => {
                 />
                 Your browser does not support the video tag.
               </video>
+
+              {showPlayOverlay && (
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 12,
+                    background: "rgba(0,0,0,0.35)",
+                  }}
+                >
+                  <button
+                    onClick={handleEnableAudio}
+                    style={{
+                      background: "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)",
+                      color: "white",
+                      border: "none",
+                      padding: "0.75rem 1.25rem",
+                      borderRadius: 10,
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
+                  >
+                    Enable Sound
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
