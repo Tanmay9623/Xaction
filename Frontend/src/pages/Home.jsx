@@ -61,21 +61,21 @@ const HeroSection = () => {
     <div
       style={{
         background: COLORS.heroOrange,
-        padding: "80px 32px",
+        padding: "clamp(40px, 8vw, 80px) clamp(16px, 4vw, 32px)",
         borderRadius: "24px",
         marginBottom: "32px",
       }}
     >
       <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
         {/* Main Headline */}
-        <div style={{ textAlign: "center", marginBottom: "64px" }}>
+        <div style={{ textAlign: "center", marginBottom: "clamp(32px, 6vw, 64px)" }}>
           <h1
             style={{
-              fontSize: "clamp(2.5rem, 6vw, 5rem)",
+              fontSize: "clamp(2rem, 5vw, 5rem)",
               fontWeight: 900,
               color: COLORS.cream,
               lineHeight: 1.1,
-              marginBottom: "48px",
+              marginBottom: "clamp(24px, 5vw, 48px)",
               fontFamily: "'Poppins', sans-serif",
             }}
           >
@@ -92,13 +92,13 @@ const HeroSection = () => {
             style={{
               display: "flex",
               flexDirection: "column",
-              gap: "16px",
-              marginBottom: "64px",
+              gap: "12px",
+              marginBottom: "clamp(32px, 6vw, 64px)",
             }}
           >
             <p
               style={{
-                fontSize: "clamp(1.25rem, 2.5vw, 1.75rem)",
+                fontSize: "clamp(1rem, 2vw, 1.75rem)",
                 fontWeight: 600,
                 color: COLORS.creamDark,
                 margin: 0,
@@ -109,7 +109,7 @@ const HeroSection = () => {
             </p>
             <p
               style={{
-                fontSize: "clamp(1.25rem, 2.5vw, 1.75rem)",
+                fontSize: "clamp(1rem, 2vw, 1.75rem)",
                 fontWeight: 600,
                 color: COLORS.creamDark,
                 margin: 0,
@@ -120,7 +120,7 @@ const HeroSection = () => {
             </p>
             <p
               style={{
-                fontSize: "clamp(1.25rem, 2.5vw, 1.75rem)",
+                fontSize: "clamp(1rem, 2vw, 1.75rem)",
                 fontWeight: 600,
                 color: COLORS.creamDark,
                 margin: 0,
@@ -136,8 +136,8 @@ const HeroSection = () => {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-            gap: "24px",
+            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+            gap: "16px",
             maxWidth: "1200px",
             margin: "0 auto",
           }}
@@ -153,12 +153,12 @@ const HeroSection = () => {
                 style={{
                   backgroundColor: industry.color,
                   borderRadius: "16px",
-                  padding: "32px 24px",
+                  padding: "clamp(24px, 3vw, 32px) 20px",
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
                   justifyContent: "center",
-                  minHeight: "180px",
+                  minHeight: "160px",
                   cursor: "pointer",
                   transition: "all 0.3s ease-out",
                   transform: isHovered ? "translateY(-8px)" : "translateY(0)",
@@ -168,14 +168,14 @@ const HeroSection = () => {
                 }}
               >
                 <IconComponent
-                  size={56}
+                  size={48}
                   color={COLORS.cream}
                   strokeWidth={1.5}
-                  style={{ marginBottom: "16px" }}
+                  style={{ marginBottom: "12px" }}
                 />
                 <span
                   style={{
-                    fontSize: "1.125rem",
+                    fontSize: "clamp(0.95rem, 1.5vw, 1.125rem)",
                     fontWeight: 600,
                     color: COLORS.cream,
                     textAlign: "center",
@@ -197,7 +197,7 @@ const HeroSection = () => {
 // ============== SECTION 2: LEARNING PLATFORM ==============
 const industryIllustrations = {
   b2b: (
-    <svg width="220" height="150" viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="100%" height="100%" viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="10" y="70" width="200" height="60" rx="8" fill="#E17854" />
       <circle cx="75" cy="55" r="18" fill="#F4D5B5" />
       <circle cx="145" cy="55" r="18" fill="#D9B08C" />
@@ -207,7 +207,7 @@ const industryIllustrations = {
     </svg>
   ),
   consumerGoods: (
-    <svg width="220" height="150" viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="100%" height="100%" viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="10" y="70" width="200" height="60" rx="8" fill="#F4B857" />
       <rect x="70" y="35" width="80" height="40" rx="4" fill="#E5E0D7" />
       <rect x="82" y="45" width="18" height="12" rx="2" fill="#E17854" />
@@ -219,7 +219,7 @@ const industryIllustrations = {
     </svg>
   ),
   consumerDurables: (
-    <svg width="220" height="150" viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="100%" height="100%" viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="10" y="70" width="200" height="60" rx="8" fill="#4A6B5E" />
       <circle cx="70" cy="90" r="18" fill="#D9B08C" />
       <rect x="60" y="108" width="20" height="20" rx="3" fill="#7A5335" />
@@ -228,7 +228,7 @@ const industryIllustrations = {
     </svg>
   ),
   retail: (
-    <svg width="220" height="150" viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="100%" height="100%" viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="10" y="70" width="200" height="60" rx="8" fill="#E88A4A" />
       <circle cx="80" cy="95" r="18" fill="#E17854" />
       <rect x="70" y="113" width="20" height="18" rx="3" fill="#586D81" />
@@ -238,7 +238,7 @@ const industryIllustrations = {
     </svg>
   ),
   banking: (
-    <svg width="220" height="150" viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="100%" height="100%" viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="10" y="70" width="200" height="60" rx="8" fill="#5B7B92" />
       <rect x="85" y="105" width="50" height="12" rx="4" fill="#7A5335" />
       <circle cx="95" cy="80" r="16" fill="#1E354B" />
@@ -247,7 +247,7 @@ const industryIllustrations = {
     </svg>
   ),
   mutualFund: (
-    <svg width="220" height="150" viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="100%" height="100%" viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="10" y="70" width="200" height="60" rx="8" fill="#8B7B99" />
       <circle cx="82" cy="86" r="16" fill="#1E354B" />
       <circle cx="112" cy="88" r="16" fill="#F4D5B5" />
@@ -259,7 +259,7 @@ const industryIllustrations = {
     </svg>
   ),
   automotive: (
-    <svg width="220" height="150" viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="100%" height="100%" viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="10" y="70" width="200" height="60" rx="8" fill="#B54B3E" />
       <circle cx="90" cy="90" r="16" fill="#1E354B" />
       <circle cx="125" cy="95" r="16" fill="#F4D5B5" />
@@ -306,11 +306,10 @@ const section2Industries = [
     name: "Automotive",
     color: COLORS.industry2.automotive,
     illustration: industryIllustrations.automotive,
-    isWide: true,
   },
 ];
 
-const IndustryCard = ({ industry, isWide }) => {
+const IndustryCard = ({ industry }) => {
   const [isHovered, setIsHovered] = useState(false);
   return (
     <div
@@ -326,7 +325,6 @@ const IndustryCard = ({ industry, isWide }) => {
         boxShadow: isHovered
           ? "0 12px 30px rgba(0, 0, 0, 0.2)"
           : "0 4px 6px rgba(0, 0, 0, 0.1)",
-        gridColumn: isWide ? "span 1" : undefined,
         display: "flex",
         flexDirection: "column",
         height: "100%",
@@ -335,21 +333,18 @@ const IndustryCard = ({ industry, isWide }) => {
       <div
         style={{
           backgroundColor: industry.color,
-          height: "200px",
+          height: "180px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          position: "relative",
-          overflow: "hidden",
+          padding: "20px",
         }}
       >
-        <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          {industry.illustration}
-        </div>
+        {industry.illustration}
       </div>
       <div
         style={{
-          padding: "24px",
+          padding: "20px",
           flex: 1,
           display: "flex",
           alignItems: "center",
@@ -358,7 +353,7 @@ const IndustryCard = ({ industry, isWide }) => {
       >
         <span
           style={{
-            fontSize: "1.25rem",
+            fontSize: "clamp(1rem, 1.8vw, 1.25rem)",
             fontWeight: 700,
             color: COLORS.tealText,
             textAlign: "center",
@@ -378,31 +373,47 @@ const LearningSection = () => {
     <div
       style={{
         background: `linear-gradient(135deg, ${COLORS.heroTealStart} 0%, ${COLORS.heroTealEnd} 100%)`,
-        padding: "80px 32px",
+        padding: "clamp(40px, 8vw, 80px) clamp(16px, 4vw, 32px)",
         borderRadius: "24px",
       }}
     >
       <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
+        <style>
+          {`
+            @media (min-width: 769px) {
+              .header-video-section {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 48px;
+                align-items: center;
+                margin-bottom: 64px;
+              }
+            }
+            @media (max-width: 768px) {
+              .header-video-section {
+                display: flex;
+                flex-direction: column;
+                gap: 32px;
+                margin-bottom: 48px;
+              }
+              .video-container-wrapper {
+                height: 360px !important;
+              }
+            }
+          `}
+        </style>
+
         {/* Header + Video Row */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "48px",
-            alignItems: "center",
-            marginBottom: "64px",
-          }}
-          className="header-video-section"
-        >
+        <div className="header-video-section">
           {/* Section Header */}
           <div>
             <h2
               style={{
-                fontSize: "clamp(2rem, 4vw, 3.5rem)",
+                fontSize: "clamp(1.75rem, 4vw, 3.5rem)",
                 fontWeight: 900,
                 color: COLORS.cream,
                 lineHeight: 1.2,
-                marginBottom: "24px",
+                marginBottom: "20px",
                 fontFamily: "'Poppins', sans-serif",
               }}
             >
@@ -414,7 +425,7 @@ const LearningSection = () => {
             </h2>
             <p
               style={{
-                fontSize: "clamp(1rem, 2vw, 1.5rem)",
+                fontSize: "clamp(1rem, 1.8vw, 1.5rem)",
                 color: COLORS.creamDark,
                 fontWeight: 500,
                 fontFamily: "'Poppins', sans-serif",
@@ -425,18 +436,15 @@ const LearningSection = () => {
           </div>
 
           {/* Video Section */}
-          <div
-            style={{
-              width: "100%",
-            }}
-          >
+          <div style={{ width: "100%" }}>
             <div
+              className="video-container-wrapper"
               style={{
                 background: "rgba(0, 0, 0, 0.3)",
                 borderRadius: "16px",
                 overflow: "hidden",
                 boxShadow: "0 8px 24px rgba(0, 0, 0, 0.25)",
-                height: "455px",
+                height: "460px",
               }}
             >
               <video
@@ -461,25 +469,14 @@ const LearningSection = () => {
             </div>
           </div>
         </div>
-        
-        <style>
-          {`
-            @media (max-width: 768px) {
-              .header-video-section {
-                grid-template-columns: 1fr !important;
-                gap: 32px !important;
-              }
-            }
-          `}
-        </style>
 
-        {/* Industry Cards Grid - 3 Rows of 2 */}
+        {/* Industry Cards Grid */}
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-            gap: "24px",
-            marginBottom: "32px",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: "20px",
+            marginBottom: "24px",
           }}
         >
           {section2Industries.slice(0, 6).map((industry, index) => (
@@ -491,8 +488,8 @@ const LearningSection = () => {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-            gap: "24px",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: "20px",
             alignItems: "stretch",
           }}
         >
@@ -501,7 +498,7 @@ const LearningSection = () => {
             style={{
               background: COLORS.cream,
               borderRadius: "12px",
-              padding: "48px 32px",
+              padding: "clamp(32px, 5vw, 48px) clamp(24px, 4vw, 32px)",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -518,10 +515,10 @@ const LearningSection = () => {
           >
             <h3
               style={{
-                fontSize: "clamp(2rem, 3vw, 3rem)",
+                fontSize: "clamp(1.75rem, 3vw, 3rem)",
                 fontWeight: 900,
                 color: COLORS.tealText,
-                marginBottom: "16px",
+                marginBottom: "12px",
                 fontFamily: "'Poppins', sans-serif",
                 lineHeight: 1.1,
               }}
@@ -532,9 +529,8 @@ const LearningSection = () => {
             </h3>
             <p
               style={{
-                fontSize: "1.125rem",
+                fontSize: "clamp(1rem, 1.5vw, 1.125rem)",
                 color: COLORS.tealText,
-                marginBottom: "32px",
                 fontFamily: "'Poppins', sans-serif",
                 fontWeight: 500,
               }}
@@ -544,7 +540,7 @@ const LearningSection = () => {
           </div>
 
           {/* Automotive Card Right Side */}
-          <IndustryCard industry={section2Industries[6]} isWide />
+          <IndustryCard industry={section2Industries[6]} />
         </div>
       </div>
     </div>
@@ -558,7 +554,7 @@ const Home = () => {
       style={{
         minHeight: "100vh",
         background: "linear-gradient(135deg, #1a237e 0%, #4285f4 50%, #90caf9 100%)",
-        padding: "32px",
+        padding: "clamp(16px, 3vw, 32px)",
         fontFamily: "'Poppins', sans-serif",
       }}
     >
@@ -569,9 +565,10 @@ const Home = () => {
       <footer
         style={{
           textAlign: "center",
-          marginTop: "48px",
+          marginTop: "clamp(32px, 5vw, 48px)",
           color: "rgba(255, 255, 255, 0.8)",
           fontSize: "0.875rem",
+          padding: "0 16px",
         }}
       >
         <p style={{ marginBottom: "8px" }}>© 2025 atkind. All rights reserved.</p>
