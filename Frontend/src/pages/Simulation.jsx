@@ -229,7 +229,7 @@ Click OK to proceed to the login page.
             Choose Your Simulation
           </h1>
           <p className="text-gray-600 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto px-2">
-            Select a simulation based on your degree and course. Each simulation offers unique challenges and learning opportunities.
+             Each simulation offers unique challenges and learning opportunities.
           </p>
           
           {/* Real-time indicator */}
@@ -326,7 +326,7 @@ Click OK to proceed to the login page.
 
         {/* Footer Info */}
         <div className="text-center mt-8 sm:mt-10 lg:mt-12 text-xs sm:text-sm text-gray-500 px-4">
-          <p>New to the platform? Contact your college administrator for access.</p>
+          
           <p className="mt-2">
             Need help? <a href="/contact" className="text-blue-600 hover:underline">Contact Support</a>
           </p>
