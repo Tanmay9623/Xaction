@@ -9,7 +9,6 @@ import {
   Car,
   Refrigerator,
 } from "lucide-react";
-import Chatbot from "../components/Chatbot/Chatbot";
 
 // ============== COLOR PALETTE ==============
 const COLORS = {
@@ -136,11 +135,11 @@ const HeroSection = () => {
         {/* Industry Cards Grid */}
         <div
           style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-        gap: "24px",
-        maxWidth: "1200px",
-        margin: "0 auto",
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: "24px",
+            maxWidth: "1200px",
+            margin: "0 auto",
           }}
         >
           {section1Industries.map((industry, index) => {
@@ -384,72 +383,95 @@ const LearningSection = () => {
       }}
     >
       <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
-        {/* Video Section */}
+        {/* Header + Video Row */}
         <div
           style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "48px",
+            alignItems: "center",
             marginBottom: "64px",
-        maxWidth: "640px",
-        margin: "0 auto 48px auto",
           }}
+          className="header-video-section"
         >
-          <div
-            style={{
-              background: "rgba(0, 0, 0, 0.3)",
-              borderRadius: "16px",
-              overflow: "hidden",
-          boxShadow: "0 8px 24px rgba(0, 0, 0, 0.25)",
-            }}
-          >
-            <video
-              autoPlay
-          loop
-          playsInline
-          controls
-          // Removing muted enables sound; autoplay with sound may be blocked by browsers.
+          {/* Section Header */}
+          <div>
+            <h2
               style={{
-                width: "100%",
-            height: "auto",
-                display: "block",
+                fontSize: "clamp(2rem, 4vw, 3.5rem)",
+                fontWeight: 900,
+                color: COLORS.cream,
+                lineHeight: 1.2,
+                marginBottom: "24px",
+                fontFamily: "'Poppins', sans-serif",
               }}
             >
-              <source
-                src="https://rrlsindetuurkyvmwijj.supabase.co/storage/v1/object/sign/xactionimg/xactvideo.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iM2Q4NmE4Ni1jNDQ1LTRkZWQtYWJiNi1hNGNkMmUyZDhlY2YiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ4YWN0aW9uaW1nL3hhY3R2aWRlby5tcDQiLCJpYXQiOjE3NjU4MDA3NzAsImV4cCI6MTc5NzMzNjc3MH0.79I2YD93pWrkaTdm00hrmI9pTWDlsxNP0FSOYP5Tqp4"
-                type="video/mp4"
-              />
-              Your browser does not support the video tag.
-            </video>
+              LEARN SALES THE WAY
+              <br />
+              IT'S ACTUALLY DONE –
+              <br />
+              SECTOR BY SECTOR
+            </h2>
+            <p
+              style={{
+                fontSize: "clamp(1rem, 2vw, 1.5rem)",
+                color: COLORS.creamDark,
+                fontWeight: 500,
+                fontFamily: "'Poppins', sans-serif",
+              }}
+            >
+              Practice real sales decisions across diverse industries
+            </p>
+          </div>
+
+          {/* Video Section */}
+          <div
+            style={{
+              width: "100%",
+            }}
+          >
+            <div
+              style={{
+                background: "rgba(0, 0, 0, 0.3)",
+                borderRadius: "16px",
+                overflow: "hidden",
+                boxShadow: "0 8px 24px rgba(0, 0, 0, 0.25)",
+                height: "455px",
+              }}
+            >
+              <video
+                autoPlay
+                loop
+                playsInline
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  display: "block",
+                  pointerEvents: "none",
+                }}
+                onContextMenu={(e) => e.preventDefault()}
+              >
+                <source
+                  src="https://rrlsindetuurkyvmwijj.supabase.co/storage/v1/object/sign/xactionimg/xactvideo.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iM2Q4NmE4Ni1jNDQ1LTRkZWQtYWJiNi1hNGNkMmUyZDhlY2YiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ4YWN0aW9uaW1nL3hhY3R2aWRlby5tcDQiLCJpYXQiOjE3NjU4MDA3NzAsImV4cCI6MTc5NzMzNjc3MH0.79I2YD93pWrkaTdm00hrmI9pTWDlsxNP0FSOYP5Tqp4"
+                  type="video/mp4"
+                />
+                Your browser does not support the video tag.
+              </video>
+            </div>
           </div>
         </div>
-
-        {/* Section Header */}
-        <div style={{ textAlign: "center", marginBottom: "64px" }}>
-          <h2
-            style={{
-              fontSize: "clamp(2rem, 4vw, 3.5rem)",
-              fontWeight: 900,
-              color: COLORS.cream,
-              lineHeight: 1.2,
-              marginBottom: "24px",
-              fontFamily: "'Poppins', sans-serif",
-            }}
-          >
-            LEARN SALES THE WAY
-            <br />
-            IT'S ACTUALLY DONE –
-            <br />
-            SECTOR BY SECTOR
-          </h2>
-          <p
-            style={{
-              fontSize: "clamp(1rem, 2vw, 1.5rem)",
-              color: COLORS.creamDark,
-              fontWeight: 500,
-              fontFamily: "'Poppins', sans-serif",
-            }}
-          >
-            Practice real sales decisions across diverse industries
-          </p>
-        </div>
+        
+        <style>
+          {`
+            @media (max-width: 768px) {
+              .header-video-section {
+                grid-template-columns: 1fr !important;
+                gap: 32px !important;
+              }
+            }
+          `}
+        </style>
 
         {/* Industry Cards Grid - 3 Rows of 2 */}
         <div
@@ -485,7 +507,6 @@ const LearningSection = () => {
               alignItems: "center",
               justifyContent: "center",
               textAlign: "center",
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
               transition: "transform 0.3s ease-out, box-shadow 0.3s ease-out",
               transform: ctaHovered ? "translateY(-6px)" : "translateY(0)",
               boxShadow: ctaHovered
@@ -568,8 +589,6 @@ const Home = () => {
           </a>
         </p>
       </footer>
-
-      <Chatbot />
     </div>
   );
 };
