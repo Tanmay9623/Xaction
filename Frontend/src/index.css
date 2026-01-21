@@ -1,4 +1,42 @@
 @import "tailwindcss";
 @import "./styles/gaming-theme.css";
 @import "./styles/premium-design-system.css";
+
+/* LinkedIn Color Palette for Corporate Simulations */
+:root {
+  --linkedin-blue: #0A66C2;
+  --linkedin-darkblue: #004182;
+  --linkedin-lightblue: #378FE9;
+  --linkedin-darkgray: #1B1F23;
+  --linkedin-gray: #666666;
+  --linkedin-lightgray: #F3F6F8;
+}
+
+/* LinkedIn themed utility classes */
+.bg-linkedin-blue { background-color: var(--linkedin-blue); }
+.bg-linkedin-darkblue { background-color: var(--linkedin-darkblue); }
+.bg-linkedin-lightblue { background-color: var(--linkedin-lightblue); }
+.bg-linkedin-darkgray { background-color: var(--linkedin-darkgray); }
+.bg-linkedin-gray { background-color: var(--linkedin-gray); }
+.bg-linkedin-lightgray { background-color: var(--linkedin-lightgray); }
+
+.text-linkedin-blue { color: var(--linkedin-blue); }
+.text-linkedin-darkblue { color: var(--linkedin-darkblue); }
+.text-linkedin-lightblue { color: var(--linkedin-lightblue); }
+.text-linkedin-darkgray { color: var(--linkedin-darkgray); }
+.text-linkedin-gray { color: var(--linkedin-gray); }
+.text-linkedin-lightgray { color: var(--linkedin-lightgray); }
+
+.border-linkedin-blue { border-color: var(--linkedin-blue); }
+.border-linkedin-darkblue { border-color: var(--linkedin-darkblue); }
+.border-linkedin-lightblue { border-color: var(--linkedin-lightblue); }
+.border-linkedin-darkgray { border-color: var(--linkedin-darkgray); }
+.border-linkedin-gray { border-color: var(--linkedin-gray); }
+.border-linkedin-lightgray { border-color: var(--linkedin-lightgray); }
+
+.hover\:bg-linkedin-blue:hover { background-color: var(--linkedin-blue); }
+.hover\:bg-linkedin-darkblue:hover { background-color: var(--linkedin-darkblue); }
+.hover\:text-linkedin-blue:hover { color: var(--linkedin-blue); }
+.hover\:text-linkedin-darkblue:hover { color: var(--linkedin-darkblue); }
+.hover\:border-linkedin-blue:hover { border-color: var(--linkedin-blue); }
  

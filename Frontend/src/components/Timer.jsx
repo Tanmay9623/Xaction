@@ -66,7 +66,6 @@ const Timer = ({
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-gray-700">Time Remaining</span>
         <span className={`text-lg font-bold ${getTimerColor()}`}>
           {formatTime(timeLeft)}
         </span>

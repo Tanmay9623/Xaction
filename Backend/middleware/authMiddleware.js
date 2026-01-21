@@ -28,6 +28,19 @@ export const protect = async (req, res, next) => {
       });
     }
 
+    // Handle demo token for corporate simulation
+    if (token === 'demo-token-corporate-participant') {
+      // Use a valid MongoDB ObjectId for demo user (deterministic)
+      req.user = {
+        _id: '507f1f77bcf86cd799439011', // Valid ObjectId
+        email: 'corporatedemo1@test.com',
+        name: 'Demo Participant',
+        role: 'participant',
+        isDemo: true
+      };
+      return next();
+    }
+
     try {
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');

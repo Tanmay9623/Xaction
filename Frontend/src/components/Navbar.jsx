@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import SimulationModal from './SimulationModal';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSimulationModalOpen, setIsSimulationModalOpen] = useState(false);
 
   // Get logged-in user from localStorage
   const user = JSON.parse(localStorage.getItem("user")) || null;
@@ -20,6 +22,16 @@ const Navbar = () => {
     setIsMobileMenuOpen(false);
   };
 
+  const openSimulationModal = (e) => {
+    e.preventDefault();
+    setIsSimulationModalOpen(true);
+    closeMobileMenu();
+  };
+
+  const closeSimulationModal = () => {
+    setIsSimulationModalOpen(false);
+  };
+
   return (
     <nav className="navbar-container">
       <div className="navbar-content">
@@ -30,7 +42,11 @@ const Navbar = () => {
         <ul className="navbar-desktop">
           <li><Link to="/" className="navbar-link">Home</Link></li>
           <li><Link to="/about" className="navbar-link">About</Link></li>
-          <li><Link to="/simulation" className="navbar-link">Simulation</Link></li>
+          <li>
+            <a href="#" onClick={openSimulationModal} className="navbar-link">
+              Simulation
+            </a>
+          </li>
           <li><Link to="/contact" className="navbar-link">Contact</Link></li>
 
           {user && (
@@ -73,9 +89,9 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link to="/simulation" className="navbar-mobile-link" onClick={closeMobileMenu}>
+            <a href="#" className="navbar-mobile-link" onClick={openSimulationModal}>
               Simulation
-            </Link>
+            </a>
           </li>
           <li>
             <Link to="/contact" className="navbar-mobile-link" onClick={closeMobileMenu}>
@@ -103,6 +119,12 @@ const Navbar = () => {
           onClick={closeMobileMenu}
         ></div>
       )}
+
+      {/* Simulation Modal */}
+      <SimulationModal 
+        isOpen={isSimulationModalOpen}
+        onClose={closeSimulationModal}
+      />
 
       <style jsx>{`
         /* Container */

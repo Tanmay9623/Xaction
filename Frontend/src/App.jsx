@@ -8,8 +8,10 @@ import Home from "./pages/Home";
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Simulation from './pages/Simulation';
+import CorporateSimulations from './pages/CorporateSimulations';
 import Registration from './pages/Registration';
 import Login from './pages/Login';
+import CorporateLogin from './pages/CorporateLogin';
 import SuperAdminDashboard from './pages/SuperAdminDashboard.jsx/SuperAdminDashboard';
 import Licenses from './pages/Licenses';
 import EnhancedQuizBuilder from './components/EnhancedQuizBuilder';
@@ -18,6 +20,7 @@ import Settings from './components/Settings';
 import AdminDashboard from './components/AdminDashboard';
 import EnhancedStudentDashboard from './components/student/EnhancedStudentDashboard';
 import CollegeAdminDashboard from './components/CollegeAdminDashboard';
+import CorporateParticipantDashboard from './components/corporate/CorporateParticipantDashboard';
 
 function App() {
   useEffect(() => {
@@ -66,7 +69,9 @@ function App() {
         <Route path="/registration" element={<><Navbar /><Registration /></>} />
         <Route path="/contact" element={<><Navbar /><Contact /></>} />
         <Route path="/simulation" element={<><Navbar /><Simulation /></>} />
+        <Route path="/corporate-simulations" element={<><Navbar /><CorporateSimulations /></>} />
         <Route path="/login" element={<Login />} />
+        <Route path="/corporate-login" element={<CorporateLogin />} />
 
         {/* Protected Student Routes */}
         <Route path="/be/student/*" element={
@@ -128,6 +133,15 @@ function App() {
               <Route path="/quizzes" element={<EnhancedQuizBuilder />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/settings" element={<Settings />} />
+            </Routes>
+          </ProtectedRoute>
+        } />
+
+        {/* Protected Corporate Participant Routes */}
+        <Route path="/corporate/participant/*" element={
+          <ProtectedRoute allowedRoles={['participant']}>
+            <Routes>
+              <Route path="dashboard" element={<CorporateParticipantDashboard />} />
             </Routes>
           </ProtectedRoute>
         } />

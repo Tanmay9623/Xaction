@@ -40,6 +40,7 @@ import scoreEditRoutes from "./routes/scoreEditRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import simulationRoutes from "./routes/simulationRoutes.js";
 import quizProgressRoutes from "./routes/quizProgressRoutes.js";
+import corporateSimulationRoutes from "./routes/corporateSimulationRoutes.js";
 
 // Initialize express app
 const app = express();
@@ -157,6 +158,7 @@ app.use("/api/licenses", licenseRoutes);
 app.use("/api/quizzes", quizRoutes);
 app.use("/api/quiz-progress", quizProgressRoutes);
 app.use("/api/simulations", simulationRoutes);
+app.use("/api/corporate-simulation", corporateSimulationRoutes);
 
 // 404 handler (must be after all routes)
 app.use(notFoundHandler);
