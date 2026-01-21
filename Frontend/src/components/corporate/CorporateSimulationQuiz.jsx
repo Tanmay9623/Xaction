@@ -11,6 +11,8 @@ import {
   ResponsiveContainer 
 } from 'recharts';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const CorporateSimulationQuiz = ({ onClose }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -127,7 +129,7 @@ const CorporateSimulationQuiz = ({ onClose }) => {
       console.log('Starting AI analysis for result:', resultId);
       setIsAnalyzingReasoning(true);
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/corporate-simulation/analyze-reasoning/${resultId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/corporate-simulation/analyze-reasoning/${resultId}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -174,7 +176,7 @@ const CorporateSimulationQuiz = ({ onClose }) => {
           const token = localStorage.getItem('token');
           
           if (token) {
-            const response = await fetch('http://localhost:5000/api/corporate-simulation/submit', {
+            const response = await fetch(`${API_BASE_URL}/api/corporate-simulation/submit`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
