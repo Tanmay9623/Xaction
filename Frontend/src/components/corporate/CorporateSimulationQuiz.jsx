@@ -8,10 +8,43 @@ import {
   PolarRadiusAxis, 
   Radar, 
   Legend,
-  ResponsiveContainer 
+  ResponsiveContainer,
+  Tooltip 
 } from 'recharts';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+// Custom Tooltip Component for Spider Graphs
+const CustomRadarTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div className="bg-white border-2 border-indigo-400 rounded-lg shadow-xl p-4">
+        <p className="font-bold text-gray-800 mb-2 text-sm">{data.fullName || data.dimension}</p>
+        {payload.map((entry, index) => (
+          <div key={index} className="flex items-center justify-between space-x-3 text-sm">
+            <span className="flex items-center">
+              <span 
+                className="w-3 h-3 rounded-full mr-2" 
+                style={{ backgroundColor: entry.color }}
+              ></span>
+              <span className="text-gray-700">{entry.name}:</span>
+            </span>
+            <span className="font-bold text-gray-900">
+              {entry.value} / 5
+            </span>
+          </div>
+        ))}
+        {data.actualScore !== undefined && (
+          <p className="text-xs text-gray-600 mt-2 pt-2 border-t border-gray-200">
+            Raw Score: {data.actualScore} | Level: {data.level?.toUpperCase()}
+          </p>
+        )}
+      </div>
+    );
+  }
+  return null;
+};
 
 const CorporateSimulationQuiz = ({ onClose }) => {
   const [showOptions, setShowOptions] = useState(false);
@@ -246,6 +279,7 @@ const CorporateSimulationQuiz = ({ onClose }) => {
     const averageAccuracy = answers.reduce((acc, curr) => acc + (curr?.totalAccuracy || 0), 0) / answers.length;
     
     // Helper function to normalize scores to 0-5 scale for radar chart
+    // Rounds to nearest whole number for perfect grid alignment
     const normalizeScore = (parameter, score) => {
       const maxScores = {
         BJ: 30,  // Maximum possible for BJ
@@ -255,7 +289,9 @@ const CorporateSimulationQuiz = ({ onClose }) => {
         GC: 24,  // Maximum possible for GC
         GT: 18   // Maximum possible for GT
       };
-      return (score / maxScores[parameter]) * 5;
+      const rawValue = (score / maxScores[parameter]) * 5;
+      // Round to nearest whole number for perfect grid alignment (0, 1, 2, 3, 4, 5)
+      return Math.round(rawValue);
     };
     
     // Generate dynamic radar chart data from actual leadership scores
@@ -263,53 +299,59 @@ const CorporateSimulationQuiz = ({ onClose }) => {
       if (!leadershipScores) {
         // Default data if scores not loaded yet
         return [
-          { dimension: 'Business Judgment', value: 0, fullMark: 5, actualScore: 0, level: 'low' },
-          { dimension: 'Financial Risk', value: 0, fullMark: 5, actualScore: 0, level: 'low' },
-          { dimension: 'Talent Assessment', value: 0, fullMark: 5, actualScore: 0, level: 'low' },
-          { dimension: 'Risk Design', value: 0, fullMark: 5, actualScore: 0, level: 'low' },
-          { dimension: 'Governance', value: 0, fullMark: 5, actualScore: 0, level: 'low' },
-          { dimension: 'Market Execution', value: 0, fullMark: 5, actualScore: 0, level: 'low' },
+          { dimension: 'BJ', fullName: 'Business Judgment', value: 0, fullMark: 5, actualScore: 0, level: 'low' },
+          { dimension: 'FR', fullName: 'Financial Risk', value: 0, fullMark: 5, actualScore: 0, level: 'low' },
+          { dimension: 'TC', fullName: 'Talent Assessment', value: 0, fullMark: 5, actualScore: 0, level: 'low' },
+          { dimension: 'RD', fullName: 'Risk Design', value: 0, fullMark: 5, actualScore: 0, level: 'low' },
+          { dimension: 'GC', fullName: 'Governance', value: 0, fullMark: 5, actualScore: 0, level: 'low' },
+          { dimension: 'GT', fullName: 'Market Execution', value: 0, fullMark: 5, actualScore: 0, level: 'low' },
         ];
       }
       
       return [
         { 
-          dimension: 'Business Judgment', 
+          dimension: 'BJ', 
+          fullName: 'Business Judgment',
           value: normalizeScore('BJ', leadershipScores.BJ.score), 
           fullMark: 5,
           actualScore: leadershipScores.BJ.score,
           level: leadershipScores.BJ.level
         },
         { 
-          dimension: 'Financial Risk', 
+          dimension: 'FR', 
+          fullName: 'Financial Risk',
           value: normalizeScore('FR', leadershipScores.FR.score), 
           fullMark: 5,
           actualScore: leadershipScores.FR.score,
           level: leadershipScores.FR.level
         },
         { 
-          dimension: 'Talent Assessment', 
+          dimension: 'TC', 
+          fullName: 'Talent Assessment',
           value: normalizeScore('TC', leadershipScores.TC.score), 
           fullMark: 5,
           actualScore: leadershipScores.TC.score,
           level: leadershipScores.TC.level
         },
         { 
-          dimension: 'Risk Design', 
+          dimension: 'RD', 
+          fullName: 'Risk Design',
           value: normalizeScore('RD', leadershipScores.RD.score), 
           fullMark: 5,
           actualScore: leadershipScores.RD.score,
           level: leadershipScores.RD.level
         },
         { 
-          dimension: 'Governance', 
+          dimension: 'GC', 
+          fullName: 'Governance',
           value: normalizeScore('GC', leadershipScores.GC.score), 
           fullMark: 5,
           actualScore: leadershipScores.GC.score,
           level: leadershipScores.GC.level
         },
         { 
-          dimension: 'Market Execution', 
+          dimension: 'GT', 
+          fullName: 'Market Execution',
           value: normalizeScore('GT', leadershipScores.GT.score), 
           fullMark: 5,
           actualScore: leadershipScores.GT.score,
@@ -330,46 +372,55 @@ const CorporateSimulationQuiz = ({ onClose }) => {
       
       if (!leadershipScores || !leadershipScores.reasoningScores) {
         return [
-          { dimension: 'Business Judgment', value: 0, fullMark: 5 },
-          { dimension: 'Financial Risk', value: 0, fullMark: 5 },
-          { dimension: 'Talent Assessment', value: 0, fullMark: 5 },
-          { dimension: 'Risk Design', value: 0, fullMark: 5 },
-          { dimension: 'Governance', value: 0, fullMark: 5 },
-          { dimension: 'Market Execution', value: 0, fullMark: 5 },
+          { dimension: 'BJ', fullName: 'Business Judgment', value: 0, fullMark: 5 },
+          { dimension: 'FR', fullName: 'Financial Risk', value: 0, fullMark: 5 },
+          { dimension: 'TC', fullName: 'Talent Assessment', value: 0, fullMark: 5 },
+          { dimension: 'RD', fullName: 'Risk Design', value: 0, fullMark: 5 },
+          { dimension: 'GC', fullName: 'Governance', value: 0, fullMark: 5 },
+          { dimension: 'GT', fullName: 'Market Execution', value: 0, fullMark: 5 },
         ];
       }
 
       const rs = leadershipScores.reasoningScores;
       
+      // Helper to round to nearest whole number for perfect grid alignment
+      const roundToWhole = (num) => Math.round(num);
+      
       return [
         { 
-          dimension: 'Business Judgment', 
-          value: (rs.BJ / 30) * 5, 
+          dimension: 'BJ', 
+          fullName: 'Business Judgment',
+          value: roundToWhole((rs.BJ / 30) * 5), 
           fullMark: 5 
         },
         { 
-          dimension: 'Financial Risk', 
-          value: (rs.FR / 10) * 5, 
+          dimension: 'FR', 
+          fullName: 'Financial Risk',
+          value: roundToWhole((rs.FR / 10) * 5), 
           fullMark: 5 
         },
         { 
-          dimension: 'Talent Assessment', 
-          value: (rs.TC / 18) * 5, 
+          dimension: 'TC', 
+          fullName: 'Talent Assessment',
+          value: roundToWhole((rs.TC / 18) * 5), 
           fullMark: 5 
         },
         { 
-          dimension: 'Risk Design', 
-          value: (rs.RD / 18) * 5, 
+          dimension: 'RD', 
+          fullName: 'Risk Design',
+          value: roundToWhole((rs.RD / 18) * 5), 
           fullMark: 5 
         },
         { 
-          dimension: 'Governance', 
-          value: (rs.GC / 24) * 5, 
+          dimension: 'GC', 
+          fullName: 'Governance',
+          value: roundToWhole((rs.GC / 24) * 5), 
           fullMark: 5 
         },
         { 
-          dimension: 'Market Execution', 
-          value: (rs.GT / 18) * 5, 
+          dimension: 'GT', 
+          fullName: 'Market Execution',
+          value: roundToWhole((rs.GT / 18) * 5), 
           fullMark: 5 
         },
       ];
@@ -432,22 +483,25 @@ const CorporateSimulationQuiz = ({ onClose }) => {
               <div className="bg-gradient-to-br from-red-50 to-red-100/50 rounded-xl p-6 border-2 border-red-200 shadow-lg">
                 <h4 className="font-bold text-center text-linkedin-darkgray mb-4 flex items-center justify-center">
                   <span className="w-4 h-4 bg-red-600 rounded-full mr-2"></span>
-                  Self Assessment
+                  Self Assessment (Option Scores)
                 </h4>
                 <ResponsiveContainer width="100%" height={400}>
                   <RadarChart data={radarData}>
                     <PolarGrid stroke="#dc2626" strokeWidth={1.5} />
                     <PolarAngleAxis 
                       dataKey="dimension" 
-                      tick={{ fill: '#000', fontSize: 11, fontWeight: 600 }}
+                      tick={{ fill: '#000', fontSize: 13, fontWeight: 700 }}
                       stroke="#dc2626"
                     />
                     <PolarRadiusAxis 
                       angle={90} 
                       domain={[0, 5]} 
-                      tick={{ fill: '#666', fontSize: 10 }}
+                      ticks={[0, 1, 2, 3, 4, 5]}
+                      tick={{ fill: '#333', fontSize: 11, fontWeight: 600 }}
                       stroke="#dc2626"
+                      strokeWidth={2}
                     />
+                    <Tooltip content={<CustomRadarTooltip />} />
                     <Radar
                       name="Self Assessment"
                       dataKey="value"
@@ -470,22 +524,25 @@ const CorporateSimulationQuiz = ({ onClose }) => {
               <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-xl p-6 border-2 border-purple-200 shadow-lg">
                 <h4 className="font-bold text-center text-linkedin-darkgray mb-4 flex items-center justify-center">
                   <span className="w-4 h-4 bg-purple-600 rounded-full mr-2"></span>
-                  Self Management
+                  Self Management (AI Reasoning)
                 </h4>
                 <ResponsiveContainer width="100%" height={400}>
                   <RadarChart data={selfManagementData}>
                     <PolarGrid stroke="#9333ea" strokeWidth={1.5} />
                     <PolarAngleAxis 
                       dataKey="dimension" 
-                      tick={{ fill: '#000', fontSize: 11, fontWeight: 600 }}
+                      tick={{ fill: '#000', fontSize: 13, fontWeight: 700 }}
                       stroke="#9333ea"
                     />
                     <PolarRadiusAxis 
                       angle={90} 
                       domain={[0, 5]} 
-                      tick={{ fill: '#666', fontSize: 10 }}
+                      ticks={[0, 1, 2, 3, 4, 5]}
+                      tick={{ fill: '#333', fontSize: 11, fontWeight: 600 }}
                       stroke="#9333ea"
+                      strokeWidth={2}
                     />
+                    <Tooltip content={<CustomRadarTooltip />} />
                     <Radar
                       name="Self Management"
                       dataKey="value"
@@ -517,13 +574,12 @@ const CorporateSimulationQuiz = ({ onClose }) => {
             {/* Comparison Chart - Both Assessments Combined */}
             <div className="mb-8">
               <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-xl p-8 border-2 border-indigo-300 shadow-xl">
-                <h3 className="text-2xl font-bold text-center text-linkedin-darkgray mb-2 flex items-center justify-center">
+                <h3 className="text-2xl font-bold text-center text-linkedin-darkgray mb-6 flex items-center justify-center">
                   <svg className="w-8 h-8 mr-2 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
                   </svg>
                   Combined Assessment Comparison
                 </h3>
-                <p className="text-center text-linkedin-gray mb-6">Visual comparison of Self Assessment vs Self Management</p>
                 
                 <ResponsiveContainer width="100%" height={500}>
                   <RadarChart data={[
@@ -567,15 +623,18 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                     <PolarGrid stroke="#6366f1" strokeWidth={1.5} />
                     <PolarAngleAxis 
                       dataKey="dimension" 
-                      tick={{ fill: '#000', fontSize: 12, fontWeight: 600 }}
+                      tick={{ fill: '#000', fontSize: 14, fontWeight: 700 }}
                       stroke="#6366f1"
                     />
                     <PolarRadiusAxis 
                       angle={90} 
                       domain={[0, 5]} 
-                      tick={{ fill: '#666', fontSize: 11 }}
+                      ticks={[0, 1, 2, 3, 4, 5]}
+                      tick={{ fill: '#333', fontSize: 12, fontWeight: 600 }}
                       stroke="#6366f1"
+                      strokeWidth={2}
                     />
+                    <Tooltip content={<CustomRadarTooltip />} />
                     {/* Self Assessment - Red */}
                     <Radar
                       name="Self Assessment (Leadership)"
