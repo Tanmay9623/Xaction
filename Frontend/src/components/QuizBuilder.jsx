@@ -408,7 +408,7 @@ const QuizBuilder = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Passing Score (%)
+                Benchmark Score (%)
               </label>
               <input
                 type="number"

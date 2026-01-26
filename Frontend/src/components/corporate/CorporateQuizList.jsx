@@ -26,13 +26,13 @@ const CorporateQuizList = ({ simulation, onQuizStateChange }) => {
     <div className="space-y-6">
       {/* Welcome Card */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-10 text-white shadow-2xl">
-        <h2 className="text-4xl font-bold mb-6 text-white">Welcome to Your Leadership Journey</h2>
+        <h2 className="text-4xl font-bold mb-6 text-white">Welcome to Your Capability Building Journey</h2>
         <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
           <p className="text-white text-lg leading-relaxed mb-4 font-medium">
             You have been with <span className="font-bold text-yellow-300">Zee Wellness</span> for just over three years now. <span className="font-bold text-yellow-300">Sahihabad</span>—your current posting in eastern Uttar Pradesh—was not the most glamorous territory, but it was critical. Wedged between Ghaziabad industrial belts and dense residential pockets, Sahihabad had a peculiar mix of high-volume kirana stores, cash-sensitive wholesalers, and fiercely competitive nutrition categories.
           </p>
           <p className="text-white text-lg leading-relaxed font-medium">
-            Two weeks ago, your <span className="font-bold text-yellow-300">General Trade distributor</span> abruptly exited the business. The reasons were predictable in hindsight—excessive OD usage, uncontrolled retailer credit, and mounting overdue. What wasn't predictable was the speed at which the market began slipping. Glucon-D facings disappeared within days. Kaplan orders dried up. Competition vans became more frequent visitors. <span className="font-bold text-yellow-300">You carry a clear mandate: appoint a new General Trade distributor within 30 days.</span>
+            Two weeks ago, your <span className="font-bold text-yellow-300">General Trade distributor</span> abruptly exited the business. The reasons were predictable in hindsight—excessive OD usage, uncontrolled retailer credit, and mounting overdue. What wasn't predictable was the speed at which the market began slipping. Glucose D facings disappeared within days. Kaplan orders dried up. Competition vans became more frequent visitors. <span className="font-bold text-yellow-300">You carry a clear mandate: appoint a new General Trade distributor within 30 days.</span>
           </p>
         </div>
       </div>
@@ -47,10 +47,10 @@ const CorporateQuizList = ({ simulation, onQuizStateChange }) => {
               </div>
               <div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  Leadership & Management Strategic Simulation
+                  Capability Building Strategic Simulation
                 </h3>
                 <p className="text-gray-600">
-                  Develop leadership skills through strategic decision-making scenarios and team management challenges.
+                  Develop Critical Thinking Skills through strategic decision making scenarios in real world
                 </p>
               </div>
             </div>
@@ -66,7 +66,7 @@ const CorporateQuizList = ({ simulation, onQuizStateChange }) => {
               <div className="text-2xl font-bold text-purple-700">10</div>
             </div>
             <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-              <div className="text-green-600 font-semibold text-sm mb-1">Passing Score</div>
+              <div className="text-green-600 font-semibold text-sm mb-1">Benchmark Score</div>
               <div className="text-2xl font-bold text-green-700">70%</div>
             </div>
           </div>

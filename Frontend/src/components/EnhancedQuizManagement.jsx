@@ -308,7 +308,7 @@ const EnhancedQuizManagement = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Passing Score (%)</label>
+                  <label className="block text-sm font-medium mb-1">Benchmark Score (%)</label>
                   <input
                     type="number"
                     value={newQuiz.passingScore}

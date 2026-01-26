@@ -15,8 +15,8 @@ const CorporateSimulations = () => {
   const corporateSimulations = [
     {
       id: 1,
-      name: "Leadership & Management",
-      description: "Develop leadership skills through strategic decision-making scenarios and team management challenges.",
+      name: "Capability Building Strategic Simulation",
+      description: "Develop Critical Thinking Skills through strategic decision making scenarios in real world",
       icon: "👔",
       color: "blue",
       duration: "6-8 weeks",

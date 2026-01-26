@@ -79,8 +79,8 @@ const SimulationModal = ({ isOpen, onClose }) => {
                 </svg>
               </div>
               <div className="btn-content">
-                <h3>MBA - Student Simulation</h3>
-                <p>Business strategy and management simulation for MBA students</p>
+                <h3>Simulations for Students</h3>
+                <p>Sales & Distribution, Retail, Marketing, Operations, Organizational Behaviour Simulations</p>
               </div>
             </button>
 
@@ -105,8 +105,8 @@ const SimulationModal = ({ isOpen, onClose }) => {
                 </svg>
               </div>
               <div className="btn-content">
-                <h3>Corporate Simulation</h3>
-                <p>Professional corporate training and business simulation</p>
+                <h3>Simulations for Business</h3>
+                <p>Need Gap Identification, Capability Building Solutions (Industry & Role Agnostic)</p>
               </div>
             </button>
           </div>

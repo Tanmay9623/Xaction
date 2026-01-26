@@ -278,20 +278,13 @@ const CorporateSimulationQuiz = ({ onClose }) => {
     const percentageScore = (score / maxPossibleMarks) * 100;
     const averageAccuracy = answers.reduce((acc, curr) => acc + (curr?.totalAccuracy || 0), 0) / answers.length;
     
-    // Helper function to normalize scores to 0-5 scale for radar chart
-    // Rounds to nearest whole number for perfect grid alignment
-    const normalizeScore = (parameter, score) => {
-      const maxScores = {
-        BJ: 30,  // Maximum possible for BJ
-        FR: 10,  // Maximum possible for FR
-        TC: 18,  // Maximum possible for TC
-        RD: 18,  // Maximum possible for RD
-        GC: 24,  // Maximum possible for GC
-        GT: 18   // Maximum possible for GT
-      };
-      const rawValue = (score / maxScores[parameter]) * 5;
-      // Round to nearest whole number for perfect grid alignment (0, 1, 2, 3, 4, 5)
-      return Math.round(rawValue);
+    // Helper function to map level to exact tick positions
+    // Maps low/medium/high to exact grid lines for perfect alignment
+    const levelToValue = (level) => {
+      if (level === 'low') return 1.67;
+      if (level === 'medium') return 3.33;
+      if (level === 'high') return 5;
+      return 0;
     };
     
     // Generate dynamic radar chart data from actual leadership scores
@@ -312,7 +305,7 @@ const CorporateSimulationQuiz = ({ onClose }) => {
         { 
           dimension: 'BJ', 
           fullName: 'Business Judgment',
-          value: normalizeScore('BJ', leadershipScores.BJ.score), 
+          value: levelToValue(leadershipScores.BJ.level), 
           fullMark: 5,
           actualScore: leadershipScores.BJ.score,
           level: leadershipScores.BJ.level
@@ -320,7 +313,7 @@ const CorporateSimulationQuiz = ({ onClose }) => {
         { 
           dimension: 'FR', 
           fullName: 'Financial Risk',
-          value: normalizeScore('FR', leadershipScores.FR.score), 
+          value: levelToValue(leadershipScores.FR.level), 
           fullMark: 5,
           actualScore: leadershipScores.FR.score,
           level: leadershipScores.FR.level
@@ -328,7 +321,7 @@ const CorporateSimulationQuiz = ({ onClose }) => {
         { 
           dimension: 'TC', 
           fullName: 'Talent Assessment',
-          value: normalizeScore('TC', leadershipScores.TC.score), 
+          value: levelToValue(leadershipScores.TC.level), 
           fullMark: 5,
           actualScore: leadershipScores.TC.score,
           level: leadershipScores.TC.level
@@ -336,7 +329,7 @@ const CorporateSimulationQuiz = ({ onClose }) => {
         { 
           dimension: 'RD', 
           fullName: 'Risk Design',
-          value: normalizeScore('RD', leadershipScores.RD.score), 
+          value: levelToValue(leadershipScores.RD.level), 
           fullMark: 5,
           actualScore: leadershipScores.RD.score,
           level: leadershipScores.RD.level
@@ -344,7 +337,7 @@ const CorporateSimulationQuiz = ({ onClose }) => {
         { 
           dimension: 'GC', 
           fullName: 'Governance',
-          value: normalizeScore('GC', leadershipScores.GC.score), 
+          value: levelToValue(leadershipScores.GC.level), 
           fullMark: 5,
           actualScore: leadershipScores.GC.score,
           level: leadershipScores.GC.level
@@ -352,7 +345,7 @@ const CorporateSimulationQuiz = ({ onClose }) => {
         { 
           dimension: 'GT', 
           fullName: 'Market Execution',
-          value: normalizeScore('GT', leadershipScores.GT.score), 
+          value: levelToValue(leadershipScores.GT.level), 
           fullMark: 5,
           actualScore: leadershipScores.GT.score,
           level: leadershipScores.GT.level
@@ -383,44 +376,49 @@ const CorporateSimulationQuiz = ({ onClose }) => {
 
       const rs = leadershipScores.reasoningScores;
       
-      // Helper to round to nearest whole number for perfect grid alignment
-      const roundToWhole = (num) => Math.round(num);
+      // Helper to convert score to level, then to exact tick position
+      const scoreToValue = (score, maxScore) => {
+        const percentage = (score / maxScore) * 100;
+        if (percentage < 40) return 1.67;  // Low
+        if (percentage < 70) return 3.33;  // Medium
+        return 5;  // High
+      };
       
       return [
         { 
           dimension: 'BJ', 
           fullName: 'Business Judgment',
-          value: roundToWhole((rs.BJ / 30) * 5), 
+          value: scoreToValue(rs.BJ, 30), 
           fullMark: 5 
         },
         { 
           dimension: 'FR', 
           fullName: 'Financial Risk',
-          value: roundToWhole((rs.FR / 10) * 5), 
+          value: scoreToValue(rs.FR, 10), 
           fullMark: 5 
         },
         { 
           dimension: 'TC', 
           fullName: 'Talent Assessment',
-          value: roundToWhole((rs.TC / 18) * 5), 
+          value: scoreToValue(rs.TC, 18), 
           fullMark: 5 
         },
         { 
           dimension: 'RD', 
           fullName: 'Risk Design',
-          value: roundToWhole((rs.RD / 18) * 5), 
+          value: scoreToValue(rs.RD, 18), 
           fullMark: 5 
         },
         { 
           dimension: 'GC', 
           fullName: 'Governance',
-          value: roundToWhole((rs.GC / 24) * 5), 
+          value: scoreToValue(rs.GC, 24), 
           fullMark: 5 
         },
         { 
           dimension: 'GT', 
           fullName: 'Market Execution',
-          value: roundToWhole((rs.GT / 18) * 5), 
+          value: scoreToValue(rs.GT, 18), 
           fullMark: 5 
         },
       ];
@@ -460,7 +458,7 @@ const CorporateSimulationQuiz = ({ onClose }) => {
 
     const matchData = calculateMatchPercentage();
     
-    // Show Leadership Assessment Profile page
+    // Show Competency Assessment Profile page
     if (showLeadershipProfile) {
       return (
         <div className="bg-white rounded-xl shadow-2xl p-8 border-t-4 border-linkedin-blue">
@@ -471,13 +469,12 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                 <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
             </div>
-            <h1 className="text-4xl font-bold text-linkedin-darkgray mb-3">Leadership Assessment Profile</h1>
-            <p className="text-xl text-linkedin-gray">Comprehensive evaluation across six critical leadership dimensions</p>
+            <h1 className="text-4xl font-bold text-linkedin-darkgray mb-3">Competency Assessment Profile</h1>
+            <p className="text-xl text-linkedin-gray">Comprehensive evaluation across six critical competencies</p>
           </div>
 
           {/* Individual Leadership Assessment Charts */}
           <div className="mb-8">
-            <h3 className="text-xl font-bold text-linkedin-darkgray mb-4 text-center">Your Leadership Assessment</h3>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               {/* Self Assessment Chart - Dynamic based on user answers */}
               <div className="bg-gradient-to-br from-red-50 to-red-100/50 rounded-xl p-6 border-2 border-red-200 shadow-lg">
@@ -489,14 +486,20 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                   <RadarChart data={radarData}>
                     <PolarGrid stroke="#dc2626" strokeWidth={1.5} />
                     <PolarAngleAxis 
-                      dataKey="dimension" 
+                      dataKey="fullName" 
                       tick={{ fill: '#000', fontSize: 13, fontWeight: 700 }}
                       stroke="#dc2626"
                     />
                     <PolarRadiusAxis 
                       angle={90} 
                       domain={[0, 5]} 
-                      ticks={[0, 1, 2, 3, 4, 5]}
+                      ticks={[0, 1.67, 3.33, 5]}
+                      tickFormatter={(value) => {
+                        if (value === 0) return '';
+                        if (value <= 1.67) return 'Low';
+                        if (value <= 3.33) return 'Medium';
+                        return 'High';
+                      }}
                       tick={{ fill: '#333', fontSize: 11, fontWeight: 600 }}
                       stroke="#dc2626"
                       strokeWidth={2}
@@ -530,14 +533,20 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                   <RadarChart data={selfManagementData}>
                     <PolarGrid stroke="#9333ea" strokeWidth={1.5} />
                     <PolarAngleAxis 
-                      dataKey="dimension" 
+                      dataKey="fullName" 
                       tick={{ fill: '#000', fontSize: 13, fontWeight: 700 }}
                       stroke="#9333ea"
                     />
                     <PolarRadiusAxis 
                       angle={90} 
                       domain={[0, 5]} 
-                      ticks={[0, 1, 2, 3, 4, 5]}
+                      ticks={[0, 1.67, 3.33, 5]}
+                      tickFormatter={(value) => {
+                        if (value === 0) return '';
+                        if (value <= 1.67) return 'Low';
+                        if (value <= 3.33) return 'Medium';
+                        return 'High';
+                      }}
                       tick={{ fill: '#333', fontSize: 11, fontWeight: 600 }}
                       stroke="#9333ea"
                       strokeWidth={2}
@@ -559,8 +568,8 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                   </p>
                 )}
                 {!isAnalyzingReasoning && (!leadershipScores?.reasoningScores || Object.values(leadershipScores.reasoningScores).every(v => v === 0)) && (
-                  <p className="text-xs text-center text-amber-700 mt-2 bg-amber-50 p-2 rounded">
-                    ⏳ Waiting for AI analysis results...
+                  <p className="text-xs text-center text-gray-700 mt-2 bg-gray-50 p-2 rounded">
+                    Score = 0
                   </p>
                 )}
                 {!isAnalyzingReasoning && leadershipScores?.reasoningScores && Object.values(leadershipScores.reasoningScores).some(v => v > 0) && (
@@ -584,37 +593,37 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                 <ResponsiveContainer width="100%" height={500}>
                   <RadarChart data={[
                     { 
-                      dimension: radarData[0]?.dimension || 'BJ', 
+                      dimension: radarData[0]?.fullName || 'Business Judgment', 
                       selfAssessment: radarData[0]?.value || 0,
                       selfManagement: selfManagementData[0]?.value || 0,
                       fullMark: 5 
                     },
                     { 
-                      dimension: radarData[1]?.dimension || 'FR', 
+                      dimension: radarData[1]?.fullName || 'Financial Risk', 
                       selfAssessment: radarData[1]?.value || 0,
                       selfManagement: selfManagementData[1]?.value || 0,
                       fullMark: 5 
                     },
                     { 
-                      dimension: radarData[2]?.dimension || 'TC', 
+                      dimension: radarData[2]?.fullName || 'Talent Assessment', 
                       selfAssessment: radarData[2]?.value || 0,
                       selfManagement: selfManagementData[2]?.value || 0,
                       fullMark: 5 
                     },
                     { 
-                      dimension: radarData[3]?.dimension || 'RD', 
+                      dimension: radarData[3]?.fullName || 'Risk Design', 
                       selfAssessment: radarData[3]?.value || 0,
                       selfManagement: selfManagementData[3]?.value || 0,
                       fullMark: 5 
                     },
                     { 
-                      dimension: radarData[4]?.dimension || 'GC', 
+                      dimension: radarData[4]?.fullName || 'Governance', 
                       selfAssessment: radarData[4]?.value || 0,
                       selfManagement: selfManagementData[4]?.value || 0,
                       fullMark: 5 
                     },
                     { 
-                      dimension: radarData[5]?.dimension || 'GT', 
+                      dimension: radarData[5]?.fullName || 'Market Execution', 
                       selfAssessment: radarData[5]?.value || 0,
                       selfManagement: selfManagementData[5]?.value || 0,
                       fullMark: 5 
@@ -629,7 +638,13 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                     <PolarRadiusAxis 
                       angle={90} 
                       domain={[0, 5]} 
-                      ticks={[0, 1, 2, 3, 4, 5]}
+                      ticks={[0, 1.67, 3.33, 5]}
+                      tickFormatter={(value) => {
+                        if (value === 0) return '';
+                        if (value <= 1.67) return 'Low';
+                        if (value <= 3.33) return 'Medium';
+                        return 'High';
+                      }}
                       tick={{ fill: '#333', fontSize: 12, fontWeight: 600 }}
                       stroke="#6366f1"
                       strokeWidth={2}
@@ -702,9 +717,8 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                   {/* BJ Score */}
                   <div className="flex flex-col items-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="text-sm font-bold text-blue-800 mb-2">BJ</div>
-                    <div className="text-4xl font-bold text-blue-900 mb-2">{leadershipScores.BJ.score}</div>
-                    <span className={`px-4 py-1.5 rounded-full text-sm font-bold ${
+                    <div className="text-sm font-bold text-blue-800 mb-2">Business Judgment</div>
+                    <span className={`px-6 py-3 rounded-full text-2xl font-bold ${
                       leadershipScores.BJ.level === 'high' ? 'bg-green-500 text-white' :
                       leadershipScores.BJ.level === 'medium' ? 'bg-yellow-500 text-white' :
                       'bg-red-500 text-white'
@@ -715,9 +729,8 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                   
                   {/* FR Score */}
                   <div className="flex flex-col items-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border-2 border-purple-200 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="text-sm font-bold text-purple-800 mb-2">FR</div>
-                    <div className="text-4xl font-bold text-purple-900 mb-2">{leadershipScores.FR.score}</div>
-                    <span className={`px-4 py-1.5 rounded-full text-sm font-bold ${
+                    <div className="text-sm font-bold text-purple-800 mb-2">Financial Risk</div>
+                    <span className={`px-6 py-3 rounded-full text-2xl font-bold ${
                       leadershipScores.FR.level === 'high' ? 'bg-green-500 text-white' :
                       leadershipScores.FR.level === 'medium' ? 'bg-yellow-500 text-white' :
                       'bg-red-500 text-white'
@@ -728,9 +741,8 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                   
                   {/* TC Score */}
                   <div className="flex flex-col items-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border-2 border-green-200 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="text-sm font-bold text-green-800 mb-2">TC</div>
-                    <div className="text-4xl font-bold text-green-900 mb-2">{leadershipScores.TC.score}</div>
-                    <span className={`px-4 py-1.5 rounded-full text-sm font-bold ${
+                    <div className="text-sm font-bold text-green-800 mb-2">Talent Assessment</div>
+                    <span className={`px-6 py-3 rounded-full text-2xl font-bold ${
                       leadershipScores.TC.level === 'high' ? 'bg-green-500 text-white' :
                       leadershipScores.TC.level === 'medium' ? 'bg-yellow-500 text-white' :
                       'bg-red-500 text-white'
@@ -741,9 +753,8 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                   
                   {/* RD Score */}
                   <div className="flex flex-col items-center p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl border-2 border-orange-200 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="text-sm font-bold text-orange-800 mb-2">RD</div>
-                    <div className="text-4xl font-bold text-orange-900 mb-2">{leadershipScores.RD.score}</div>
-                    <span className={`px-4 py-1.5 rounded-full text-sm font-bold ${
+                    <div className="text-sm font-bold text-orange-800 mb-2">Risk Design</div>
+                    <span className={`px-6 py-3 rounded-full text-2xl font-bold ${
                       leadershipScores.RD.level === 'high' ? 'bg-green-500 text-white' :
                       leadershipScores.RD.level === 'medium' ? 'bg-yellow-500 text-white' :
                       'bg-red-500 text-white'
@@ -754,9 +765,8 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                   
                   {/* GC Score */}
                   <div className="flex flex-col items-center p-4 bg-gradient-to-br from-red-50 to-red-100 rounded-xl border-2 border-red-200 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="text-sm font-bold text-red-800 mb-2">GC</div>
-                    <div className="text-4xl font-bold text-red-900 mb-2">{leadershipScores.GC.score}</div>
-                    <span className={`px-4 py-1.5 rounded-full text-sm font-bold ${
+                    <div className="text-sm font-bold text-red-800 mb-2">Governance</div>
+                    <span className={`px-6 py-3 rounded-full text-2xl font-bold ${
                       leadershipScores.GC.level === 'high' ? 'bg-green-500 text-white' :
                       leadershipScores.GC.level === 'medium' ? 'bg-yellow-500 text-white' :
                       'bg-red-500 text-white'
@@ -767,9 +777,8 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                   
                   {/* GT Score */}
                   <div className="flex flex-col items-center p-4 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl border-2 border-indigo-200 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="text-sm font-bold text-indigo-800 mb-2">GT</div>
-                    <div className="text-4xl font-bold text-indigo-900 mb-2">{leadershipScores.GT.score}</div>
-                    <span className={`px-4 py-1.5 rounded-full text-sm font-bold ${
+                    <div className="text-sm font-bold text-indigo-800 mb-2">Market Execution</div>
+                    <span className={`px-6 py-3 rounded-full text-2xl font-bold ${
                       leadershipScores.GT.level === 'high' ? 'bg-green-500 text-white' :
                       leadershipScores.GT.level === 'medium' ? 'bg-yellow-500 text-white' :
                       'bg-red-500 text-white'
@@ -858,8 +867,8 @@ const CorporateSimulationQuiz = ({ onClose }) => {
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
           </div>
-          <h1 className="text-4xl font-bold text-linkedin-darkgray mb-3">Leadership Assessment Complete!</h1>
-          <p className="text-xl text-linkedin-gray">You've successfully completed the Leadership & Management Simulation</p>
+          <h1 className="text-4xl font-bold text-linkedin-darkgray mb-3">Mission Complete !!</h1>
+          <p className="text-xl text-linkedin-gray">You have successfully completed the Capability Building Simulation</p>
           {isSubmitted && (
             <div className="mt-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg inline-block">
               <p className="text-green-700 font-semibold flex items-center">
@@ -895,82 +904,38 @@ const CorporateSimulationQuiz = ({ onClose }) => {
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-linkedin-darkgray mb-6 flex items-center">
             <span className="w-1 h-8 bg-linkedin-blue mr-3 rounded"></span>
-            Decision Performance Analysis
+            Your Decision Choices
           </h2>
           <div className="space-y-6">
             {answers.map((answer, index) => (
               <div key={index} className="bg-linkedin-lightblue/30 rounded-xl p-6 border-l-4 border-linkedin-blue hover:shadow-lg transition-shadow">
-                <h3 className="font-bold text-lg mb-4 text-linkedin-darkgray flex items-center">
-                  <span className="w-8 h-8 bg-linkedin-blue text-white rounded-full flex items-center justify-center mr-3 text-sm">
-                    {index + 1}
-                  </span>
-                  {answer.title}
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-white rounded-lg p-4">
-                    <h4 className="font-semibold text-linkedin-darkgray mb-3 flex items-center">
-                      <svg className="w-5 h-5 mr-2 text-linkedin-blue" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
-                      </svg>
-                      Decision Accuracy
-                    </h4>
-                    {answer.orderedOptions.map((option) => {
-                      const accuracy = answer.accuracyPerOption[option.id];
-                      return (
-                        <div key={option.id} className="flex justify-between items-center mb-3">
-                          <span className="text-sm text-linkedin-gray flex-1">{option.text}</span>
-                          <div className="flex items-center ml-4">
-                            <span className="text-sm font-bold text-linkedin-blue mr-2 w-12 text-right">
-                              {accuracy.accuracy}%
-                            </span>
-                            <div className="w-24 bg-gray-200 rounded-full h-2.5">
-                              <div
-                                className="bg-linkedin-blue rounded-full h-2.5 transition-all"
-                                style={{ width: `${accuracy.accuracy}%` }}
-                              ></div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-bold text-lg text-linkedin-darkgray flex items-center">
+                    <span className="w-8 h-8 bg-linkedin-blue text-white rounded-full flex items-center justify-center mr-3 text-sm">
+                      {index + 1}
+                    </span>
+                    {answer.title}
+                  </h3>
+                  <div className="bg-linkedin-blue text-white px-4 py-2 rounded-lg font-bold">
+                    Score: {answer.score} pts
                   </div>
-                  <div className="bg-white rounded-lg p-4">
-                    <h4 className="font-semibold text-linkedin-darkgray mb-3 flex items-center">
-                      <svg className="w-5 h-5 mr-2 text-linkedin-blue" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
-                      </svg>
-                      Performance Metrics
-                    </h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-sm text-linkedin-gray">Strategic Score:</span>
-                        <span className="text-sm font-bold text-linkedin-blue">{answer.score - answer.reasoningPoints} pts</span>
+                </div>
+                <div className="bg-white rounded-lg p-4">
+                  <h4 className="font-semibold text-linkedin-darkgray mb-3 flex items-center">
+                    <svg className="w-5 h-5 mr-2 text-linkedin-blue" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    Your Priority Order
+                  </h4>
+                  <div className="space-y-2">
+                    {answer.orderedOptions.map((option, idx) => (
+                      <div key={option.id} className="flex items-start p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <span className="flex-shrink-0 w-8 h-8 bg-linkedin-blue text-white rounded-full flex items-center justify-center mr-3 text-sm font-bold">
+                          {idx + 1}
+                        </span>
+                        <span className="text-sm text-linkedin-darkgray flex-1">{option.text}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-linkedin-gray">Reasoning Bonus:</span>
-                        <span className="text-sm font-bold text-green-600">{answer.reasoningPoints} pts</span>
-                      </div>
-                      <div className="flex justify-between border-t border-linkedin-lightblue pt-2 mt-2">
-                        <span className="text-sm font-semibold text-linkedin-darkgray">Total Points:</span>
-                        <span className="text-sm font-bold text-linkedin-blue">{answer.score} pts</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-linkedin-gray">Avg Accuracy:</span>
-                        <span className="text-sm font-semibold text-linkedin-blue">{answer.totalAccuracy.toFixed(1)}%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-linkedin-gray">Time Taken:</span>
-                        <span className="text-sm font-semibold text-linkedin-gray">{answer.timeTaken}s</span>
-                      </div>
-                      {answer.isAutoSubmitted && (
-                        <p className="text-xs text-red-600 mt-2 flex items-center">
-                          <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                          </svg>
-                          Auto-submitted (time expired)
-                        </p>
-                      )}
-                    </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -987,7 +952,7 @@ const CorporateSimulationQuiz = ({ onClose }) => {
               <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
               <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            View Leadership Assessment Profile
+            View Competency Assessment Profile
           </button>
           <button
             onClick={onClose}
@@ -1077,7 +1042,7 @@ const CorporateSimulationQuiz = ({ onClose }) => {
               <span className="w-1 h-8 bg-linkedin-blue mr-3 rounded"></span>
               RANKING PROTOCOL
             </h3>
-            <p className="text-linkedin-gray mb-6">Drag and drop options to rank them from highest priority (1st) to lowest priority (last)</p>
+            <p className="text-linkedin-gray mb-6">Use the Arrow Buttons to move your decision choices Up/Down to prioritize your options</p>
 
             {/* Ranking Options */}
             <div className="space-y-4 mb-8">
@@ -1151,8 +1116,7 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                       <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                     </svg>
                     <div>
-                      <p className="text-amber-800 font-bold text-base">Final Leadership Decision</p>
-                      <p className="text-amber-700 text-sm mt-1">This is your last scenario. Review your choices carefully before submitting.</p>
+                      <p className="text-amber-800 font-bold text-base">Final Capability Building Simulation Decision</p>
                     </div>
                   </div>
                 </div>

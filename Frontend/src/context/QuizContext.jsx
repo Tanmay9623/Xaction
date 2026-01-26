@@ -97,7 +97,7 @@ The challenge is whether to trust visible numbers or invisible fundamentals, kno
     day: 3,
     title: 'Portfolio Conflict Assessment',
     description: `A distributor with deep penetration in health drinks and OTC nutrition is keen to onboard Zee Wellness. His salesmen are productive, retailer relationships are strong, and infrastructure is robust. On paper, he scores well across most parameters.
-However, his portfolio includes a direct competitor to Glucon-D and a substitute product to Kaplan. During discussions, he assures "fair play" but subtly indicates that higher margin brands will always get priority. His salesman already run overloaded routes.
+However, his portfolio includes a direct competitor to Glucose D and a substitute product to Kaplan. During discussions, he assures "fair play" but subtly indicates that higher margin brands will always get priority. His salesman already run overloaded routes.
 Retailers trust him, but several mention that he focuses disproportionately on top-margin SKUs. Management likes the productivity upside, while the ASM is worried about focus dilution and silent cannibalization.
 The conflict is whether reach and efficiency can compensate for portfolio conflict, knowing that neglect rarely shows immediately but damages brands quietly over time.`,
     timeLimit: 75, // 1.25 minutes
@@ -108,10 +108,7 @@ The conflict is whether reach and efficiency can compensate for portfolio confli
       "The distributor will need a warehouse space of minimum 500 sq ft to deliver a business of 5 Lacs per month.",
       "The distributor will need a four-wheeler supply van to accommodate the shipper boxes.",
       "The distributor will need to keep at least 15 days of stock spread across various brands and maintain required market standard credit to retailers which could be in the ball park range of 15 days. Area Manager's call will be final on all of these parameters.",
-      "The distributor will only service the assigned outlets in the geography decided by the Area Manager.",
-      "The distributor will need to ensure fill rates of minimum 90% for the orders received from the market and deliver the orders within 24 hours from receipt of order.",
-      "Distributor will need to pass the secondary schemes & displays schemes decided by the company in the market and claim back the amount from the company in +1 month maximum from the month of disbursing them to the market.",
-      "You cannot fire any distributor within 3 months on performance related issues."
+      "The distributor will only service the assigned outlets in the geography decided by the Area Manager."
     ],
     options: [
       {
@@ -146,7 +143,7 @@ The conflict is whether reach and efficiency can compensate for portfolio confli
     title: 'Distributor Scalability & Succession',
     description: `By the third day, you are sitting in a dimly lit office near the old Sahibabad mandi. Across the table was Mr. Sharma—white hair, calm voice, and a reputation built over 30 years. Retailers spoke highly of him. "Paisa kabhi nahi dubta," they said.
 On paper, Mr. Sharma looked safe. Clean books, no major disputes, decent godown space. But as you looked closer, cracks began to appear. Billing was manual. There was no distributor management system. Deliveries depended on two ageing tempo drivers who worked limited hours. More concerning was succession—his son had moved to Noida for an IT job and had no interest in distribution.
-You imagine six months down the line. Would this distributor invest in route expansion? Would he adopt Zee reporting discipline? Could he scale Glucon-D summer demand or Kaplan school-season spikes?
+You imagine six months down the line. Would this distributor invest in route expansion? Would he adopt Zee reporting discipline? Could he scale Glucose D summer demand or Kaplan school-season spikes?
 The ASM leaned toward reputation. You are worried about sustainability.`,
     timeLimit: 105, // 1.75 minutes
     rules: [
@@ -157,7 +154,7 @@ The ASM leaned toward reputation. You are worried about sustainability.`,
       "Limited ability to scale manpower during seasonal peaks",
       "Resistance to technology adoption",
       "Territory requires long-term stability (3–5 years)",
-      "Zydus reporting and compliance requirements are non-negotiable"
+      "Zee Wellness reporting and compliance requirements are non-negotiable"
     ],
     options: [
       {
@@ -237,7 +234,7 @@ You must decide whether to accommodate short-term market realities or protect lo
     title: 'Family-Owned Distributor Governance',
     description: `As the distributor search in Sahihabad progresses, you evaluate Gupta Distributors, a financially strong, family-owned operation. On the surface, the business looks ideal—two well-maintained godowns, four delivery vehicles, experienced salesmen, and strong liquidity. The family has been in distribution for over 20 years and is respected locally.
 However, during multiple meetings, Rahul begins noticing serious governance issues. There is no clear decision-maker. The father handles finances, the elder son controls sales routes, the younger son interferes in trade schemes, and the wife personally manages retailer complaints. Decisions change daily depending on who is present. Commitments made on one day are revised the next.
-Retailer feedback confirms this confusion. Claims often get delayed because "final approval nahi mila." Salesmen receive mixed instructions, resulting in inconsistent servicing. Gupta Distributors insists that this family involvement ensures control and trust, but you know that Zee Wellness requires clarity, accountability, and system-driven execution—especially during seasonal peaks for Glucon-D and Kaplan.
+Retailer feedback confirms this confusion. Claims often get delayed because "final approval nahi mila." Salesmen receive mixed instructions, resulting in inconsistent servicing. Gupta Distributors insists that this family involvement ensures control and trust, but you know that Zee Wellness requires clarity, accountability, and system-driven execution—especially during seasonal peaks for Glucose D and Kaplan.
 The ASM is impressed by financial muscle, but wary of future escalations. Rahul must decide whether strong capital can compensate for weak governance, knowing that governance failures typically surface as chronic issues that drain Sales Officer and management time.`,
     timeLimit: 90, // 1.5 minutes
     rules: [
@@ -246,7 +243,7 @@ The ASM is impressed by financial muscle, but wary of future escalations. Rahul 
       "Conflicting instructions to sales team",
       "History of delayed claims and approvals",
       "Family resistance to external controls",
-      "Zydus requires structured SOP compliance",
+      "Zee Wellness requires structured SOP compliance",
       "High risk of internal conflict escalation",
       "Sales Officer has limited control over family dynamics"
     ],
@@ -292,7 +289,7 @@ The ASM appreciates the distributor's professionalism but shares your concern ab
       "Cash collections and credit negotiations are critical in GT",
       "Distributor manpower trained for MT, not GT",
       "Kirana retailers value relationship over systems",
-      "Zydus GT business requires rapid seasonal scale-up",
+      "Zee Wellness GT business requires rapid seasonal scale-up",
       "Risk of execution mismatch and slow adaptation"
     ],
     options: [
@@ -337,7 +334,7 @@ The dilemma is subtle but serious: strong current performance versus future cont
       "Ageing proprietor nearing retirement",
       "No second-line leadership or empowerment",
       "Territory recently suffered distributor exit",
-      "Zydus requires long-term market stability",
+      "Zee Wellness requires long-term market stability",
       "Transition planning resisted by owner",
       "High risk of sudden operational vacuum"
     ],
@@ -382,7 +379,7 @@ The dilemma is stark: control through power versus control through systems. Once
       "History of SOP and pricing non-compliance",
       "Retailers reluctant to give honest feedback",
       "Risk of market disturbance if rejected",
-      "Zydus governance and compliance standards strict",
+      "Zee Wellness governance and compliance standards strict",
       "Difficult to terminate once appointed",
       "High escalation risk to senior management",
       "Sales Officer's authority limited against influence"
@@ -428,7 +425,7 @@ The ASM is cautiously optimistic, seeing long-term potential. Management likes t
       "Retailers unfamiliar with the distributor",
       "Sales team will be largely inexperienced",
       "High learning-curve risk in initial months",
-      "Zydus brand trust at stake during launch phase",
+      "Zee Wellness brand trust at stake during launch phase",
       "Requires intensive SO and ASM handholding",
       "Market has low tolerance for early errors"
     ],
