@@ -2,7 +2,7 @@ import express from 'express';
 import CorporateSimulationResult from '../models/corporateSimulationResultModel.js';
 import { protect } from '../middleware/authMiddleware.js';
 import { calculateParameterScores, getScoreLevel } from '../data/corporateScoringMatrix.js';
-import { analyzeStrategicReasoning } from '../services/geminiAIService.js';
+import { analyzeStrategicReasoning } from '../services/groqAIService.js';
 
 const router = express.Router();
 
