@@ -482,8 +482,8 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                   <span className="w-4 h-4 bg-red-600 rounded-full mr-2"></span>
                   Self Assessment (Option Scores)
                 </h4>
-                <ResponsiveContainer width="100%" height={400}>
-                  <RadarChart data={radarData}>
+                <ResponsiveContainer width="100%" height={450}>
+                  <RadarChart data={radarData} margin={{ top: 30, right: 30, bottom: 30, left: 30 }}>
                     <PolarGrid stroke="#dc2626" strokeWidth={1.5} />
                     <PolarAngleAxis 
                       dataKey="fullName" 
@@ -494,12 +494,7 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                       angle={90} 
                       domain={[0, 5]} 
                       ticks={[0, 1.67, 3.33, 5]}
-                      tickFormatter={(value) => {
-                        if (value === 0) return '';
-                        if (value <= 1.67) return 'Low';
-                        if (value <= 3.33) return 'Medium';
-                        return 'High';
-                      }}
+                      tickFormatter={(value) => ''}
                       tick={{ fill: '#333', fontSize: 11, fontWeight: 600 }}
                       stroke="#dc2626"
                       strokeWidth={2}
@@ -529,8 +524,8 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                   <span className="w-4 h-4 bg-purple-600 rounded-full mr-2"></span>
                   Self Management (AI Reasoning)
                 </h4>
-                <ResponsiveContainer width="100%" height={400}>
-                  <RadarChart data={selfManagementData}>
+                <ResponsiveContainer width="100%" height={450}>
+                  <RadarChart data={selfManagementData} margin={{ top: 30, right: 30, bottom: 30, left: 30 }}>
                     <PolarGrid stroke="#9333ea" strokeWidth={1.5} />
                     <PolarAngleAxis 
                       dataKey="fullName" 
@@ -541,12 +536,7 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                       angle={90} 
                       domain={[0, 5]} 
                       ticks={[0, 1.67, 3.33, 5]}
-                      tickFormatter={(value) => {
-                        if (value === 0) return '';
-                        if (value <= 1.67) return 'Low';
-                        if (value <= 3.33) return 'Medium';
-                        return 'High';
-                      }}
+                      tickFormatter={(value) => ''}
                       tick={{ fill: '#333', fontSize: 11, fontWeight: 600 }}
                       stroke="#9333ea"
                       strokeWidth={2}
@@ -590,45 +580,48 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                   Combined Assessment Comparison
                 </h3>
                 
-                <ResponsiveContainer width="100%" height={500}>
-                  <RadarChart data={[
-                    { 
-                      dimension: radarData[0]?.fullName || 'Business Judgment', 
-                      selfAssessment: radarData[0]?.value || 0,
-                      selfManagement: selfManagementData[0]?.value || 0,
-                      fullMark: 5 
-                    },
-                    { 
-                      dimension: radarData[1]?.fullName || 'Financial Risk', 
-                      selfAssessment: radarData[1]?.value || 0,
-                      selfManagement: selfManagementData[1]?.value || 0,
-                      fullMark: 5 
-                    },
-                    { 
-                      dimension: radarData[2]?.fullName || 'Talent Assessment', 
-                      selfAssessment: radarData[2]?.value || 0,
-                      selfManagement: selfManagementData[2]?.value || 0,
-                      fullMark: 5 
-                    },
-                    { 
-                      dimension: radarData[3]?.fullName || 'Risk Design', 
-                      selfAssessment: radarData[3]?.value || 0,
-                      selfManagement: selfManagementData[3]?.value || 0,
-                      fullMark: 5 
-                    },
-                    { 
-                      dimension: radarData[4]?.fullName || 'Governance', 
-                      selfAssessment: radarData[4]?.value || 0,
-                      selfManagement: selfManagementData[4]?.value || 0,
-                      fullMark: 5 
-                    },
-                    { 
-                      dimension: radarData[5]?.fullName || 'Market Execution', 
-                      selfAssessment: radarData[5]?.value || 0,
-                      selfManagement: selfManagementData[5]?.value || 0,
-                      fullMark: 5 
-                    },
-                  ]}>
+                <ResponsiveContainer width="100%" height={550}>
+                  <RadarChart 
+                    data={[
+                      { 
+                        dimension: radarData[0]?.fullName || 'Business Judgment', 
+                        selfAssessment: radarData[0]?.value || 0,
+                        selfManagement: selfManagementData[0]?.value || 0,
+                        fullMark: 5 
+                      },
+                      { 
+                        dimension: radarData[1]?.fullName || 'Financial Risk', 
+                        selfAssessment: radarData[1]?.value || 0,
+                        selfManagement: selfManagementData[1]?.value || 0,
+                        fullMark: 5 
+                      },
+                      { 
+                        dimension: radarData[2]?.fullName || 'Talent Assessment', 
+                        selfAssessment: radarData[2]?.value || 0,
+                        selfManagement: selfManagementData[2]?.value || 0,
+                        fullMark: 5 
+                      },
+                      { 
+                        dimension: radarData[3]?.fullName || 'Risk Design', 
+                        selfAssessment: radarData[3]?.value || 0,
+                        selfManagement: selfManagementData[3]?.value || 0,
+                        fullMark: 5 
+                      },
+                      { 
+                        dimension: radarData[4]?.fullName || 'Governance', 
+                        selfAssessment: radarData[4]?.value || 0,
+                        selfManagement: selfManagementData[4]?.value || 0,
+                        fullMark: 5 
+                      },
+                      { 
+                        dimension: radarData[5]?.fullName || 'Market Execution', 
+                        selfAssessment: radarData[5]?.value || 0,
+                        selfManagement: selfManagementData[5]?.value || 0,
+                        fullMark: 5 
+                      },
+                    ]}
+                    margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
+                  >
                     <PolarGrid stroke="#6366f1" strokeWidth={1.5} />
                     <PolarAngleAxis 
                       dataKey="dimension" 
@@ -639,12 +632,7 @@ const CorporateSimulationQuiz = ({ onClose }) => {
                       angle={90} 
                       domain={[0, 5]} 
                       ticks={[0, 1.67, 3.33, 5]}
-                      tickFormatter={(value) => {
-                        if (value === 0) return '';
-                        if (value <= 1.67) return 'Low';
-                        if (value <= 3.33) return 'Medium';
-                        return 'High';
-                      }}
+                      tickFormatter={(value) => ''}
                       tick={{ fill: '#333', fontSize: 12, fontWeight: 600 }}
                       stroke="#6366f1"
                       strokeWidth={2}

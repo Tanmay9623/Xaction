@@ -23,34 +23,62 @@ export async function analyzeStrategicReasoning(answers, leadershipScores) {
         text: opt.text,
         rank: opt.order,
         points: 0  // Points not stored in orderedOptions
-      })) : []
+      })) : [],
+      topChoice: ans.orderedOptions && ans.orderedOptions.length > 0 
+        ? ans.orderedOptions.find(opt => opt.order === 1)?.text || ans.orderedOptions[0].text
+        : ''
     })).filter(r => r.reasoning.trim().length > 0);
 
-    // Pre-validation: Check if reasoning is just copy-paste of options
+    // Enhanced Pre-validation: Check if reasoning matches top choice or is just copy-paste
     let isCopyPaste = false;
     let copyPasteCount = 0;
+    let contradictionCount = 0;
+    let duplicateCount = 0;
     
+    // Check 0: Detect if same reasoning is used for multiple questions (lazy copy-paste)
+    const reasoningFrequency = {};
     for (const r of reasoningTexts) {
-      const reasoningLower = r.reasoning.toLowerCase().replace(/[^a-z0-9]/g, '');
-      let matchCount = 0;
+      // More aggressive normalization: remove numbers, newlines, extra spaces
+      const normalized = r.reasoning
+        .trim()
+        .toLowerCase()
+        .replace(/[\n\r\t]+/g, ' ')  // Replace newlines/tabs with space
+        .replace(/\d+/g, '')          // Remove all numbers
+        .replace(/\s+/g, ' ')         // Normalize multiple spaces to single space
+        .trim();
       
-      for (const opt of r.rankedOptions) {
-        const optionLower = opt.text.toLowerCase().replace(/[^a-z0-9]/g, '');
-        // Check if significant portion of option text appears in reasoning
-        if (reasoningLower.includes(optionLower.substring(0, Math.min(20, optionLower.length)))) {
-          matchCount++;
-        }
+      if (!reasoningFrequency[normalized]) {
+        reasoningFrequency[normalized] = { count: 0, questions: [] };
       }
-      
-      // If reasoning contains 3+ options text, likely copy-paste
-      if (matchCount >= 3) {
-        copyPasteCount++;
+      reasoningFrequency[normalized].count++;
+      reasoningFrequency[normalized].questions.push(r.questionNumber);
+    }
+    
+    // Count how many questions use duplicated reasoning
+    let duplicateGroups = [];
+    for (const [text, data] of Object.entries(reasoningFrequency)) {
+      if (data.count > 1) {
+        duplicateCount += data.count;
+        duplicateGroups.push({ questions: data.questions, count: data.count, preview: text.substring(0, 50) });
       }
     }
     
-    // If most answers are copy-paste, return zero scores immediately
-    if (copyPasteCount >= reasoningTexts.length * 0.7) {
-      console.log('⚠️ Detected copy-paste reasoning in', copyPasteCount, 'out of', reasoningTexts.length, 'answers');
+    // Debug log to see what's happening
+    console.log('🔍 Duplicate Analysis:', {
+      totalQuestions: reasoningTexts.length,
+      uniqueReasoningCount: Object.keys(reasoningFrequency).length,
+      duplicateCount,
+      duplicateGroups: duplicateGroups.length > 0 ? duplicateGroups : 'None'
+    });
+    
+    // If same reasoning used for 50%+ of questions, it's lazy copy-paste
+    if (duplicateCount >= reasoningTexts.length * 0.5) {
+      console.log('🚫 DUPLICATE REASONING DETECTED - RETURNING ZERO SCORES:', {
+        duplicateCount,
+        totalQuestions: reasoningTexts.length,
+        percentage: Math.round((duplicateCount / reasoningTexts.length) * 100) + '%',
+        duplicateGroups
+      });
       return {
         success: true,
         data: {
@@ -62,7 +90,78 @@ export async function analyzeStrategicReasoning(answers, leadershipScores) {
             GC: 0,
             GT: 0
           },
-          analysis: 'Reasoning appears to be copy-pasted option text rather than genuine explanation of ranking decisions. No credit given.',
+          analysis: `Identical reasoning text detected across ${duplicateCount} out of ${reasoningTexts.length} questions. Each question requires unique strategic reasoning explaining your specific ranking choices for that scenario. Using the same generic text for multiple questions shows lack of genuine analysis.`,
+          alignmentScore: 0
+        }
+      };
+    }
+    
+    for (const r of reasoningTexts) {
+      const reasoningLower = r.reasoning.toLowerCase().replace(/[^a-z0-9\s]/g, '');
+      const topChoiceLower = r.topChoice.toLowerCase().replace(/[^a-z0-9\s]/g, '');
+      
+      // Check 1: Is reasoning just the option text copied?
+      let matchCount = 0;
+      let hasExactMatch = false;
+      
+      for (const opt of r.rankedOptions) {
+        const optionLower = opt.text.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const optionWords = opt.text.toLowerCase().split(/\s+/);
+        
+        // Check if significant portion of option text appears in reasoning
+        if (reasoningLower.includes(optionLower.substring(0, Math.min(30, optionLower.length)))) {
+          matchCount++;
+        }
+        
+        // Check if reasoning is EXACTLY the option text (90%+ similarity)
+        const wordsInReasoning = optionWords.filter(word => 
+          word.length > 3 && reasoningLower.includes(word)
+        ).length;
+        if (wordsInReasoning >= optionWords.length * 0.9) {
+          hasExactMatch = true;
+        }
+      }
+      
+      // If reasoning contains 3+ options text or has exact match, likely copy-paste
+      if (matchCount >= 3 || hasExactMatch) {
+        copyPasteCount++;
+      }
+      
+      // Check 2: Does reasoning contradict the top choice?
+      // Look for keywords that suggest they're arguing for a DIFFERENT option
+      const topChoiceWords = topChoiceLower.split(/\s+/).filter(w => w.length > 3);
+      const topChoiceKeywords = topChoiceWords.filter(w => 
+        reasoningLower.includes(w)
+      ).length;
+      
+      // If reasoning barely mentions top choice (< 20% of keywords), likely contradiction
+      if (topChoiceKeywords < topChoiceWords.length * 0.2 && topChoiceWords.length > 0) {
+        contradictionCount++;
+      }
+    }
+    
+    // If most answers are copy-paste or contradictory, return zero scores immediately
+    if (copyPasteCount >= reasoningTexts.length * 0.6 || contradictionCount >= reasoningTexts.length * 0.5) {
+      console.log('⚠️ Detected issues:', {
+        copyPaste: copyPasteCount,
+        contradictions: contradictionCount,
+        duplicates: duplicateCount,
+        total: reasoningTexts.length
+      });
+      return {
+        success: true,
+        data: {
+          reasoningScores: {
+            BJ: 0,
+            FR: 0,
+            TC: 0,
+            RD: 0,
+            GC: 0,
+            GT: 0
+          },
+          analysis: copyPasteCount > contradictionCount 
+            ? 'Strategic reasoning appears to be copy-pasted from options without genuine explanation. The reasoning must explain WHY you chose your top option, not just repeat the option text.' 
+            : 'Strategic reasoning does not support your top choices. Your reasoning should clearly explain why you ranked your #1 option first.',
           alignmentScore: 0
         }
       };
@@ -71,6 +170,7 @@ export async function analyzeStrategicReasoning(answers, leadershipScores) {
     console.log('📊 Total answers received:', answers.length);
     console.log('📝 Answers with reasoning:', reasoningTexts.length);
     console.log('🔍 Copy-paste detected in:', copyPasteCount, 'answers');
+    console.log('🔄 Duplicate reasoning detected in:', duplicateCount, 'answers');
     console.log('💬 Reasoning texts:', reasoningTexts.map(r => ({
       q: r.questionNumber,
       text: r.reasoning.substring(0, 60) + '...',
@@ -110,8 +210,17 @@ You are an expert leadership assessment analyzer. Your job is to determine if th
 **ZERO SCORE RULES (MOST IMPORTANT):**
 - **Copy-paste from UI**: If reasoning is just the option text copied exactly with NO explanation → ALL SCORES = 0
 - **Random text**: Any meaningless characters, numbers, keyboard spam (aaa, 123, qwerty, etc.) → ALL SCORES = 0
-- **Contradiction**: User ranked option X as #1 BUT reasoning argues AGAINST it or supports different option → ALL SCORES = 0
-- Example: User puts "Delay appointment" as #1, but reasoning says "We should act quickly and not delay" → Score = 0
+- **CONTRADICTION (CRITICAL)**: User ranked option X as #1 BUT reasoning argues AGAINST it or supports different option → ALL SCORES = 0
+- **Example 1**: User puts "Delay appointment" as #1, but reasoning says "We should act quickly and not delay" → Score = 0, Analysis MUST include word "contradiction"
+- **Example 2**: User puts "Fire the manager" as #1, but reasoning says "Training and development is the best approach" → Score = 0, Analysis MUST include word "contradiction"
+- **Example 3**: User puts "Immediate action" as #1, but reasoning says "We should wait and assess" → Score = 0, Analysis MUST include word "contradiction"
+
+**CRITICAL CONTRADICTION CHECK:**
+For EACH question, compare the #1 ranked option text with the reasoning:
+- If reasoning argues for the OPPOSITE action (e.g., delay vs immediate, fire vs train, wait vs act) → ZERO SCORES
+- If reasoning supports a DIFFERENT option that was ranked lower → ZERO SCORES
+- If reasoning doesn't mention or explain why the #1 option was chosen → ZERO SCORES
+- In your analysis, YOU MUST USE THE WORD "contradiction" or "contradicts" when this happens!
 
 **Actual Leadership Scores Received (from ranking choices):**
 - BJ (Business Judgment): ${leadershipScores.BJ.score}/30
@@ -125,20 +234,33 @@ You are an expert leadership assessment analyzer. Your job is to determine if th
 ${reasoningTexts.map(r => `
 Question ${r.questionNumber}: ${r.title}
 
-User's Ranking Choice (1st to last):
-${r.rankedOptions.map((opt, idx) => `  ${opt.rank}. ${opt.text} ${idx === 0 ? '← THEIR TOP CHOICE (Must support this!)' : ''}`).join('\n')}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 USER'S TOP CHOICE (MUST BE SUPPORTED):
+"${r.topChoice}"
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-User's Reasoning Text: "${r.reasoning}"
+Full Ranking Order (1st to last):
+${r.rankedOptions.map((opt, idx) => `  ${opt.rank}. ${opt.text} ${idx === 0 ? '← #1 CHOICE (reasoning MUST explain why THIS option!)' : ''}`).join('\n')}
 
-Score Received: ${r.actualScore}
+📝 User's Strategic Reasoning:
+"${r.reasoning}"
 
-**CRITICAL CHECKS:**
-1. Is reasoning EXACT copy from UI options with no explanation? (If yes = 0)
-2. Is reasoning random/meaningless text like "20 a", "asdfsdf", "!!!"? (If yes = 0)
-3. Does reasoning SUPPORT their #1 choice or argue AGAINST it? (If against = contradiction = 0)
-4. Does reasoning explain WHY option ranked #1 was chosen over others? (If no = 0)
-5. Does reasoning match their ranking order or contradict it? (If contradict = 0)
-6. Is it genuine original explanation or just generic/filler text? (If generic = 0)
+Actual Score Received: ${r.actualScore}
+
+**CRITICAL VALIDATION CHECKS (Apply in order):**
+1. ❌ Is reasoning EXACT copy of option text "${r.topChoice}" with no explanation added? → Score = 0
+2. ❌ Is reasoning random/meaningless: "20 a", "asdfsdf", "!!!", keyboard spam? → Score = 0
+3. ❌ **CONTRADICTION CHECK**: Does reasoning argue for the OPPOSITE of "${r.topChoice}"? → Score = 0, Analysis MUST say "contradiction"
+4. ❌ **OPPOSITE ACTION CHECK**: Does reasoning support a different option instead of "${r.topChoice}"? → Score = 0, Analysis MUST say "contradiction"
+5. ❌ Does reasoning fail to mention or explain why "${r.topChoice}" was chosen? → Score = 0
+6. ❌ Is reasoning generic ("good choice", "best option") that could apply to ANY ranking? → Score = 0
+7. ✅ Does reasoning specifically explain WHY "${r.topChoice}" was ranked #1? → Continue scoring
+8. ✅ Does reasoning show trade-off analysis comparing "${r.topChoice}" vs other options? → Higher score
+
+**Contradiction Detection Examples:**
+- Top choice: "Delay appointment" | Reasoning: "act immediately" or "quick action needed" → CONTRADICTION = 0
+- Top choice: "Fire manager" | Reasoning: "provide training" or "coaching approach" → CONTRADICTION = 0
+- Top choice: "Strict policy" | Reasoning: "flexible approach" or "case by case" → CONTRADICTION = 0
 `).join('\n---\n')}
 
 **STRICT SCORING RULES - READ CAREFULLY:**
@@ -305,6 +427,77 @@ You are scoring how well they EXPLAINED their performance, not creating new perf
     // Validate the result structure
     if (!result.reasoningScores || !result.analysis || typeof result.alignmentScore !== 'number') {
       throw new Error('Invalid AI response structure');
+    }
+    
+    // CRITICAL CHECK: If AI detected generic/copy-paste reasoning, force all scores to ZERO
+    const analysisLower = result.analysis.toLowerCase();
+    const genericKeywords = [
+      'mostly generic',
+      'generally poor',
+      'reasoning is poor',
+      'lacks original thinking',
+      'copy-paste',
+      'copy paste',
+      'copypaste',
+      'copied from',
+      'does not provide clear explanation',
+      'no actual explanation',
+      'no explanation',
+      'generic and',
+      'lacks genuine',
+      'not genuine',
+      'appears to be generic',
+      'meaningless text',
+      'random text',
+      'keyboard spam',
+      'just repeating',
+      'simply repeating',
+      'from ui options',
+      'from options'
+    ];
+    
+    const contradictionKeywords = [
+      'contradiction',
+      'contradicts',
+      'contradictory',
+      'argues against',
+      'opposite',
+      'does not support',
+      'doesnt support',
+      'conflicts with',
+      'inconsistent with'
+    ];
+    
+    const hasGenericIssue = genericKeywords.some(keyword => analysisLower.includes(keyword));
+    const hasContradiction = contradictionKeywords.some(keyword => analysisLower.includes(keyword));
+    
+    // Also check if alignment score is very low (< 25)
+    const hasLowAlignment = result.alignmentScore < 25;
+    
+    if (hasGenericIssue || hasContradiction || hasLowAlignment) {
+      console.log('🚫 AI DETECTED POOR/CONTRADICTORY REASONING - Forcing all scores to ZERO:', {
+        hasGenericIssue,
+        hasContradiction,
+        hasLowAlignment,
+        alignmentScore: result.alignmentScore,
+        matchedGeneric: genericKeywords.filter(k => analysisLower.includes(k)),
+        matchedContradiction: contradictionKeywords.filter(k => analysisLower.includes(k))
+      });
+      return {
+        success: true,
+        data: {
+          reasoningScores: {
+            BJ: 0,
+            FR: 0,
+            TC: 0,
+            RD: 0,
+            GC: 0,
+            GT: 0
+          },
+          analysis: result.analysis,
+          alignmentScore: 0
+        }
+      };
     }
     
     // CRITICAL FIX: Cap AI reasoning scores to never exceed actual option scores
