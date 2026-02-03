@@ -68,17 +68,8 @@ const CorporateLogin = () => {
         }
       }
 
-      // Determine the correct endpoint based on role
-      let endpoint;
-      if (activeRole === "admin") {
-        endpoint = `${API_URL}/corporate/admin/login`;
-      } else if (activeRole === "participant") {
-        endpoint = `${API_URL}/corporate/participant/login`;
-      } else {
-        setError("Invalid role selected");
-        setLoading(false);
-        return;
-      }
+      // Use standard auth endpoint for all corporate roles
+      const endpoint = `${API_URL}/auth/login`;
 
       // Make the login request
       const loginResponse = await fetch(endpoint, {
@@ -88,11 +79,7 @@ const CorporateLogin = () => {
         },
         body: JSON.stringify({ 
           email, 
-          password,
-          role: activeRole,
-          simulationType: 'corporate',
-          simulationId: selectedSimulation.id,
-          simulationName: selectedSimulation.name
+          password
         })
       });
 
