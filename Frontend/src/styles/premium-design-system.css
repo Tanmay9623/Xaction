@@ -7,26 +7,26 @@
 /* === ROOT CSS VARIABLES === */
 :root {
   /* Primary Background Colors */
-  --cream-bg: #F5E6D3;
-  --warm-beige: #FFF5E8;
-  --light-sand: #FFF8ED;
-  --peach: #FFD4B8;
+  --cream-bg: #EFF6FF;
+  --warm-beige: #F5F3FF;
+  --light-sand: #FEFBF6;
+  --peach: #E0F2FE;
 
   /* Accent Colors */
-  --purple-primary: #7B7BE8;
-  --purple-light: #A5A5FF;
-  --coral-orange: #FF9B71;
-  --bright-orange: #FF8A4D;
-  --sunny-yellow: #FFD93D;
-  --warm-brown: #A67C52;
-  --soft-blue: #6BA8FF;
+  --purple-primary: #2563EB;
+  --purple-light: #60A5FA;
+  --coral-orange: #3B82F6;
+  --bright-orange: #2563EB;
+  --sunny-yellow: #3B82F6;
+  --warm-brown: #6B7280;
+  --soft-blue: #3B82F6;
 
   /* Neutral Colors */
-  --dark-charcoal: #2D2D2D;
-  --medium-gray: #5A5A5A;
-  --light-gray: #E5E5E5;
-  --pure-white: #FEFBF6;  /* Softer off-white with warm undertone */
-  --card-white: #FFF9F0;  /* Warmer white for cards */
+  --dark-charcoal: #1F2937;
+  --medium-gray: #6B7280;
+  --light-gray: #E5E7EB;
+  --pure-white: #FFFFFF;
+  --card-white: #FFFFFF;
 
   /* Semantic Colors */
   --success: #4CAF50;
@@ -35,8 +35,8 @@
   --error: #FF5252;
 
   /* Gradients */
-  --gradient-purple: linear-gradient(135deg, #7B7BE8 0%, #A5A5FF 100%);
-  --gradient-orange: linear-gradient(135deg, #FF9B71 0%, #FFB86C 100%);
+  --gradient-purple: linear-gradient(135deg, #2563EB 0%, #3B82F6 100%);
+  --gradient-orange: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
   --gradient-background: linear-gradient(135deg, #EFF6FF 0%, #F5F3FF 50%, #FEFBF6 100%);
 
   /* Typography - Font Families */
@@ -165,18 +165,19 @@ h1, h2, h3, h4, h5, h6 {
 
 /* === PREMIUM CARD COMPONENTS === */
 .premium-card-base {
-  background: var(--card-white);
-  border-radius: var(--radius-lg);
-  padding: var(--card-padding);
-  box-shadow: var(--shadow-card);
-  transition: all var(--transition-smooth);
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  border-top: 4px solid #2563EB;
 }
 
 .premium-card-base:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-elevated);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
 }
 
 .premium-card-lg {
@@ -241,18 +242,18 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .stat-card-icon.purple {
-  background: linear-gradient(135deg, rgba(123, 123, 232, 0.2), rgba(165, 165, 255, 0.2));
-  color: var(--purple-primary);
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(59, 130, 246, 0.2));
+  color: #2563EB;
 }
 
 .stat-card-icon.orange {
-  background: linear-gradient(135deg, rgba(255, 155, 113, 0.2), rgba(255, 138, 77, 0.2));
-  color: var(--coral-orange);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(96, 165, 250, 0.2));
+  color: #3B82F6;
 }
 
 .stat-card-icon.blue {
-  background: linear-gradient(135deg, rgba(107, 168, 255, 0.2), rgba(123, 123, 232, 0.2));
-  color: var(--soft-blue);
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.2), rgba(59, 130, 246, 0.2));
+  color: #3B82F6;
 }
 
 .stat-card-value {
@@ -363,31 +364,32 @@ h1, h2, h3, h4, h5, h6 {
 
 /* === QUIZ CARD === */
 .quiz-card {
-  background: var(--pure-white);
-  border-radius: var(--radius-xl);
-  padding: var(--card-padding);
-  box-shadow: var(--shadow-card);
-  transition: all var(--transition-smooth);
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   position: relative;
   overflow: hidden;
   border: 2px solid transparent;
+  border-top: 4px solid #2563EB;
 }
 
 .quiz-card::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--gradient-purple);
+  background: linear-gradient(135deg, #2563EB, #3B82F6);
   opacity: 0;
-  transition: opacity var(--transition-smooth);
-  border-radius: var(--radius-xl);
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 16px;
 }
 
 .quiz-card:hover {
   transform: translateY(-6px);
-  box-shadow: var(--shadow-elevated);
-  border-color: var(--purple-primary);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border-color: #2563EB;
 }
 
 .quiz-card:hover::before {
@@ -407,13 +409,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .quiz-card-badge.featured {
-  background: linear-gradient(135deg, #FFD93D, #FFB74D);
-  color: var(--dark-charcoal);
+  background: linear-gradient(135deg, #2563EB, #3B82F6);
+  color: #FFFFFF;
 }
 
 .quiz-card-badge.new {
-  background: var(--gradient-purple);
-  color: var(--pure-white);
+  background: linear-gradient(135deg, #2563EB, #3B82F6);
+  color: #FFFFFF;
 }
 
 /* === ANSWER OPTIONS === */
@@ -497,8 +499,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .badge.category {
-  background: rgba(123, 123, 232, 0.1);
-  color: var(--purple-primary);
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563EB;
 }
 
 .badge.difficulty-easy {
