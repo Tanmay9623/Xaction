@@ -44,32 +44,21 @@ function SortableItem({ id, rank, text }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center p-3 sm:p-5 bg-white/90 backdrop-blur-sm border-2 rounded-lg sm:rounded-xl cursor-move group transition-all shadow-md ${
+      className={`flex items-start p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-move group transition-all ${
         isDragging
           ? 'scale-105 z-50 border-blue-500 shadow-lg'
-          : 'border-purple-200 hover:border-purple-300 hover:shadow-lg'
+          : 'hover:border-gray-300 hover:shadow-md'
       }`}
       {...attributes}
       {...listeners}
     >
-      {/* Rank Badge - Mobile Responsive */}
-      <div className={`w-10 sm:w-12 h-10 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center font-black text-lg sm:text-xl transition-all flex-shrink-0 ${
-        isDragging 
-          ? 'bg-blue-600 text-white shadow-md' 
-          : 'bg-blue-500 text-white'
-      }`}>
-        <span className="font-black">{rank}</span>
-      </div>
+      {/* Rank Badge */}
+      <span className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center mr-3 text-sm font-bold">
+        {rank}
+      </span>
 
-      {/* Option Text - Mobile Responsive */}
-      <div className="flex-1 ml-2 sm:ml-4">
-        <p className="text-gray-800 font-semibold text-sm sm:text-lg">{text}</p>
-      </div>
-
-      {/* Drag Handle Icon - Mobile Responsive */}
-      <svg className="w-5 sm:w-7 h-5 sm:h-7 text-blue-500 group-hover:scale-110 transition-transform flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16M4 18h16" />
-      </svg>
+      {/* Option Text */}
+      <span className="text-sm text-gray-800 flex-1">{text}</span>
     </div>
   );
 }
@@ -363,228 +352,111 @@ const RankingQuiz = ({ quiz, onComplete, onBack }) => {
   }
 
   return (
-    <div className="premium-dashboard-bg" style={{
-      minHeight: '100vh',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
-      {/* Animated Background Circles */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        pointerEvents: 'none',
-        overflow: 'hidden'
-      }}>
-        <div style={{
-          position: 'absolute',
-          top: '20%',
-          left: '15%',
-          width: '400px',
-          height: '400px',
-          background: 'radial-gradient(circle, rgba(123, 123, 232, 0.15), transparent)',
-          borderRadius: '50%',
-          filter: 'blur(60px)'
-        }} />
-        <div style={{
-          position: 'absolute',
-          bottom: '20%',
-          right: '15%',
-          width: '350px',
-          height: '350px',
-          background: 'radial-gradient(circle, rgba(255, 155, 113, 0.15), transparent)',
-          borderRadius: '50%',
-          filter: 'blur(60px)'
-        }} />
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
 
-      <div style={{
-        position: 'relative',
-        zIndex: 10,
-        padding: 'var(--space-xl) var(--space-md)'
-      }}>
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+      <div className="max-w-5xl mx-auto">
           {/* Back Button */}
           {onBack && (
             <button
               onClick={handleAbandonQuiz}
-              className="btn-secondary"
-              style={{ marginBottom: 'var(--space-xl)' }}
+              className="mb-6 px-4 py-2 text-gray-700 hover:text-gray-900 flex items-center transition-all group"
             >
-              <svg style={{ width: '20px', height: '20px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              <span>Back to Mission Select</span>
+              Back to Mission Select
             </button>
           )}
 
           {/* Progress Section */}
-          <div style={{ marginBottom: 'var(--space-2xl)' }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: 'var(--space-md)'
-            }}>
-              <span style={{
-                fontSize: 'var(--text-body-lg)',
-                fontWeight: 'var(--weight-bold)',
-                color: 'var(--dark-charcoal)'
-              }}>
-                Mission Progress
-              </span>
-              <span style={{
-                fontSize: 'var(--text-body-lg)',
-                fontWeight: 'var(--weight-black)',
-                color: 'var(--purple-primary)'
-              }}>
-                {Math.round(progressPercentage)}%
-              </span>
+          <div className="mb-6">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm font-semibold text-gray-600 uppercase">Mission Progress</span>
+              <span className="text-sm font-bold text-blue-600">{currentQuestionIndex + 1} of {totalQuestions}</span>
             </div>
-            <div className="progress-container">
-              <div 
-                className="progress-bar"
+            <div className="w-full bg-gray-200 rounded-full h-3 mb-1">
+              <div
+                className="bg-blue-600 rounded-full h-3 transition-all duration-500"
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              marginTop: 'var(--space-md)',
-              gap: 'var(--space-xs)'
-            }}>
-              {Array.from({ length: totalQuestions }).map((_, i) => (
-                <div
-                  key={i}
-                  style={{
-                    flex: 1,
-                    height: '8px',
-                    borderRadius: 'var(--radius-sm)',
-                    background: i < currentQuestionIndex 
-                      ? 'var(--success)'
-                      : i === currentQuestionIndex
-                      ? 'var(--purple-primary)'
-                      : 'var(--light-gray)',
-                    transition: 'all var(--transition-normal)',
-                    animation: i === currentQuestionIndex ? 'pulse 2s infinite' : 'none'
-                  }}
-                />
-              ))}
-            </div>
+            <span className="text-xs text-gray-600">{Math.round(progressPercentage)}%</span>
           </div>
 
-          {/* Mission Header - Mobile Responsive */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8 border-2 border-purple-200">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 mb-4 sm:mb-6">
-              <div className="w-16 sm:w-24 h-16 sm:h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg sm:rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
-                <div className="text-center">
-                  <div className="text-2xl sm:text-4xl font-black text-white mb-1">
-                    {currentQuestionIndex + 1}
-                  </div>
-                  <div className="text-xs sm:text-sm text-white/90">of {totalQuestions}</div>
+          {/* Mission Header */}
+          <div className="bg-white rounded-xl shadow-2xl border-t-4 border-blue-600 mb-6">
+            <div className="border-b-2 border-blue-100 p-8">
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <div className="text-xs font-bold text-blue-600 uppercase tracking-wide mb-2">MISSION {currentQuestionIndex + 1}</div>
+                  <h2 className="text-3xl font-bold text-gray-800 mb-1">Strategic Decision</h2>
+                  <p className="text-sm text-gray-600 flex items-center">
+                    <svg className="w-4 h-4 mr-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                    </svg>
+                    No Time Limit
+                  </p>
                 </div>
               </div>
-              
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-5 sm:w-8 h-5 sm:h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                  </svg>
-                  <h1 className="text-lg sm:text-3xl font-black text-gray-800">
-                    <span style={{ fontFamily: 'var(--font-heading)' }}>
-                      MISSION {currentQuestionIndex + 1}
-                    </span>
-                  </h1>
-                </div>
-                <div className="flex flex-col gap-1 sm:gap-3 text-xs sm:text-sm text-gray-600">
-                  <div className="flex items-center gap-2">
-                    <svg className="w-4 sm:w-5 h-4 sm:h-5 text-purple-500" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
-                      <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd"/>
-                    </svg>
-                    <span className="font-semibold">Strategic Decision</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <svg className="w-4 sm:w-5 h-4 sm:h-5 text-green-500" fill="currentColor" viewBox="0 0 24 24">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd"/>
-                    </svg>
-                    <span className="font-semibold text-green-600">No Time Limit</span>
-                  </div>
-                </div>
+
+              {/* Question Text */}
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-l-4 border-blue-600 rounded-lg p-6 shadow-md">
+                <p className="text-gray-800 leading-relaxed text-base font-medium">{currentQuestion.text}</p>
               </div>
             </div>
 
-            {/* Question Text */}
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              <span style={{ fontFamily: 'var(--font-heading)' }}>
-                {currentQuestion.text}
-              </span>
-            </h2>
+            {/* Constraints Section */}
+            {currentQuestion.points && currentQuestion.points.length > 0 && (
+              <div className="p-8">
+                <div className="mb-8">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-xl font-bold text-gray-800">Constraints</h3>
+                    <span className="bg-red-100 text-red-700 px-4 py-1 rounded-full text-xs font-bold uppercase">Important</span>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">Critical information points (read-only)</p>
+                  <div className="space-y-3">
+                    {currentQuestion.points.map((point, index) => (
+                      <div key={index} className="bg-white rounded-lg p-4 flex items-start shadow-sm border border-gray-200">
+                        <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center mr-3 text-sm font-bold flex-shrink-0">
+                          {index + 1}
+                        </span>
+                        <p className="text-sm text-gray-800 flex-1 leading-relaxed">{point.text}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Points Section */}
-          {currentQuestion.points && currentQuestion.points.length > 0 && (
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 mb-8 border-2 border-purple-200">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
-                  <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg sm:text-2xl font-black text-purple-700">Constraints</h3>
-                  <h3 className="text-lg sm:text-2xl font-black text-purple-700" style={{ fontFamily: 'var(--font-heading)' }}>Constraints</h3>
-                  <p className="text-xs sm:text-sm text-gray-600" style={{ fontFamily: 'var(--font-heading)' }}>Critical information points (read-only)</p>
-                </div>
-                <div className="px-3 sm:px-4 py-1 sm:py-2 bg-purple-100 rounded-full border border-purple-300">
-                  <span className="text-purple-700 font-bold text-xs sm:text-sm">IMPORTANT</span>
-                </div>
-              </div>
-              <div className="space-y-2 sm:space-y-3">
-                {currentQuestion.points.map((point, index) => (
-                  <div key={index} className="bg-gray-50/80 backdrop-blur-sm border border-purple-200 rounded-lg p-2 sm:p-4 flex items-start gap-2 sm:gap-4 hover:border-purple-300 transition-all">
-                    <div className="w-8 sm:w-10 h-8 sm:h-10 bg-purple-500 text-white rounded-lg flex items-center justify-center font-bold text-xs sm:text-base flex-shrink-0">
-                      {index + 1}
-                    </div>
-                    <p className="text-gray-900 leading-relaxed flex-1 font-bold" style={{ fontSize: '18px' }}>
-                      <span style={{ fontFamily: 'var(--font-heading)' }}>{point.text}</span>
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* View Strategic Options Button - Mobile Responsive */}
+          {/* View Strategic Options Button */}
           {!showStrategicOptions && (
-            <div className="flex justify-center mb-6 sm:mb-8">
+            <div className="bg-white rounded-xl shadow-2xl border-t-4 border-blue-600 p-8 mb-6">
               <button
                 onClick={handleViewStrategicOptions}
-                className="px-4 sm:px-12 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-sm sm:text-xl font-bold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105"
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-lg transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center"
               >
-                <span className="flex items-center gap-2 sm:gap-3">
-                  <svg className="w-5 sm:w-7 h-5 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                  <span className="hidden sm:inline">VIEW STRATEGIC OPTIONS</span>
-                  <span className="sm:hidden">OPTIONS</span>
-                </span>
+                <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                VIEW STRATEGIC OPTIONS
               </button>
             </div>
           )}
 
           {/* Strategic Options Section */}
           {showStrategicOptions && (
-            <div>
-              {/* Ranking Instructions - Mobile Responsive */}
-              <div className="bg-blue-50/80 backdrop-blur-sm border-2 border-blue-300 rounded-lg sm:rounded-xl p-3 sm:p-6 mb-6 sm:mb-8">
-                <div className="flex items-start gap-2 sm:gap-4">
-                  <svg className="w-6 sm:w-8 h-6 sm:h-8 text-blue-600 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-white rounded-xl shadow-2xl border-t-4 border-blue-600 p-8">
+              {/* Ranking Instructions */}
+              <div className="bg-blue-50 border-l-4 border-blue-600 rounded-lg p-6 mb-6">
+                <div className="flex items-start gap-4">
+                  <svg className="w-6 h-6 text-blue-600 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <div>
-                    <p className="text-base sm:text-xl font-black text-blue-800 mb-1 sm:mb-2">RANKING PROTOCOL</p>
-                    <p className="text-gray-700 text-xs sm:text-lg leading-relaxed">
+                    <p className="text-lg font-bold text-blue-800 mb-2">RANKING PROTOCOL</p>
+                    <p className="text-gray-700 text-base leading-relaxed">
                       Drag and drop options to rank them from <strong className="text-green-600">highest priority (1st)</strong> to <strong className="text-orange-600">lowest priority (last)</strong>
                     </p>
                   </div>
@@ -592,7 +464,7 @@ const RankingQuiz = ({ quiz, onComplete, onBack }) => {
               </div>
 
               {/* Drag and Drop Ranking */}
-              <div className="mb-6 sm:mb-8">
+              <div className="mb-6">
                 <DndContext
                   sensors={sensors}
                   collisionDetection={closestCenter}
@@ -602,7 +474,7 @@ const RankingQuiz = ({ quiz, onComplete, onBack }) => {
                     items={rankedOptions.map(opt => opt.id)}
                     strategy={verticalListSortingStrategy}
                   >
-                    <div className="space-y-2 sm:space-y-4">
+                    <div className="space-y-2">
                       {rankedOptions.map((option) => (
                         <SortableItem
                           key={option.id}
@@ -617,17 +489,17 @@ const RankingQuiz = ({ quiz, onComplete, onBack }) => {
               </div>
 
               {/* Instruction Field */}
-              <div className="bg-yellow-50/80 backdrop-blur-sm border-2 border-yellow-300 rounded-xl p-6 mb-8">
+              <div className="bg-yellow-50 border-l-4 border-yellow-400 rounded-lg p-6 mb-6">
                 <label className="block">
                   <div className="flex items-center gap-3 mb-4">
-                    <svg className="w-8 h-8 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
                     </svg>
                     <div>
-                      <span className="text-lg sm:text-2xl font-black text-yellow-800">
+                      <span className="text-lg font-bold text-yellow-800">
                         Your Strategic Reason <span className="text-red-600">*</span>
                       </span>
-                      <p className="text-gray-700 text-xs sm:text-sm mt-1">
+                      <p className="text-gray-700 text-sm mt-1">
                         Explain your ranking choice (20-100 words required)
                       </p>
                     </div>
@@ -636,11 +508,11 @@ const RankingQuiz = ({ quiz, onComplete, onBack }) => {
                     value={instruction}
                     onChange={(e) => setInstruction(e.target.value)}
                     placeholder="Provide your strategic reasoning for this ranking decision..."
-                    className="w-full px-3 sm:px-6 py-3 sm:py-4 bg-white/90 backdrop-blur-sm border-2 border-purple-200 rounded-lg sm:rounded-xl text-sm sm:text-lg text-gray-800 placeholder-gray-400 focus:border-purple-400 focus:ring-4 focus:ring-purple-100 transition-all min-h-32 sm:min-h-40 resize-y"
+                    className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-base text-gray-800 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all min-h-32 resize-y"
                     required
                   />
                 </label>
-                <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:justify-between gap-2 text-xs sm:text-base">
+                <div className="mt-3 flex justify-between text-sm">
                   <p className={`font-bold ${
                     countWords(instruction) < 20 ? 'text-red-600' : 
                     countWords(instruction) > 100 ? 'text-red-600' : 
@@ -654,41 +526,38 @@ const RankingQuiz = ({ quiz, onComplete, onBack }) => {
                 </div>
               </div>
 
-              {/* Navigation Buttons - Mobile Responsive - NO PREVIOUS BUTTON */}
-              <div className={`flex items-center gap-2 sm:gap-4 justify-end`}>
+              {/* Navigation Button */}
+              <div className="flex justify-end">
                 <button
                   onClick={handleNext}
                   disabled={isSubmitting}
-                  className="flex-1 sm:flex-initial px-4 sm:px-12 py-3 sm:py-4 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white text-sm sm:text-xl font-bold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed sm:max-w-md"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-lg transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   {isSubmitting ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <div className="w-4 sm:w-6 h-4 sm:h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <span className="hidden sm:inline">Submitting...</span>
-                    </span>
+                    <>
+                      <div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Submitting...</span>
+                    </>
                   ) : currentQuestionIndex === totalQuestions - 1 ? (
-                    <span className="flex items-center justify-center gap-1 sm:gap-3">
-                      <span className="hidden sm:inline">COMPLETE</span>
-                      <span className="sm:hidden">Done</span>
-                      <svg className="w-5 sm:w-7 h-5 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <>
+                      <span>COMPLETE MISSION</span>
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                    </span>
+                    </>
                   ) : (
-                    <span className="flex items-center justify-center gap-1 sm:gap-3">
-                      <span className="hidden sm:inline">Next Challenge</span>
-                      <span className="sm:hidden">Next</span>
-                      <svg className="w-5 sm:w-7 h-5 sm:h-7 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    <>
+                      <span>Next Challenge</span>
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
-                    </span>
+                    </>
                   )}
                 </button>
               </div>
             </div>
           )}
         </div>
-      </div>
     </div>
   );
 };

@@ -22,6 +22,12 @@ const StudentQuizList = ({ onQuizStateChange }) => {
   const [completedQuizResult, setCompletedQuizResult] = useState(null);
   const [activeTab, setActiveTab] = useState('available');
 
+  // Student info for header
+  const studentInfo = {
+    name: localStorage.getItem('fullName') || 'Student',
+    college: localStorage.getItem('college') || localStorage.getItem('userCollege') || 'Test School'
+  };
+
   const api = axios.create({
     baseURL: API_URL,
     headers: {
@@ -204,32 +210,71 @@ const StudentQuizList = ({ onQuizStateChange }) => {
   }
 
   return (
-    <div className="min-h-screen premium-dashboard-bg relative overflow-hidden">
-      {/* Animated Background Circles */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div 
-          className="absolute rounded-full blur-3xl opacity-20"
-          style={{
-            top: '20%',
-            left: '15%',
-            width: '500px',
-            height: '500px',
-            background: 'var(--gradient-purple)'
-          }}
-        ></div>
-        <div 
-          className="absolute rounded-full blur-3xl opacity-20"
-          style={{
-            bottom: '10%',
-            right: '10%',
-            width: '450px',
-            height: '450px',
-            background: 'var(--gradient-orange)'
-          }}
-        ></div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      {/* Header - Hidden when quiz/preface/results is active */}
+      {!showPreface && !showQuiz && !showResults && (
+        <div className="bg-white shadow-md border-b-4 border-gradient-to-r from-blue-500 to-purple-500">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="flex justify-between items-center">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="text-4xl">🎓</div>
+                  <div>
+                    <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                      Student Dashboard
+                    </h1>
+                    <p className="text-sm text-gray-500">MBA Training Program</p>
+                  </div>
+                </div>
+                <p className="mt-2 text-gray-700">
+                  Hello, <span className="font-semibold text-blue-600">{studentInfo.name}</span>
+                </p>
+                <p className="text-sm text-gray-600">{studentInfo.college}</p>
+              </div>
+              <button
+                onClick={() => {
+                  localStorage.clear();
+                  window.location.href = '/login';
+                }}
+                className="flex items-center gap-2 px-6 py-3 bg-red-50 text-red-600 rounded-lg border-2 border-red-200 hover:bg-red-100 transition-all font-semibold"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-      <div className="relative z-10 py-8 px-4 sm:px-6 lg:px-8">
+      {/* Content Container */}
+      <div className="relative overflow-hidden">
+        {/* Animated Background Circles */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div 
+            className="absolute rounded-full blur-3xl opacity-20"
+            style={{
+              top: '20%',
+              left: '15%',
+              width: '500px',
+              height: '500px',
+              background: 'var(--gradient-purple)'
+            }}
+          ></div>
+          <div 
+            className="absolute rounded-full blur-3xl opacity-20"
+            style={{
+              bottom: '10%',
+              right: '10%',
+              width: '450px',
+              height: '450px',
+              background: 'var(--gradient-orange)'
+            }}
+          ></div>
+        </div>
+
+        <div className="relative z-10 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Header */}
           <div className="premium-card-base premium-card-lg stagger-animation">
@@ -746,7 +791,9 @@ const StudentQuizList = ({ onQuizStateChange }) => {
             )}
           </div>
         </div>
+        </div>
       </div>
+      {/* End Content Container */}
     </div>
   );
 };
