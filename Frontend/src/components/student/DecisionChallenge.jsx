@@ -57,10 +57,10 @@ function SortableItem({ id, rank, text }) {
       </div>
 
       <div className="flex-1 ml-4">
-        <p className="text-white font-semibold text-lg">{text}</p>
+        <p className="text-black font-semibold text-lg">{text}</p>
       </div>
 
-      <svg className="w-7 h-7 text-cyan-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-7 h-7 text-gray-600 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16M4 18h16" />
       </svg>
     </div>
@@ -78,6 +78,7 @@ const DecisionChallenge = ({ quiz, onComplete, onBack }) => {
     constraints: true,
     intelligence: true
   });
+  const [isProgressHydrated, setIsProgressHydrated] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -93,19 +94,102 @@ const DecisionChallenge = ({ quiz, onComplete, onBack }) => {
   const currentQuestion = quiz.questions[currentQuestionIndex];
   const totalQuestions = quiz.questions.length;
   const progressPercentage = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+  const storageKey = `decisionChallenge-progress-${quiz._id}`;
 
   useEffect(() => {
-    if (currentQuestion) {
-      const options = currentQuestion.options.map((opt, index) => ({
-        id: `option-${index}`,
-        text: opt.text,
-        rank: index + 1
-      }));
-      setRankedOptions(options);
+    if (!storageKey || typeof window === 'undefined') {
+      setIsProgressHydrated(true);
+      return;
+    }
+
+    try {
+      const savedProgress = localStorage.getItem(storageKey);
+      if (savedProgress) {
+        const parsed = JSON.parse(savedProgress);
+
+        if (Array.isArray(parsed?.allAnswers)) {
+          setAllAnswers(parsed.allAnswers);
+        }
+
+        if (typeof parsed?.currentQuestionIndex === 'number') {
+          const nextIndex = Math.min(
+            Math.max(parsed.currentQuestionIndex, 0),
+            Math.max(totalQuestions - 1, 0)
+          );
+          setCurrentQuestionIndex(nextIndex);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to restore quiz progress:', error);
+      localStorage.removeItem(storageKey);
+    } finally {
+      setIsProgressHydrated(true);
+    }
+  }, [storageKey, totalQuestions]);
+
+  useEffect(() => {
+    if (!isProgressHydrated || typeof window === 'undefined') {
+      return;
+    }
+
+    try {
+      const payload = {
+        currentQuestionIndex,
+        allAnswers,
+      };
+      localStorage.setItem(storageKey, JSON.stringify(payload));
+    } catch (error) {
+      console.error('Failed to persist quiz progress:', error);
+    }
+  }, [storageKey, currentQuestionIndex, allAnswers, isProgressHydrated]);
+
+  useEffect(() => {
+    if (!currentQuestion) {
+      return;
+    }
+
+    const baseOptions = currentQuestion.options.map((opt, index) => ({
+      id: `option-${index}`,
+      text: opt.text,
+      rank: index + 1,
+      originalIndex: index,
+    }));
+
+    const savedAnswer = allAnswers[currentQuestionIndex];
+
+    if (savedAnswer?.selectedRanking?.length) {
+      const rankingOrder = savedAnswer.selectedRanking
+        .slice()
+        .sort((a, b) => a.rank - b.rank)
+        .map((item) => item.text);
+
+      const orderedOptions = [...baseOptions]
+        .sort((a, b) => {
+          const positionA = rankingOrder.indexOf(a.text);
+          const positionB = rankingOrder.indexOf(b.text);
+          const safeA = positionA === -1 ? a.originalIndex + rankingOrder.length : positionA;
+          const safeB = positionB === -1 ? b.originalIndex + rankingOrder.length : positionB;
+          return safeA - safeB;
+        })
+        .map((option, index) => ({
+          id: option.id,
+          text: option.text,
+          rank: index + 1,
+        }));
+
+      setRankedOptions(orderedOptions);
+      setInstruction(savedAnswer.instruction || '');
+      setShowStrategicOptions(Boolean(savedAnswer.instruction));
+    } else {
+      setRankedOptions(baseOptions.map((option, index) => ({
+        id: option.id,
+        text: option.text,
+        rank: index + 1,
+      })));
       setInstruction('');
       setShowStrategicOptions(false);
     }
-  }, [currentQuestionIndex, currentQuestion]);
+  }, [currentQuestionIndex, currentQuestion, allAnswers]);
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -223,6 +307,10 @@ const DecisionChallenge = ({ quiz, onComplete, onBack }) => {
       if (onComplete) {
         onComplete(response.data.data);
       }
+
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(storageKey);
+      }
     } catch (error) {
       console.error('Error submitting quiz:', error);
       const errorMessage = error.response?.data?.message || error.message || 'Failed to submit quiz';
@@ -265,7 +353,7 @@ const DecisionChallenge = ({ quiz, onComplete, onBack }) => {
           {/* Progress Bar */}
           <div className="mb-8 animate-fadeIn">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-lg font-bold text-white">Mission Progress</span>
+              <span className="text-lg font-bold text-black">Mission Progress</span>
               <span className="text-lg font-bold text-cyan-400">
                 Challenge {currentQuestionIndex + 1}/{totalQuestions}
               </span>
@@ -285,21 +373,21 @@ const DecisionChallenge = ({ quiz, onComplete, onBack }) => {
               </div>
               
               <div className="flex-1">
-                <h1 className="text-4xl font-black text-white mb-3">
+                <h1 className="text-4xl font-black text-black mb-3">
                   Decision Challenge {currentQuestionIndex + 1}
                 </h1>
-                <div className="flex items-center gap-6 text-white/70">
+                <div className="flex items-center gap-6 text-black">
                   <div className="flex items-center gap-2">
                     <svg className="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
                     </svg>
-                    <span className="font-semibold">Day {currentQuestionIndex + 1}</span>
+                    <span className="font-semibold text-black">Day {currentQuestionIndex + 1}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                     </svg>
-                    <span className="font-semibold text-green-400">Untimed - Strategic Focus</span>
+                    <span className="font-semibold text-black">Untimed - Strategic Focus</span>
                   </div>
                 </div>
               </div>
@@ -315,18 +403,18 @@ const DecisionChallenge = ({ quiz, onComplete, onBack }) => {
                 </svg>
               </div>
               <div>
-                <h2 className="text-3xl font-black text-blue-300 mb-2">Strategic Business Decision</h2>
-                <p className="text-white/80 text-lg">Review the decision scenario below</p>
+                <h2 className="text-3xl font-black text-black mb-2">Strategic Business Decision</h2>
+                <p className="text-black text-lg">Review the decision scenario below</p>
               </div>
             </div>
           </div>
 
           {/* Property Shortlisting / Question Description */}
           <div className="premium-card mb-8">
-            <h2 className="text-3xl font-black text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text mb-4">
+            <h2 className="text-3xl font-black text-black mb-4">
               Property Shortlisting
             </h2>
-            <p className="text-white/90 text-lg leading-relaxed">
+            <p className="text-black text-lg leading-relaxed">
               Select properties for new store openings considering rent levels and potential footfall. 
               Cover the top confectionary, bakery, supermarkets across NCR numbering 1500 in 3 to 6 months. 
               These outlets are key stores for Tedbury's and are very snooty by nature, spread across North, 
@@ -349,8 +437,8 @@ const DecisionChallenge = ({ quiz, onComplete, onBack }) => {
                   </svg>
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black text-red-300 mb-1">Mission Constraints</h2>
-                  <p className="text-white/70">Critical operational parameters</p>
+                  <h2 className="text-2xl font-black text-black mb-1">Mission Constraints</h2>
+                  <p className="text-black">Critical operational parameters</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -375,14 +463,14 @@ const DecisionChallenge = ({ quiz, onComplete, onBack }) => {
                     <div className="w-10 h-10 bg-purple-500/30 rounded-xl flex items-center justify-center">
                       <span className="text-white font-black text-lg">G</span>
                     </div>
-                    <h3 className="text-2xl font-black text-purple-300 mt-1">General Mission Parameters</h3>
+                    <h3 className="text-2xl font-black text-black mt-1">General Mission Parameters</h3>
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-start gap-4 p-4 bg-purple-900/30 border border-purple-400/30 rounded-lg hover:border-purple-400/50 transition-all">
                       <div className="neon-badge" style={{ width: '2.5rem', height: '2.5rem', fontSize: '1rem' }}>
                         1
                       </div>
-                      <p className="text-white/90 leading-relaxed flex-1 text-lg">
+                      <p className="text-black leading-relaxed flex-1 text-lg">
                         Each Salesman can cover maximum of 8-10 outlets per day considering the distances
                       </p>
                     </div>
@@ -404,8 +492,8 @@ const DecisionChallenge = ({ quiz, onComplete, onBack }) => {
                     <span className="text-white font-black text-2xl">2</span>
                   </div>
                   <div>
-                    <h2 className="text-2xl font-black text-orange-300 mb-1">Mission-Specific Intelligence</h2>
-                    <p className="text-white/70">Additional strategic information</p>
+                    <h2 className="text-2xl font-black text-black mb-1">Mission-Specific Intelligence</h2>
+                    <p className="text-black">Additional strategic information</p>
                   </div>
                 </div>
                 <svg 
@@ -426,7 +514,7 @@ const DecisionChallenge = ({ quiz, onComplete, onBack }) => {
                         <div className="neon-badge" style={{ width: '2.5rem', height: '2.5rem', fontSize: '1rem', background: 'linear-gradient(135deg, #f97316, #ea580c)' }}>
                           {index + 1}
                         </div>
-                        <p className="text-white/90 leading-relaxed flex-1 text-lg">{point.text}</p>
+                        <p className="text-black leading-relaxed flex-1 text-lg">{point.text}</p>
                       </div>
                     ))}
                   </div>
@@ -457,9 +545,9 @@ const DecisionChallenge = ({ quiz, onComplete, onBack }) => {
           {showStrategicOptions && (
             <div className="animate-fadeIn">
               <div className="premium-card border-2 border-cyan-400/50 mb-8">
-                <h3 className="text-2xl font-black text-cyan-300 mb-4">Rank Your Strategic Options</h3>
-                <p className="text-white/80 text-lg mb-6">
-                  Drag and drop options to rank from <strong className="text-green-400">highest priority (1st)</strong> to <strong className="text-orange-400">lowest priority (last)</strong>
+                <h3 className="text-2xl font-black text-black mb-4">Rank Your Strategic Options</h3>
+                <p className="text-black text-lg mb-6">
+                  Drag and drop options to rank from <strong className="text-green-600">highest priority (1st)</strong> to <strong className="text-orange-600">lowest priority (last)</strong>
                 </p>
                 
                 <DndContext
@@ -493,10 +581,10 @@ const DecisionChallenge = ({ quiz, onComplete, onBack }) => {
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
                     </svg>
                     <div>
-                      <span className="text-2xl font-black text-yellow-300">
-                        Your Strategic Instruction <span className="text-red-400">*</span>
+                      <span className="text-2xl font-black text-black">
+                        Your Strategic Instruction <span className="text-red-600">*</span>
                       </span>
-                      <p className="text-white/70 text-sm mt-1">
+                      <p className="text-black text-sm mt-1">
                         Explain your ranking choice (20-100 words required)
                       </p>
                     </div>
@@ -505,38 +593,26 @@ const DecisionChallenge = ({ quiz, onComplete, onBack }) => {
                     value={instruction}
                     onChange={(e) => setInstruction(e.target.value)}
                     placeholder="Provide your strategic reasoning for this ranking decision..."
-                    className="w-full px-6 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 rounded-xl text-white placeholder-white/50 focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/20 transition-all min-h-40 resize-y text-lg"
+                    className="w-full px-6 py-4 bg-white border-2 border-blue-200 rounded-xl text-black placeholder-gray-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all min-h-40 resize-y text-lg"
                     required
                   />
                 </label>
                 <div className="mt-4 flex justify-between text-base">
                   <p className={`font-bold ${
-                    countWords(instruction) < 20 ? 'text-red-400' : 
-                    countWords(instruction) > 100 ? 'text-red-400' : 
-                    'text-green-400'
+                    countWords(instruction) < 20 ? 'text-red-500' : 
+                    countWords(instruction) > 100 ? 'text-red-500' : 
+                    'text-green-600'
                   }`}>
                     Word count: {countWords(instruction)} (min: 20, max: 100)
                   </p>
-                  <p className="text-white/60">
+                  <p className="text-gray-600">
                     {instruction.length} characters
                   </p>
                 </div>
               </div>
 
               {/* Navigation Buttons */}
-              <div className={`flex items-center gap-4 ${currentQuestionIndex === 0 ? 'justify-end' : 'justify-between'}`}>
-                {currentQuestionIndex > 0 && (
-                  <button
-                    onClick={handlePrevious}
-                    className="px-8 py-4 rounded-xl font-bold text-lg text-white bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 transition-all border border-white/20 hover:scale-105 flex items-center gap-2"
-                  >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
-                    </svg>
-                    Previous
-                  </button>
-                )}
-
+              <div className="flex items-center justify-end gap-4">
                 <button
                   onClick={handleNext}
                   disabled={isSubmitting}
