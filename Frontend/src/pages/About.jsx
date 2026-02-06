@@ -296,10 +296,10 @@ const About = () => {
                 <h4>Ayushant Khandekar</h4>
                 <div className="team-bio">
                   <p>
-                    Ayushant is an expert in tech development and AI-driven solutions, Founder of Atkind, a Founder Member at TrayaTech Labs, and building FairPlace.in, an AI-driven e-commerce solution for retailers in a Bengaluru-based startup.
+                    Ayushant is an expert in tech development and AI-driven solutions, Founder of Atkind, a Founder Member at TrayaTech Labs, and builded FairPlace, an AI-driven e-commerce solution for retailers in a Bengaluru-based startup.
                   </p>
                   <p>
-                    He also serves as a Technical Advisor to a Turkey-based venture and lead teams at peakprosys pvt ltd(peakprosys.in)
+                   Technical Advisor to a Canadian startup and a Turkey-based venture; Team Lead at PeakProsys Pvt. Ltd. (peakprosys.in).
                   </p>
                   <p>
                     His expertise spans full-stack development, UI/UX design, automation, and AI integration, enabling the creation of scalable digital products that combine creativity with engineering depth.
