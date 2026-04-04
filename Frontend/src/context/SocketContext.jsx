@@ -27,6 +27,13 @@ export const SocketProvider = ({ children }) => {
   const [licenseStatus, setLicenseStatus] = useState({});
 
   useEffect(() => {
+    // Skip socket connection entirely for the offline game simulation
+    const activeSimulation = localStorage.getItem('simulation');
+    if (activeSimulation === 'Distribution Simulation') {
+      setIsConnected(false);
+      return;
+    }
+
     // Initialize Socket.IO connection
     // Get Socket URL from environment variables with fallback
     const socketUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';

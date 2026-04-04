@@ -9,6 +9,16 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Simulation from './pages/Simulation';
 import CorporateSimulations from './pages/CorporateSimulations';
+import GameSimulation from './pages/GameSimulation';
+import GameDistributionIntro from './pages/game-simulation/GameDistributionIntro';
+import GameDistributionInventory from './pages/game-simulation/GameDistributionInventory';
+import GameDistributionAcquisition from './pages/game-simulation/GameDistributionAcquisition';
+import GameDistributionDecisions from './pages/game-simulation/GameDistributionDecisions';
+import GameDistributionTradeScheme from './pages/game-simulation/GameDistributionTradeScheme';
+import GameDistributionCreditControl from './pages/game-simulation/GameDistributionCreditControl';
+import GameDistributionSalesTeam from './pages/game-simulation/GameDistributionSalesTeam';
+import GameDistributionSupplyDiscipline from './pages/game-simulation/GameDistributionSupplyDiscipline';
+import GameDistributionRoundResult from './pages/game-simulation/GameDistributionRoundResult';
 import Registration from './pages/Registration';
 import Login from './pages/Login';
 import CorporateLogin from './pages/CorporateLogin';
@@ -24,20 +34,7 @@ import CorporateParticipantDashboard from './components/corporate/CorporateParti
 
 function App() {
   useEffect(() => {
-    // Additional runtime suppression (reinforcement)
-    const noop = () => {};
-    
-    // Suppress all popups
-    window.alert = noop;
-    window.confirm = () => true;
-    window.prompt = () => null;
-    
-    // Suppress all console methods
-    Object.keys(console).forEach(key => {
-      if (typeof console[key] === 'function') {
-        console[key] = noop;
-      }
-    });
+    // Suppression removed to allow debugging and standard UI alerts/confirms
   }, []);
   const checkAuth = () => {
     const token = localStorage.getItem('token');
@@ -70,6 +67,16 @@ function App() {
         <Route path="/contact" element={<><Navbar /><Contact /></>} />
         <Route path="/simulation" element={<><Navbar /><Simulation /></>} />
         <Route path="/corporate-simulations" element={<><Navbar /><CorporateSimulations /></>} />
+        <Route path="/game-simulation" element={<><Navbar /><GameSimulation /></>} />
+        <Route path="/game-distribution/intro" element={<GameDistributionIntro />} />
+        <Route path="/game-distribution/inventory" element={<GameDistributionInventory />} />
+        <Route path="/game-distribution/acquisition" element={<GameDistributionAcquisition />} />
+        <Route path="/game-distribution/decisions" element={<GameDistributionDecisions />} />
+        <Route path="/game-distribution/trade-scheme" element={<GameDistributionTradeScheme />} />
+        <Route path="/game-distribution/credit-control" element={<GameDistributionCreditControl />} />
+        <Route path="/game-distribution/sales-team" element={<GameDistributionSalesTeam />} />
+        <Route path="/game-distribution/supply-discipline" element={<GameDistributionSupplyDiscipline />} />
+        <Route path="/game-distribution/round-result" element={<GameDistributionRoundResult />} />
         <Route path="/login" element={<Login />} />
         <Route path="/corporate-login" element={<CorporateLogin />} />
 

@@ -17,6 +17,11 @@ const SimulationModal = ({ isOpen, onClose }) => {
     onClose();
   };
 
+  const handleGameSimulation = () => {
+    navigate('/game-simulation');
+    onClose();
+  };
+
   return (
     <>
       {/* Overlay */}
@@ -107,6 +112,36 @@ const SimulationModal = ({ isOpen, onClose }) => {
               <div className="btn-content">
                 <h3>Simulations for Business</h3>
                 <p>Need Gap Identification, Capability Building Solutions (Industry & Role Agnostic)</p>
+              </div>
+            </button>
+
+            <button 
+              className="modal-option-btn game-btn"
+              onClick={handleGameSimulation}
+            >
+              <div className="btn-icon">
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="32" 
+                  height="32" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <rect x="2" y="6" width="20" height="12" rx="3" ry="3"></rect>
+                  <circle cx="8.5" cy="12" r="1.5"></circle>
+                  <circle cx="15.5" cy="10" r="1"></circle>
+                  <circle cx="17.5" cy="12" r="1"></circle>
+                  <circle cx="15.5" cy="14" r="1"></circle>
+                  <circle cx="13.5" cy="12" r="1"></circle>
+                </svg>
+              </div>
+              <div className="btn-content">
+                <h3>Game Simulation</h3>
+                <p>Interactive game-based learning with immersive scenarios, challenges & real-time decision making</p>
               </div>
             </button>
           </div>
@@ -265,6 +300,16 @@ const SimulationModal = ({ isOpen, onClose }) => {
           box-shadow: 0 8px 24px rgba(124, 58, 237, 0.2);
         }
 
+        .game-btn {
+          border-color: #10b981;
+        }
+
+        .game-btn:hover {
+          background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+          border-color: #059669;
+          box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2);
+        }
+
         /* Button Icon */
         .btn-icon {
           flex-shrink: 0;
@@ -284,6 +329,11 @@ const SimulationModal = ({ isOpen, onClose }) => {
 
         .corporate-btn .btn-icon {
           background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+          color: white;
+        }
+
+        .game-btn .btn-icon {
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
           color: white;
         }
 

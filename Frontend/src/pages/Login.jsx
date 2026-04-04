@@ -59,7 +59,30 @@ const Login = () => {
     }
 
     try {
-      // First check if server is accessible
+      // FRONTEND BYPASS FOR DISTRIBUTION GAME SIMULATION
+      // Check for hardcoded credentials before any backend network requests
+      if (activeSimulation === "Distribution Simulation" && activeRole === "student") {
+        if (email.toLowerCase() === "testgame45" && password === "testgame45") {
+          // Store dummy authentication data for the frontend game
+          localStorage.setItem('token', 'dummy-game-token-12345');
+          localStorage.setItem('userRole', 'student');
+          localStorage.setItem('userEmail', email);
+          localStorage.setItem('simulation', activeSimulation);
+          localStorage.setItem('userName', 'Sunshine Agency');
+          localStorage.setItem('userDegree', activeSimulation);
+          
+          setLoading(false);
+          // Navigate to the game introduction screen
+          navigate("/game-distribution/intro");
+          return; // Exit here, do not proceed to backend calls
+        } else {
+          setError("Invalid credentials for Distribution Simulation. Hint: use 'testgame45' for both.");
+          setLoading(false);
+          return;
+        }
+      }
+
+      // First check if server is accessible for all other logins
       try {
         await axios.options(API_BASE_URL);
       } catch (err) {
