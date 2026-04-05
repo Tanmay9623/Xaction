@@ -123,9 +123,17 @@ const GameDistributionRoundResult = () => {
 
   const handleExit = () => {
     if (window.confirm("Round 1 is complete. Return to game menu?")) {
-      localStorage.removeItem("gameDistributionCash");
-      localStorage.removeItem("gameDistributionInventory");
-      localStorage.removeItem("gameDistributionStep");
+      // Clear all game-related data from local storage
+      const keysToRemove = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith("gameDistribution")) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+      
+      // Navigate back to the game simulation start screen
       navigate("/game-simulation");
     }
   };

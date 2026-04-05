@@ -185,6 +185,12 @@ const Login = () => {
       options.push(
         <option key="superadmin" value="superadmin">Super Admin</option>
       );
+    } else if (activeSimulation === "Distribution Simulation") {
+      // For Distribution Simulation, show Participant and Admin options
+      options.push(
+        <option key="student" value="student">Participant</option>,
+        <option key="admin" value="admin">Admin</option>
+      );
     } else if (activeSimulation) {
       // For any simulation (MBA, BE, BTech, Law, etc.), show student and admin options
       options.push(
