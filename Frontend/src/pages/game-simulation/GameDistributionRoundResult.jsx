@@ -140,12 +140,8 @@ const GameDistributionRoundResult = () => {
       {/* Main Game Container */}
       <div className="w-full max-w-5xl bg-yellow-100 rounded-3xl shadow-2xl overflow-hidden border-8 border-yellow-200">
         
-        {/* Screen Indicator */}
         <div className="bg-emerald-700 text-emerald-50 px-6 py-3 flex justify-between items-center text-sm font-bold tracking-widest uppercase border-b-4 border-emerald-800">
           <span>Game Simulation</span>
-          <span className="bg-emerald-500 text-white px-3 py-1 rounded-full text-xs shadow-sm">
-            Screen 12
-          </span>
         </div>
 
         {/* Header */}

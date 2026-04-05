@@ -36,45 +36,14 @@ const GameDistributionInventory = () => {
     localStorage.setItem("gameDistributionStep", currentStep.toString());
   }, [cash, inventory, currentStep]);
 
-  // Track which products have been bought on this screen
-  const [bought, setBought] = useState({ milk: false, dark: false, wafer: false, gift: false });
-
-  // Contribution percentages (backend logic, not shown on UI)
-  const contributions = { milk: 0.40, dark: 0.30, wafer: 0.20, gift: 0.10 };
-  const INITIAL_CASH = 5000000; // ₹50,00,000
-
   const handleBuy = (productId) => {
-    if (bought[productId]) return; // Already bought
-    const deduction = Math.round(INITIAL_CASH * contributions[productId]);
-    if (deduction > cash) {
-      alert("Not enough cash available!");
-      return;
-    }
-    // Calculate units based on unit price
-    const unitPrice = inventory[productId].price;
-    const unitsBought = Math.floor(deduction / unitPrice);
-
-    setCash(prev => prev - deduction);
-    setInventory(prev => ({
-      ...prev,
-      [productId]: { ...prev[productId], qty: prev[productId].qty + unitsBought }
-    }));
-    setBought(prev => ({ ...prev, [productId]: true }));
+    // Navigate to the acquisition screen for the selected product
+    navigate(`/game-distribution/acquisition?product=${productId}`);
   };
 
   const handleOK = () => {
-    if (stage === '3a') {
-      navigate("/game-distribution/acquisition?product=wafer");
-    } else if (stage === '4a') {
-      navigate("/game-distribution/acquisition?product=gift");
-    } else if (stage === '5a') {
-      navigate("/game-distribution/acquisition?product=dark");
-    } else if (stage === '6a' || stage === '7') {
-      navigate("/game-distribution/trade-scheme");
-    } else {
-      // Navigate strictly to the first acquisition screen in the sequence (Milk Chocolate)
-      navigate("/game-distribution/acquisition?product=milk");
-    }
+    // From the hub, OK always goes to Trade Scheme (Screen 8)
+    navigate("/game-distribution/trade-scheme");
   };
 
   const handleExit = () => {
@@ -102,12 +71,8 @@ const GameDistributionInventory = () => {
       {/* Main Game Container */}
       <div className="w-full max-w-4xl bg-yellow-100 rounded-3xl shadow-2xl overflow-hidden border-8 border-yellow-200">
         
-        {/* Screen Indicator */}
         <div className="bg-emerald-700 text-emerald-50 px-6 py-3 flex justify-between items-center text-sm font-bold tracking-widest uppercase border-b-4 border-emerald-800">
           <span>Game Simulation</span>
-          <span className="bg-emerald-500 text-white px-3 py-1 rounded-full text-xs shadow-sm">
-            Screen {stage ? stage : '2'}
-          </span>
         </div>
 
         {/* Header */}
@@ -155,13 +120,9 @@ const GameDistributionInventory = () => {
               </div>
               <button 
                 onClick={() => handleBuy('milk')}
-                disabled={bought.milk}
-                className={`font-bold py-3 px-6 rounded-xl border transition-all text-lg min-w-[220px]
-                  ${bought.milk 
-                    ? 'bg-emerald-100 text-emerald-700 border-emerald-300 cursor-default' 
-                    : 'bg-white hover:bg-gray-50 text-gray-800 border-gray-300 shadow-[0_4px_0_rgb(209,213,219)] hover:shadow-[0_2px_0_rgb(209,213,219)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] cursor-pointer'}`}
+                className="bg-white hover:bg-gray-50 text-gray-800 font-bold py-3 px-6 rounded-xl border border-gray-300 shadow-[0_4px_0_rgb(209,213,219)] hover:shadow-[0_2px_0_rgb(209,213,219)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-lg min-w-[220px] cursor-pointer"
               >
-                {bought.milk ? '✓ Bought Milk Chocolate' : 'Buy Milk Chocolate'}
+                Buy {inventory.milk.qty > 0 ? 'More ' : ''}Milk Chocolate
               </button>
             </div>
 
@@ -174,13 +135,9 @@ const GameDistributionInventory = () => {
               </div>
               <button 
                 onClick={() => handleBuy('dark')}
-                disabled={bought.dark}
-                className={`font-bold py-3 px-6 rounded-xl border transition-all text-lg min-w-[220px]
-                  ${bought.dark 
-                    ? 'bg-emerald-100 text-emerald-700 border-emerald-300 cursor-default' 
-                    : 'bg-white hover:bg-gray-50 text-gray-800 border-gray-300 shadow-[0_4px_0_rgb(209,213,219)] hover:shadow-[0_2px_0_rgb(209,213,219)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] cursor-pointer'}`}
+                className="bg-white hover:bg-gray-50 text-gray-800 font-bold py-3 px-6 rounded-xl border border-gray-300 shadow-[0_4px_0_rgb(209,213,219)] hover:shadow-[0_2px_0_rgb(209,213,219)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-lg min-w-[220px] cursor-pointer"
               >
-                {bought.dark ? '✓ Bought Dark Chocolate' : 'Buy Dark Chocolate'}
+                Buy {inventory.dark.qty > 0 ? 'More ' : ''}Dark Chocolate
               </button>
             </div>
 
@@ -193,13 +150,9 @@ const GameDistributionInventory = () => {
               </div>
               <button 
                 onClick={() => handleBuy('wafer')}
-                disabled={bought.wafer}
-                className={`font-bold py-3 px-6 rounded-xl border transition-all text-lg min-w-[220px]
-                  ${bought.wafer 
-                    ? 'bg-emerald-100 text-emerald-700 border-emerald-300 cursor-default' 
-                    : 'bg-white hover:bg-gray-50 text-gray-800 border-gray-300 shadow-[0_4px_0_rgb(209,213,219)] hover:shadow-[0_2px_0_rgb(209,213,219)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] cursor-pointer'}`}
+                className="bg-white hover:bg-gray-50 text-gray-800 font-bold py-3 px-6 rounded-xl border border-gray-300 shadow-[0_4px_0_rgb(209,213,219)] hover:shadow-[0_2px_0_rgb(209,213,219)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-lg min-w-[220px] cursor-pointer"
               >
-                {bought.wafer ? '✓ Bought Wafer Chocolate' : 'Buy Wafer Chocolate'}
+                Buy {inventory.wafer.qty > 0 ? 'More ' : ''}Wafer Chocolate
               </button>
             </div>
 
@@ -212,13 +165,9 @@ const GameDistributionInventory = () => {
               </div>
               <button 
                 onClick={() => handleBuy('gift')}
-                disabled={bought.gift}
-                className={`font-bold py-3 px-6 rounded-xl border transition-all text-lg min-w-[220px]
-                  ${bought.gift 
-                    ? 'bg-emerald-100 text-emerald-700 border-emerald-300 cursor-default' 
-                    : 'bg-white hover:bg-gray-50 text-gray-800 border-gray-300 shadow-[0_4px_0_rgb(209,213,219)] hover:shadow-[0_2px_0_rgb(209,213,219)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] cursor-pointer'}`}
+                className="bg-white hover:bg-gray-50 text-gray-800 font-bold py-3 px-6 rounded-xl border border-gray-300 shadow-[0_4px_0_rgb(209,213,219)] hover:shadow-[0_2px_0_rgb(209,213,219)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-lg min-w-[220px] cursor-pointer"
               >
-                {bought.gift ? '✓ Bought Gift Packs' : 'Buy Gift Packs'}
+                Buy {inventory.gift.qty > 0 ? 'More ' : ''}Gift Packs
               </button>
             </div>
 

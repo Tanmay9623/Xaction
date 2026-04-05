@@ -77,33 +77,13 @@ const GameDistributionAcquisition = () => {
   };
 
   const handleOK = () => {
-    if (productKey === 'milk') {
-      navigate("/game-distribution/inventory?stage=3a");
-    } else if (productKey === 'wafer' && stage === '6a') {
-      navigate("/game-distribution/inventory?stage=7");
-    } else if (productKey === 'wafer') {
-      navigate("/game-distribution/inventory?stage=4a");
-    } else if (productKey === 'gift') {
-      navigate("/game-distribution/inventory?stage=5a");
-    } else if (productKey === 'dark') {
-      navigate("/game-distribution/acquisition?product=wafer&stage=6a"); 
-    }
+    // Always return to the inventory hub (Screen 2)
+    navigate("/game-distribution/inventory");
   };
 
   const handleBack = () => {
-    if (productKey === 'milk') {
-      navigate("/game-distribution/inventory?stage=2");
-    } else if (productKey === 'wafer' && stage === '6a') {
-      navigate("/game-distribution/acquisition?product=dark");
-    } else if (productKey === 'wafer') {
-      navigate("/game-distribution/inventory?stage=3a");
-    } else if (productKey === 'gift') {
-      navigate("/game-distribution/inventory?stage=4a");
-    } else if (productKey === 'dark') {
-      navigate("/game-distribution/inventory?stage=5a");
-    } else {
-      navigate("/game-distribution/inventory");
-    }
+    // Go back to the inventory hub (Screen 2)
+    navigate("/game-distribution/inventory");
   };
 
   // Format currency
@@ -121,12 +101,8 @@ const GameDistributionAcquisition = () => {
       {/* Main Game Container */}
       <div className="w-full max-w-4xl bg-yellow-100 rounded-3xl shadow-2xl overflow-hidden border-8 border-yellow-200">
         
-        {/* Screen Indicator */}
         <div className="bg-emerald-700 text-emerald-50 px-6 py-3 flex justify-between items-center text-sm font-bold tracking-widest uppercase border-b-4 border-emerald-800">
           <span>Game Simulation</span>
-          <span className="bg-emerald-500 text-white px-3 py-1 rounded-full text-xs shadow-sm">
-            Screen {stage === '6a' ? '6a' : productKey === 'milk' ? 3 : productKey === 'wafer' ? 4 : productKey === 'gift' ? 5 : 6}
-          </span>
         </div>
 
         {/* Header */}
