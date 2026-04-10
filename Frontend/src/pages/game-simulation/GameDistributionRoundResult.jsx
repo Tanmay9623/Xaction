@@ -39,10 +39,10 @@ const GameDistributionRoundResult = () => {
   // --- Round 1 Inputs (admin/config) ---
 
   const monthlySales = {
-    milk: { units: 15000, sellingPrice: 120 },
-    dark: { units: 5000, sellingPrice: 180 },
-    wafer: { units: 8000, sellingPrice: 100 },
-    gift: { units: 500, sellingPrice: 600 }
+    milk: { units: 10000, sellingPrice: 54, totalSales: 540000 },
+    dark: { units: 7000, sellingPrice: 77, totalSales: 540000 },
+    wafer: { units: 10000, sellingPrice: 32.4, totalSales: 324000 },
+    gift: { units: 1000, sellingPrice: 216, totalSales: 216000 }
   };
 
   // Cost prices per unit (purchase price from Acquisition screen)
@@ -73,8 +73,12 @@ const GameDistributionRoundResult = () => {
     const invQty = inventory[p.key].qty;
     const costPrice = costPrices[p.key];
 
-    const units = salesUnits - invQty;
-    const value = (salesUnits * sellingPrice) / (1 + distributorMarginPercent / 100) - (invQty * costPrice);
+    // Units sold = min(inventory purchased, market demand) — can't sell more than you stocked or market wants
+    const units = Math.min(invQty, salesUnits);
+    // Total Sales from admin data (₹), scaled to actual units sold
+    const sales = units * sellingPrice;
+    // Value = distributor's net receivable from retailers
+    const value = sales / (1 + distributorMarginPercent / 100);
 
     return {
       ...p,
@@ -84,17 +88,21 @@ const GameDistributionRoundResult = () => {
     };
   });
 
-  // Total Sales (gross) = sum of (monthly sales units × selling price) — used in financial formulas
+  // Table total should match the Value column sum in Monthly Sales.
+  const monthlySalesTableTotal = salesValues.reduce((sum, p) => sum + p.value, 0);
+
+  // Total Sales (gross) = sum of product-level Total Sales — used in financial formulas
   const totalSales = productRows.reduce(
-    (sum, p) => sum + monthlySales[p.key].units * monthlySales[p.key].sellingPrice, 0
+    (sum, p) => sum + (monthlySales[p.key].totalSales ?? (monthlySales[p.key].units * monthlySales[p.key].sellingPrice)), 0
   );
 
   // Distributor Rupee Gross Margin = Sales - Sales/(1 + Distributor Margin%)
   const distributorRupeeGrossMargin = totalSales - totalSales / (1 + distributorMarginPercent / 100);
 
-  // Net Distributor Rupee Gross Margin = DRGM × (Early Discount %) × (1 - Credit Days/30)
-  const netDistributorRupeeGrossMargin =
+  // Net Distributor Rupee Gross Margin = DRGM - [DRGM × (Early Discount %) × (1 - Credit Days/30)]
+  const netDistributorGrossMarginDeduction =
     distributorRupeeGrossMargin * (earlyPaymentDiscount / 100) * (1 - creditDays / 30);
+  const netDistributorRupeeGrossMargin = distributorRupeeGrossMargin - netDistributorGrossMarginDeduction;
 
   // Retailer Outstanding = Credit Days × Sales / 30
   const retailerOutstanding = creditDays * totalSales / 30;
@@ -121,7 +129,7 @@ const GameDistributionRoundResult = () => {
 
   // Total Manpower = Coverage / Retailer Visit per Salesperson
   const totalManpower = retailersToVisit > 0
-    ? Math.ceil(totalCoverage / retailersToVisit)
+    ? Math.round(totalCoverage / retailersToVisit)
     : 0;
 
   // Manpower Cost = 20,000 × Total Manpower
@@ -249,7 +257,7 @@ const GameDistributionRoundResult = () => {
                 <tfoot>
                   <tr className="bg-emerald-50 border-t-2 border-emerald-200">
                     <td className="px-5 py-3 font-extrabold text-gray-900 text-lg" colSpan={3}>Total Sales</td>
-                    <td className="px-5 py-3 text-right font-extrabold text-emerald-700 text-lg">{formatCurrency(totalSales)}</td>
+                    <td className="px-5 py-3 text-right font-extrabold text-emerald-700 text-lg">{formatCurrency(monthlySalesTableTotal)}</td>
                   </tr>
                 </tfoot>
               </table>
@@ -268,8 +276,7 @@ const GameDistributionRoundResult = () => {
                 { label: "Net Distributor Rupee Gross Margin", value: formatCurrency(Math.round(netDistributorRupeeGrossMargin)) },
                 { label: "Retailer Outstanding", value: formatCurrency(Math.round(retailerOutstanding)) },
                 { label: "Net Payment Received", value: formatCurrency(Math.round(netPaymentReceived)) },
-                { label: "Total Inventory", value: `${totalInventoryUnits.toLocaleString('en-IN')} Units` },
-                { label: "Total Trade Scheme Spend", value: formatCurrency(Math.round(totalTradeSchemeSpend)) },
+                { label: "Total Trade Scheme Spend", value: `${totalInventoryUnits.toLocaleString('en-IN')} Units` },
               ].map(item => (
                 <div key={item.label} className="bg-yellow-50 p-4 rounded-xl border-2 border-yellow-200 flex justify-between items-center">
                   <span className="text-gray-700 font-medium">{item.label}</span>

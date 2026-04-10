@@ -4,6 +4,10 @@ import { useNavigate } from "react-router-dom";
 const GameDistributionIntro = () => {
   const navigate = useNavigate();
 
+  const handleBack = () => {
+    navigate("/game-simulation");
+  };
+
   const handleNext = () => {
     navigate("/game-distribution/inventory");
   };
@@ -60,7 +64,13 @@ const GameDistributionIntro = () => {
           </div>
 
           {/* Action Footer */}
-          <div className="mt-10 flex justify-end">
+          <div className="mt-10 flex justify-between items-center">
+            <button
+              onClick={handleBack}
+              className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1"
+            >
+              Back
+            </button>
             <button
               onClick={handleNext}
               className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 flex items-center group"

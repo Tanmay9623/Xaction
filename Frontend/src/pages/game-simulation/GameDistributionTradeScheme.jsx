@@ -16,8 +16,14 @@ const GameDistributionTradeScheme = () => {
     return saved !== null ? parseFloat(saved) : 5; // Default 5%
   });
 
-  const [quantityDiscount, setQuantityDiscount] = useState(0);
-  const [retailDisplayIncentive, setRetailDisplayIncentive] = useState(0);
+  const [quantityDiscount, setQuantityDiscount] = useState(() => {
+    const saved = localStorage.getItem("gameDistributionQuantityDiscount");
+    return saved !== null ? parseInt(saved, 10) || 0 : 0;
+  });
+  const [retailDisplayIncentive, setRetailDisplayIncentive] = useState(() => {
+    const saved = localStorage.getItem("gameDistributionRetailDisplay");
+    return saved !== null ? parseInt(saved, 10) || 0 : 0;
+  });
 
   const totalScheme = quantityDiscount + retailDisplayIncentive;
   const remainingScheme = approvedScheme - totalScheme;
@@ -183,18 +189,8 @@ const GameDistributionTradeScheme = () => {
 
           </div>
 
-          {/* Back to Dashboard Link */}
-          <div className="mt-8 text-center">
-            <button
-              onClick={handleBack}
-              className="text-blue-600 hover:text-blue-800 underline font-bold text-lg transition-colors"
-            >
-              [ Back to Distributor Dashboard ]
-            </button>
-          </div>
-
           {/* Action Buttons Row */}
-          <div className="mt-10 flex justify-between items-center max-w-2xl mx-auto px-4">
+          <div className="mt-10 flex flex-wrap justify-between items-center gap-4 max-w-2xl mx-auto px-4">
             <button 
               onClick={handleExit}
               className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(153,27,27)] hover:shadow-[0_2px_0_rgb(153,27,27)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl"
@@ -210,9 +206,10 @@ const GameDistributionTradeScheme = () => {
             </button>
 
             <button 
-              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(30,64,175)] hover:shadow-[0_2px_0_rgb(30,64,175)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl"
+              onClick={handleBack}
+              className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(75,85,99)] hover:shadow-[0_2px_0_rgb(75,85,99)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl"
             >
-              [ Help ]
+              [ Back ]
             </button>
           </div>
 

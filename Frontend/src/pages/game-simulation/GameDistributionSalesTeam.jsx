@@ -21,11 +21,28 @@ const GameDistributionSalesTeam = () => {
   });
 
   // User-adjustable values
-  const [retailersToVisit, setRetailersToVisit] = useState(0);
-  const [newRetailerEffort, setNewRetailerEffort] = useState(0); // 0=Low, 1=Medium, 2=High
-  const [schemePushIntensity, setSchemePushIntensity] = useState(0); // 0=Low, 1=Medium, 2=High
+  const [retailersToVisit, setRetailersToVisit] = useState(() => {
+    const saved = localStorage.getItem("gameDistributionRetailersToVisit");
+    return saved !== null ? parseInt(saved, 10) || 0 : 0;
+  });
+  const [newRetailerEffort, setNewRetailerEffort] = useState(() => {
+    const saved = localStorage.getItem("gameDistributionNewRetailerEffort");
+    const value = saved !== null ? parseInt(saved, 10) : 0;
+    return Math.min(2, Math.max(0, Number.isNaN(value) ? 0 : value));
+  }); // 0=Low, 1=Medium, 2=High
+  const [schemePushIntensity, setSchemePushIntensity] = useState(() => {
+    const saved = localStorage.getItem("gameDistributionSchemePushIntensity");
+    const value = saved !== null ? parseInt(saved, 10) : 0;
+    return Math.min(2, Math.max(0, Number.isNaN(value) ? 0 : value));
+  }); // 0=Low, 1=Medium, 2=High
 
   const levelLabels = ["Low", "Medium", "High"];
+
+  // Total Manpower = Coverage / Retailer Visit per Salesperson (rounded)
+  const totalCoverage = 1050;
+  const totalManpower = retailersToVisit > 0
+    ? Math.round(totalCoverage / retailersToVisit)
+    : 0;
 
   // Save to localStorage whenever state changes
   useEffect(() => {
@@ -202,18 +219,8 @@ const GameDistributionSalesTeam = () => {
 
           </div>
 
-          {/* Back to Dashboard Link */}
-          <div className="mt-8 text-center">
-            <button
-              onClick={handleBack}
-              className="text-blue-600 hover:text-blue-800 underline font-bold text-lg transition-colors"
-            >
-              [ Back to Distributor Dashboard ]
-            </button>
-          </div>
-
           {/* Action Buttons Row */}
-          <div className="mt-10 flex justify-between items-center max-w-2xl mx-auto px-4">
+          <div className="mt-10 flex flex-wrap justify-between items-center gap-4 max-w-2xl mx-auto px-4">
             <button 
               onClick={handleExit}
               className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(153,27,27)] hover:shadow-[0_2px_0_rgb(153,27,27)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl"
@@ -229,9 +236,10 @@ const GameDistributionSalesTeam = () => {
             </button>
 
             <button 
-              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(30,64,175)] hover:shadow-[0_2px_0_rgb(30,64,175)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl"
+              onClick={handleBack}
+              className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(75,85,99)] hover:shadow-[0_2px_0_rgb(75,85,99)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl"
             >
-              [ Help ]
+              [ Back ]
             </button>
           </div>
 
@@ -242,6 +250,9 @@ const GameDistributionSalesTeam = () => {
           <div className="flex flex-col space-y-1">
             <span>Round: <span className="text-emerald-700">1</span> of 7</span>
             <span>Sales Team Available: <span className="text-emerald-700">{salesTeamAvailable}</span></span>
+          </div>
+          <div className="flex flex-col items-center space-y-1">
+            <span>Total Manpower: <span className="text-emerald-700 text-2xl">{totalManpower}</span></span>
           </div>
           <div className="flex flex-col text-right space-y-1">
             <span>Retailers in Territory: <span className="text-blue-700">{retailersInTerritory}</span></span>

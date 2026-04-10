@@ -46,14 +46,14 @@ const GameDistributionInventory = () => {
     navigate("/game-distribution/trade-scheme");
   };
 
+  const handleBack = () => {
+    navigate("/game-distribution/intro");
+  };
+
   const handleExit = () => {
     if (window.confirm("Are you sure you want to exit the market?")) {
       navigate("/simulation");
     }
-  };
-
-  const handleHelp = () => {
-    alert("Buy inventory based on expected market demand. Milk chocolate sells fast but has lower margins. Gift packs have high margins but sell slower. Manage your ₹50,00,000 wisely!");
   };
 
   // Format currency
@@ -98,6 +98,12 @@ const GameDistributionInventory = () => {
               </h3>
               <p className="text-gray-700 leading-relaxed font-medium">
                 Choose how much inventory to purchase across products. High-demand SKUs sell faster but may offer lower margins. Premium products give better margins but move slower. Overstocking can lock your capital, while understocking can lead to missed sales.
+              </p>
+            </div>
+
+            <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+              <p className="text-red-800 font-bold text-lg">
+                Min inventory purchased must be 3500000
               </p>
             </div>
           </div>
@@ -174,7 +180,7 @@ const GameDistributionInventory = () => {
           </div>
 
           {/* Action Buttons Row */}
-          <div className="mt-16 flex justify-between items-center max-w-3xl mx-auto">
+          <div className="mt-16 flex flex-wrap justify-between items-center gap-4 max-w-3xl mx-auto">
             <button 
               onClick={handleExit}
               className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(153,27,27)] hover:shadow-[0_2px_0_rgb(153,27,27)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl"
@@ -190,10 +196,10 @@ const GameDistributionInventory = () => {
             </button>
 
             <button 
-              onClick={handleHelp}
-              className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(194,65,12)] hover:shadow-[0_2px_0_rgb(194,65,12)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl"
+              onClick={handleBack}
+              className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(75,85,99)] hover:shadow-[0_2px_0_rgb(75,85,99)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl"
             >
-              Help!
+              Back
             </button>
           </div>
 

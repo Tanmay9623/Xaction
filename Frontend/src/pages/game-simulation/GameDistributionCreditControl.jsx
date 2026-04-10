@@ -4,10 +4,23 @@ import { useNavigate } from "react-router-dom";
 const GameDistributionCreditControl = () => {
   const navigate = useNavigate();
 
-  const [creditDays, setCreditDays] = useState(0);
-  const [maxCreditLimit, setMaxCreditLimit] = useState(0);
-  const [earlyPaymentDiscount, setEarlyPaymentDiscount] = useState(0);
-  const [enforcementLevel, setEnforcementLevel] = useState(0); // 0=Low, 1=Medium, 2=High
+  const [creditDays, setCreditDays] = useState(() => {
+    const saved = localStorage.getItem("gameDistributionCreditDays");
+    return saved !== null ? parseInt(saved, 10) || 0 : 0;
+  });
+  const [maxCreditLimit, setMaxCreditLimit] = useState(() => {
+    const saved = localStorage.getItem("gameDistributionMaxCreditLimit");
+    return saved !== null ? parseInt(saved, 10) || 0 : 0;
+  });
+  const [earlyPaymentDiscount, setEarlyPaymentDiscount] = useState(() => {
+    const saved = localStorage.getItem("gameDistributionEarlyPaymentDiscount");
+    return saved !== null ? parseInt(saved, 10) || 0 : 0;
+  });
+  const [enforcementLevel, setEnforcementLevel] = useState(() => {
+    const saved = localStorage.getItem("gameDistributionEnforcementLevel");
+    const value = saved !== null ? parseInt(saved, 10) : 0;
+    return Math.min(2, Math.max(0, Number.isNaN(value) ? 0 : value));
+  }); // 0=Low, 1=Medium, 2=High
 
   const enforcementLabels = ["Low", "Medium", "High"];
 
@@ -202,18 +215,8 @@ const GameDistributionCreditControl = () => {
 
           </div>
 
-          {/* Back to Dashboard Link */}
-          <div className="mt-8 text-center">
-            <button
-              onClick={handleBack}
-              className="text-blue-600 hover:text-blue-800 underline font-bold text-lg transition-colors"
-            >
-              [ Back to Distributor Dashboard ]
-            </button>
-          </div>
-
           {/* Action Buttons Row */}
-          <div className="mt-10 flex justify-between items-center max-w-2xl mx-auto px-4">
+          <div className="mt-10 flex flex-wrap justify-between items-center gap-4 max-w-2xl mx-auto px-4">
             <button 
               onClick={handleExit}
               className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(153,27,27)] hover:shadow-[0_2px_0_rgb(153,27,27)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl"
@@ -229,9 +232,10 @@ const GameDistributionCreditControl = () => {
             </button>
 
             <button 
-              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(30,64,175)] hover:shadow-[0_2px_0_rgb(30,64,175)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl"
+              onClick={handleBack}
+              className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(75,85,99)] hover:shadow-[0_2px_0_rgb(75,85,99)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl"
             >
-              [ Help ]
+              [ Back ]
             </button>
           </div>
 
