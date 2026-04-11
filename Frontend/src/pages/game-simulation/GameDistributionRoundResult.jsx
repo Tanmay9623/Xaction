@@ -77,8 +77,8 @@ const GameDistributionRoundResult = () => {
     const units = Math.min(invQty, salesUnits);
     // Total Sales from admin data (₹), scaled to actual units sold
     const sales = units * sellingPrice;
-    // Value = distributor's net receivable from retailers
-    const value = sales / (1 + distributorMarginPercent / 100);
+    // Value = Units × Selling Price
+    const value = units * sellingPrice;
 
     return {
       ...p,
@@ -114,14 +114,14 @@ const GameDistributionRoundResult = () => {
   const totalInventoryUnits =
     inventory.milk.qty + inventory.dark.qty + inventory.wafer.qty + inventory.gift.qty;
 
-  // Net Inventory Value (₹) = sum of (inventory qty × cost price) — used in ROI denominator
-  const netInventoryValue = productRows.reduce(
-    (sum, p) => sum + inventory[p.key].qty * costPrices[p.key], 0
-  );
+  // Inventory for ROI = actual amount invested from working capital (₹50,00,000 - current cash)
+  const openingWorkingCapital = 5000000;
+  const currentCash = parseInt(localStorage.getItem("gameDistributionCash") || `${openingWorkingCapital}`, 10);
+  const inventoryInvestment = Math.max(0, openingWorkingCapital - currentCash);
 
-  // Total Trade Scheme Spend = Sales / (1 + Scheme%)
+  // Total Trade Scheme Spend = Sales - Sales / (1 + Scheme%)
   const totalTradeSchemeSpend = totalSchemePercent > 0
-    ? totalSales / (1 + totalSchemePercent / 100)
+    ? totalSales - totalSales / (1 + totalSchemePercent / 100)
     : 0;
 
   // New Outlets Opened
@@ -135,8 +135,8 @@ const GameDistributionRoundResult = () => {
   // Manpower Cost = 20,000 × Total Manpower
   const manpowerCost = totalManpower * 20000;
 
-  // Distributor ROI = (Net DRGM - Manpower Cost - Delivery Cost) / (20,00,000 + Net Inventory + Retailer Outstanding) × 100
-  const roiDenominator = 2000000 + netInventoryValue + retailerOutstanding;
+  // Distributor ROI = (Net DRGM - Manpower Cost - Delivery Cost) / (20,00,000 + Inventory Investment + Retailer Outstanding) × 100
+  const roiDenominator = 2000000 + inventoryInvestment + retailerOutstanding;
   const distributorROI = roiDenominator > 0
     ? ((netDistributorRupeeGrossMargin - manpowerCost - deliveryWarehouseCost) / roiDenominator) * 100
     : 0;
