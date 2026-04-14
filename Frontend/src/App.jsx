@@ -19,6 +19,9 @@ import GameDistributionCreditControl from './pages/game-simulation/GameDistribut
 import GameDistributionSalesTeam from './pages/game-simulation/GameDistributionSalesTeam';
 import GameDistributionSupplyDiscipline from './pages/game-simulation/GameDistributionSupplyDiscipline';
 import GameDistributionRoundResult from './pages/game-simulation/GameDistributionRoundResult';
+import GameDistributionRound2Intro from './pages/game-simulation/GameDistributionRound2Intro';
+import GameDistributionRound2Inventory from './pages/game-simulation/GameDistributionRound2Inventory';
+import GameDistributionRound2Result from './pages/game-simulation/GameDistributionRound2Result';
 import Registration from './pages/Registration';
 import Login from './pages/Login';
 import CorporateLogin from './pages/CorporateLogin';
@@ -77,6 +80,9 @@ function App() {
         <Route path="/game-distribution/sales-team" element={<GameDistributionSalesTeam />} />
         <Route path="/game-distribution/supply-discipline" element={<GameDistributionSupplyDiscipline />} />
         <Route path="/game-distribution/round-result" element={<GameDistributionRoundResult />} />
+        <Route path="/game-distribution/round2-intro" element={<GameDistributionRound2Intro />} />
+        <Route path="/game-distribution/round2-inventory" element={<GameDistributionRound2Inventory />} />
+        <Route path="/game-distribution/round2-result" element={<GameDistributionRound2Result />} />
         <Route path="/login" element={<Login />} />
         <Route path="/corporate-login" element={<CorporateLogin />} />
 

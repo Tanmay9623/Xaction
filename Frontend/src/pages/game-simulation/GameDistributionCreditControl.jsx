@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 const GameDistributionCreditControl = () => {
   const navigate = useNavigate();
+  const currentRound = parseInt(localStorage.getItem("gameDistributionCurrentRound") || "1", 10);
 
   const [creditDays, setCreditDays] = useState(() => {
     const saved = localStorage.getItem("gameDistributionCreditDays");
@@ -244,7 +245,7 @@ const GameDistributionCreditControl = () => {
         {/* Footer Info Strip */}
         <div className="bg-yellow-100 border-t-4 border-yellow-300 px-8 py-5 flex justify-between items-center text-lg font-bold text-gray-800">
           <div className="flex flex-col space-y-1">
-            <span>Round: <span className="text-emerald-700">1</span> of 7</span>
+            <span>Round: <span className="text-emerald-700">{currentRound}</span> of 7</span>
           </div>
         </div>
 

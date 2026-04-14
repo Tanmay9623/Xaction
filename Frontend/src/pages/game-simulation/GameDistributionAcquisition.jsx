@@ -6,6 +6,10 @@ const GameDistributionAcquisition = () => {
   const [searchParams] = useSearchParams();
   const productKey = searchParams.get("product") || "milk";
   const stage = searchParams.get("stage") || "";
+  const round = searchParams.get("round") || "1";
+  
+  const inventoryKey = round === "2" ? "gameDistributionRound2Inventory" : "gameDistributionInventory";
+  const hubRoute = round === "2" ? "/game-distribution/round2-inventory" : "/game-distribution/inventory";
   
   // Initialize state from localStorage
   const [cash, setCash] = useState(() => {
@@ -14,7 +18,7 @@ const GameDistributionAcquisition = () => {
   });
 
   const [inventory, setInventory] = useState(() => {
-    const saved = localStorage.getItem("gameDistributionInventory");
+    const saved = localStorage.getItem(inventoryKey);
     if (saved) return JSON.parse(saved);
     return {
       milk: { name: "Tedbury Milk Chocolate", qty: 0 },
@@ -58,8 +62,8 @@ const GameDistributionAcquisition = () => {
   // Save to localStorage whenever state changes
   useEffect(() => {
     localStorage.setItem("gameDistributionCash", cash.toString());
-    localStorage.setItem("gameDistributionInventory", JSON.stringify(inventory));
-  }, [cash, inventory]);
+    localStorage.setItem(inventoryKey, JSON.stringify(inventory));
+  }, [cash, inventory, inventoryKey]);
 
   const handleBuy = (option) => {
     if (cash >= option.price) {
@@ -77,13 +81,13 @@ const GameDistributionAcquisition = () => {
   };
 
   const handleOK = () => {
-    // Always return to the inventory hub (Screen 2)
-    navigate("/game-distribution/inventory");
+    // Return to the appropriate inventory hub
+    navigate(hubRoute);
   };
 
   const handleBack = () => {
-    // Go back to the inventory hub (Screen 2)
-    navigate("/game-distribution/inventory");
+    // Go back to the appropriate inventory hub
+    navigate(hubRoute);
   };
 
   // Format currency
@@ -170,7 +174,7 @@ const GameDistributionAcquisition = () => {
         {/* Footer Info Strip */}
         <div className="bg-yellow-100 border-t-4 border-yellow-300 px-8 py-5 flex justify-between items-center text-lg font-bold text-gray-800">
           <div className="flex flex-col space-y-1">
-            <span>Round: <span className="text-emerald-700">1</span> of 7</span>
+            <span>Round: <span className="text-emerald-700">{round}</span> of 7</span>
             <span>Cash Available: <span className="text-emerald-700">{formatCurrency(cash)}</span></span>
           </div>
           <div className="flex flex-col text-right space-y-1">

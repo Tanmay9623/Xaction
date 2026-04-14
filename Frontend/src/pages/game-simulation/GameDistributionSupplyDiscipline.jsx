@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 const GameDistributionSupplyDiscipline = () => {
   const navigate = useNavigate();
+  const currentRound = parseInt(localStorage.getItem("gameDistributionCurrentRound") || "1", 10);
 
   // User-adjustable values
   const [orderFulfilmentRate, setOrderFulfilmentRate] = useState(() => {
@@ -34,7 +35,11 @@ const GameDistributionSupplyDiscipline = () => {
   }, [orderFulfilmentRate, deliveryFrequency, priorityAllocation, stockBufferLevel]);
 
   const handleOK = () => {
-    navigate("/game-distribution/round-result");
+    if (currentRound === 2) {
+      navigate("/game-distribution/round2-result");
+    } else {
+      navigate("/game-distribution/round-result");
+    }
   };
 
   const handleBack = () => {
@@ -245,7 +250,7 @@ const GameDistributionSupplyDiscipline = () => {
         {/* Footer Info Strip */}
         <div className="bg-yellow-100 border-t-4 border-yellow-300 px-8 py-5 flex justify-between items-center text-lg font-bold text-gray-800">
           <div className="flex flex-col space-y-1">
-            <span>Round: <span className="text-emerald-700">1</span> of 7</span>
+            <span>Round: <span className="text-emerald-700">{currentRound}</span> of 7</span>
           </div>
         </div>
 

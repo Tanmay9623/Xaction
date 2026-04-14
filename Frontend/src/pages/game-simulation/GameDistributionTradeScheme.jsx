@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 const GameDistributionTradeScheme = () => {
   const navigate = useNavigate();
+  const currentRound = parseInt(localStorage.getItem("gameDistributionCurrentRound") || "1", 10);
 
   // Initialize state from localStorage
   const [cash, setCash] = useState(() => {
@@ -62,7 +63,11 @@ const GameDistributionTradeScheme = () => {
   };
 
   const handleBack = () => {
-    navigate("/game-distribution/inventory?stage=7");
+    if (currentRound === 2) {
+      navigate("/game-distribution/round2-inventory");
+    } else {
+      navigate("/game-distribution/inventory?stage=7");
+    }
   };
 
   const handleExit = () => {
@@ -108,7 +113,7 @@ const GameDistributionTradeScheme = () => {
             <p className="text-lg text-gray-700 leading-relaxed max-w-2xl mx-auto">
               You can offer trade schemes to encourage retailers to order more Tedbury products.
               Stronger schemes increase retailer demand but reduce your margins. Fixed Retailer Margin is <span className="font-bold text-emerald-700">12%</span>. 
-              The additional approved scheme from Company is <span className="font-bold text-emerald-700">{approvedScheme}%</span> for Round 1.
+              The additional approved scheme from Company is <span className="font-bold text-emerald-700">{approvedScheme}%</span> for Round {currentRound}.
             </p>
           </div>
 
@@ -218,7 +223,7 @@ const GameDistributionTradeScheme = () => {
         {/* Footer Info Strip */}
         <div className="bg-yellow-100 border-t-4 border-yellow-300 px-8 py-5 flex justify-between items-center text-lg font-bold text-gray-800">
           <div className="flex flex-col space-y-1">
-            <span>Round: <span className="text-emerald-700">1</span> of 7</span>
+            <span>Round: <span className="text-emerald-700">{currentRound}</span> of 7</span>
             <span>Available Scheme: <span className="text-emerald-700">{remainingScheme >= 0 ? remainingScheme : 0}%</span></span>
           </div>
           <div className="flex flex-col text-right space-y-1">
