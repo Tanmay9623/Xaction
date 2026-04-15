@@ -1,8 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const GameDistributionRound2Intro = () => {
   const navigate = useNavigate();
+
+  // --- Round 1 Data (from localStorage, saved at end of Round 1) ---
+  const r1TotalSales = parseInt(localStorage.getItem("gameDistributionR1TotalSales") || "0", 10);
+  const r1RetailerOutstanding = parseInt(localStorage.getItem("gameDistributionR1RetailerOutstanding") || "0", 10);
+  const r1TradeSchemeSpend = parseInt(localStorage.getItem("gameDistributionR1TradeSchemeSpend") || "0", 10);
+  const r1NetPaymentReceived = parseInt(localStorage.getItem("gameDistributionR1NetPaymentReceived") || "0", 10);
+
+  // --- Round 2 Opening Inventory ---
+  const [inventory] = useState(() => {
+    const saved = localStorage.getItem("gameDistributionRound2Inventory");
+    if (saved) return JSON.parse(saved);
+    return {
+      milk: { qty: 0 }, dark: { qty: 0 }, wafer: { qty: 0 }, gift: { qty: 0 }
+    };
+  });
+  
+  const openingStock = inventory.milk.qty + inventory.dark.qty + inventory.wafer.qty + inventory.gift.qty;
+
+  // Opening Cash Balance
+  const r1ClosingCash = parseInt(localStorage.getItem("gameDistributionCash") || "5000000", 10);
+  
+  // Cash in Hand = Opening Cash Balance + Payment Received (from R1) – Trade Scheme (from R1)
+  const cashInHand = r1ClosingCash + r1NetPaymentReceived - r1TradeSchemeSpend;
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
 
   const handleNext = () => {
     navigate('/game-distribution/round2-inventory');
@@ -26,6 +57,30 @@ const GameDistributionRound2Intro = () => {
 
         {/* Content Area */}
         <div className="p-8 sm:p-12 space-y-8">
+
+          {/* Carried Forward from Round 1 */}
+          <div className="bg-white border-4 border-emerald-300 rounded-xl p-6 shadow-sm">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-emerald-200 pb-2 flex items-center">
+              <span className="text-emerald-600 mr-2">📋</span> Carried Forward from Round 1
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                { label: "Opening Stock (R2 Inventory)", value: `${openingStock} Units` },
+                { label: "Last Round Sale (R1)", value: formatCurrency(r1TotalSales) },
+                { label: "Retailer Outstanding (R1)", value: formatCurrency(r1RetailerOutstanding) },
+                { label: "Trade Scheme to be Reimbursed by the Company", value: formatCurrency(r1TradeSchemeSpend) },
+                { label: "Cash in Hand", value: formatCurrency(cashInHand) },
+              ].map((item, idx) => (
+                <div key={idx} className="bg-emerald-50 p-4 rounded-lg border border-emerald-100 flex flex-col justify-center">
+                  <span className="text-sm text-gray-500 font-bold uppercase tracking-wider mb-1">{item.label}</span>
+                  <span className="text-xl font-black text-emerald-800">{item.value}</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-gray-500 mt-4 italic font-medium">
+              * Cash in Hand = Opening Cash Balance + Payment Received (from R1) – Trade Scheme (from R1)
+            </p>
+          </div>
 
           {/* Main Context */}
           <div className="bg-white border-4 border-blue-300 rounded-xl p-6 shadow-sm">

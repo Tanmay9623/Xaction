@@ -22,6 +22,14 @@ import GameDistributionRoundResult from './pages/game-simulation/GameDistributio
 import GameDistributionRound2Intro from './pages/game-simulation/GameDistributionRound2Intro';
 import GameDistributionRound2Inventory from './pages/game-simulation/GameDistributionRound2Inventory';
 import GameDistributionRound2Result from './pages/game-simulation/GameDistributionRound2Result';
+import GameDistributionRound3Intro from './pages/game-simulation/GameDistributionRound3Intro';
+import GameDistributionRound3Inventory from './pages/game-simulation/GameDistributionRound3Inventory';
+import GameDistributionRound3TradeScheme from './pages/game-simulation/GameDistributionRound3TradeScheme';
+import GameDistributionRound3CreditControl from './pages/game-simulation/GameDistributionRound3CreditControl';
+import GameDistributionRound3SalesTeam from './pages/game-simulation/GameDistributionRound3SalesTeam';
+import GameDistributionRound3SupplyDiscipline from './pages/game-simulation/GameDistributionRound3SupplyDiscipline';
+import GameDistributionRound3Result from './pages/game-simulation/GameDistributionRound3Result';
+import GameDistributionRound4Intro from './pages/game-simulation/GameDistributionRound4Intro';
 import Registration from './pages/Registration';
 import Login from './pages/Login';
 import CorporateLogin from './pages/CorporateLogin';
@@ -83,6 +91,14 @@ function App() {
         <Route path="/game-distribution/round2-intro" element={<GameDistributionRound2Intro />} />
         <Route path="/game-distribution/round2-inventory" element={<GameDistributionRound2Inventory />} />
         <Route path="/game-distribution/round2-result" element={<GameDistributionRound2Result />} />
+        <Route path="/game-distribution/round3-intro" element={<GameDistributionRound3Intro />} />
+        <Route path="/game-distribution/round3-inventory" element={<GameDistributionRound3Inventory />} />
+        <Route path="/game-distribution/round3-trade-scheme" element={<GameDistributionRound3TradeScheme />} />
+        <Route path="/game-distribution/round3-credit-control" element={<GameDistributionRound3CreditControl />} />
+        <Route path="/game-distribution/round3-sales-team" element={<GameDistributionRound3SalesTeam />} />
+        <Route path="/game-distribution/round3-supply-discipline" element={<GameDistributionRound3SupplyDiscipline />} />
+        <Route path="/game-distribution/round3-result" element={<GameDistributionRound3Result />} />
+        <Route path="/game-distribution/round4-intro" element={<GameDistributionRound4Intro />} />
         <Route path="/login" element={<Login />} />
         <Route path="/corporate-login" element={<CorporateLogin />} />
 

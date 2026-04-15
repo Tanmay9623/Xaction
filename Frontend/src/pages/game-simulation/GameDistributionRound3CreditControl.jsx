@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const GameDistributionCreditControl = () => {
+const GameDistributionRound3CreditControl = () => {
   const navigate = useNavigate();
-  const currentRound = parseInt(localStorage.getItem("gameDistributionCurrentRound") || "1", 10);
 
   const [creditDays, setCreditDays] = useState(() => {
-    const saved = localStorage.getItem("gameDistributionCreditDays");
+    const saved = localStorage.getItem("gameDistributionR3CreditDays");
     return saved !== null ? parseInt(saved, 10) || 0 : 0;
   });
   const [maxCreditLimit, setMaxCreditLimit] = useState(() => {
-    const saved = localStorage.getItem("gameDistributionMaxCreditLimit");
+    const saved = localStorage.getItem("gameDistributionR3MaxCreditLimit");
     return saved !== null ? parseInt(saved, 10) || 0 : 0;
   });
   const [earlyPaymentDiscount, setEarlyPaymentDiscount] = useState(() => {
-    const saved = localStorage.getItem("gameDistributionEarlyPaymentDiscount");
+    const saved = localStorage.getItem("gameDistributionR3EarlyPaymentDiscount");
     return saved !== null ? parseInt(saved, 10) || 0 : 0;
   });
   const [enforcementLevel, setEnforcementLevel] = useState(() => {
-    const saved = localStorage.getItem("gameDistributionEnforcementLevel");
+    const saved = localStorage.getItem("gameDistributionR3EnforcementLevel");
     const value = saved !== null ? parseInt(saved, 10) : 0;
     return Math.min(2, Math.max(0, Number.isNaN(value) ? 0 : value));
   }); // 0=Low, 1=Medium, 2=High
@@ -27,30 +26,26 @@ const GameDistributionCreditControl = () => {
 
   // Save to localStorage whenever state changes
   useEffect(() => {
-    localStorage.setItem("gameDistributionCreditDays", creditDays.toString());
-    localStorage.setItem("gameDistributionMaxCreditLimit", maxCreditLimit.toString());
-    localStorage.setItem("gameDistributionEarlyPaymentDiscount", earlyPaymentDiscount.toString());
-    localStorage.setItem("gameDistributionEnforcementLevel", enforcementLevel.toString());
+    localStorage.setItem("gameDistributionR3CreditDays", creditDays.toString());
+    localStorage.setItem("gameDistributionR3MaxCreditLimit", maxCreditLimit.toString());
+    localStorage.setItem("gameDistributionR3EarlyPaymentDiscount", earlyPaymentDiscount.toString());
+    localStorage.setItem("gameDistributionR3EnforcementLevel", enforcementLevel.toString());
   }, [creditDays, maxCreditLimit, earlyPaymentDiscount, enforcementLevel]);
 
   const handleOK = () => {
-    navigate("/game-distribution/sales-team");
+    navigate("/game-distribution/round3-sales-team");
   };
 
   const handleBack = () => {
-    navigate("/game-distribution/trade-scheme");
+    navigate("/game-distribution/round3-trade-scheme");
   };
 
   const handleExit = () => {
     if (window.confirm("Are you sure you want to exit the market?")) {
-      localStorage.removeItem("gameDistributionCash");
-      localStorage.removeItem("gameDistributionInventory");
-      localStorage.removeItem("gameDistributionStep");
       navigate("/game-simulation");
     }
   };
 
-  // Format currency
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
@@ -72,7 +67,7 @@ const GameDistributionCreditControl = () => {
         {/* Header */}
         <div className="text-center pt-8 pb-4 border-b-4 border-yellow-200/50">
           <h1 className="text-4xl font-extrabold text-red-600 tracking-wider uppercase drop-shadow-sm">
-            Retailer Credit Control
+            Round 3 – Retailer Credit Control
           </h1>
         </div>
 
@@ -82,14 +77,14 @@ const GameDistributionCreditControl = () => {
           {/* Description */}
           <div className="text-center mb-4">
             <p className="text-lg text-gray-700 leading-relaxed max-w-2xl mx-auto">
-              You can decide the credit terms offered to retailers.
-              Offering longer credit may increase retailer orders, but it can also strain your working capital and increase payment risk.
+              With <span className="font-bold text-blue-700">1000 new outlets</span> being onboarded, you need to define the credit terms for both existing and new retailers.
+              Offering longer credit may increase retailer orders, but it can also strain your working capital and increase payment risk — especially with new outlets.
             </p>
           </div>
 
           <div className="text-center mb-10">
             <p className="text-md text-gray-600 italic">
-              Adjust the credit policy carefully to balance sales growth, collections, and cash flow.
+              Adjust the credit policy carefully to balance expansion growth, collections, and cash flow.
             </p>
           </div>
 
@@ -97,50 +92,28 @@ const GameDistributionCreditControl = () => {
           <div className="flex flex-col items-center max-w-2xl mx-auto space-y-6">
             
             {/* Credit Days */}
-            <div className={`w-full bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 shadow-sm ${currentRound === 2 ? 'opacity-80 border-red-300' : ''}`}>
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="text-xl font-bold text-gray-800">Credit Days for Retailers:</h3>
-                {currentRound === 2 && (
-                  <span className="text-xs font-bold bg-red-100 text-red-700 px-2 py-1 rounded border border-red-200">
-                    🔒 Frozen (Round 2 Rules)
-                  </span>
-                )}
-              </div>
+            <div className="w-full bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-800 mb-3">Credit Days for Retailers:</h3>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <button
                     onClick={() => setCreditDays(prev => Math.max(0, prev - 1))}
-                    disabled={currentRound === 2}
-                    className={`font-bold w-12 h-12 rounded-xl border-2 text-2xl transition-all 
-                      ${currentRound === 2 
-                        ? 'bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed opacity-50' 
-                        : 'bg-red-100 hover:bg-red-200 text-red-700 border-red-300 active:translate-y-[2px]'
-                      }`}
+                    className="bg-red-100 hover:bg-red-200 text-red-700 font-bold w-12 h-12 rounded-xl border-2 border-red-300 text-2xl transition-all active:translate-y-[2px]"
                   >
                     −
                   </button>
-                  <span className={`text-4xl font-extrabold min-w-[100px] text-center ${currentRound === 2 ? 'text-red-700' : 'text-emerald-700'}`}>
-                    {currentRound === 2 ? 30 : creditDays}
+                  <span className="text-4xl font-extrabold text-emerald-700 min-w-[100px] text-center">
+                    {creditDays}
                   </span>
                   <button
                     onClick={() => setCreditDays(prev => prev + 1)}
-                    disabled={currentRound === 2}
-                    className={`font-bold w-12 h-12 rounded-xl border-2 text-2xl transition-all 
-                      ${currentRound === 2 
-                        ? 'bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed opacity-50' 
-                        : 'bg-green-100 hover:bg-green-200 text-green-700 border-green-300 active:translate-y-[2px]'
-                      }`}
+                    className="bg-green-100 hover:bg-green-200 text-green-700 font-bold w-12 h-12 rounded-xl border-2 border-green-300 text-2xl transition-all active:translate-y-[2px]"
                   >
                     +
                   </button>
                 </div>
                 <p className="text-gray-600 font-bold text-right text-lg">Days</p>
               </div>
-              {currentRound === 2 && (
-                <p className="text-red-600 text-sm mt-3 font-semibold italic">
-                  Note: Retailers have unilaterally extended credit days to 30 due to rainfall disruption. You can only reduce this by offering an Early Payment Discount below.
-                </p>
-              )}
             </div>
 
             {/* Maximum Credit Limit per Retailer */}
@@ -169,15 +142,8 @@ const GameDistributionCreditControl = () => {
             </div>
 
             {/* Early Payment Discount */}
-            <div className={`w-full bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 shadow-sm ${currentRound === 2 ? 'ring-4 ring-emerald-300 shadow-emerald-200/50' : ''}`}>
-              <h3 className="text-xl font-bold text-gray-800 mb-3 flex items-center">
-                Early Payment Discount:
-                {currentRound === 2 && (
-                  <span className="ml-3 text-xs font-bold bg-emerald-100 text-emerald-700 px-2 py-1 rounded border border-emerald-200">
-                    🎯 Key Action (Round 2)
-                  </span>
-                )}
-              </h3>
+            <div className="w-full bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-800 mb-3">Early Payment Discount:</h3>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <button
@@ -196,16 +162,7 @@ const GameDistributionCreditControl = () => {
                     +
                   </button>
                 </div>
-                <div className="flex flex-col items-end">
-                  <p className="text-gray-600 font-bold text-right text-lg">
-                    {currentRound === 2 ? 'Every 1% takes the credit days down by 5 Days' : 'Discount for Payment within 7 Days'}
-                  </p>
-                  {currentRound === 2 && (
-                    <p className="text-red-500 font-bold text-sm mt-1 uppercase tracking-wider">
-                      The discount will get deducted from the distributor margin
-                    </p>
-                  )}
-                </div>
+                <p className="text-gray-600 font-bold text-right text-lg">Discount for Payment within 7 Days</p>
               </div>
             </div>
 
@@ -248,7 +205,7 @@ const GameDistributionCreditControl = () => {
                 ))}
               </div>
               <p className="text-gray-500 text-sm italic text-center mt-3">
-                Higher enforcement improves collections but may reduce retailer orders.
+                Higher enforcement improves collections but may reduce new retailer onboarding speed.
               </p>
             </div>
 
@@ -283,7 +240,11 @@ const GameDistributionCreditControl = () => {
         {/* Footer Info Strip */}
         <div className="bg-yellow-100 border-t-4 border-yellow-300 px-8 py-5 flex justify-between items-center text-lg font-bold text-gray-800">
           <div className="flex flex-col space-y-1">
-            <span>Round: <span className="text-emerald-700">{currentRound}</span> of 7</span>
+            <span>Round: <span className="text-emerald-700">3</span> of 7</span>
+          </div>
+          <div className="flex flex-col text-right space-y-1">
+            <span>Market Temperature: <span className="text-blue-700">Expanding</span></span>
+            <span>New Outlets Target: <span className="text-amber-600">1000</span></span>
           </div>
         </div>
 
@@ -292,4 +253,4 @@ const GameDistributionCreditControl = () => {
   );
 };
 
-export default GameDistributionCreditControl;
+export default GameDistributionRound3CreditControl;

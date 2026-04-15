@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const GameDistributionRound2Result = () => {
+const GameDistributionRound3Result = () => {
   const navigate = useNavigate();
 
-  // --- Round 2 Inventory (from Round 2 Inventory/Acquisition screens) ---
+  // --- Round 3 Inventory (from Round 3 Inventory screen) ---
   const [inventory] = useState(() => {
-    const saved = localStorage.getItem("gameDistributionRound2Inventory");
+    const saved = localStorage.getItem("gameDistributionRound3Inventory");
     if (saved) return JSON.parse(saved);
     return {
       milk: { name: "Tedbury Milk Chocolate", qty: 0 },
@@ -16,51 +16,50 @@ const GameDistributionRound2Result = () => {
     };
   });
 
-  // --- Round 1 Data (from localStorage, saved at end of Round 1) ---
-  const r1TotalSales = parseInt(localStorage.getItem("gameDistributionR1TotalSales") || "0", 10);
-  const r1RetailerOutstanding = parseInt(localStorage.getItem("gameDistributionR1RetailerOutstanding") || "0", 10);
-  const r1TradeSchemeSpend = parseInt(localStorage.getItem("gameDistributionR1TradeSchemeSpend") || "0", 10);
-  const r1NetPaymentReceived = parseInt(localStorage.getItem("gameDistributionR1NetPaymentReceived") || "0", 10);
+  // --- Round 2 Data (from localStorage, saved at end of Round 2) ---
+  const r2TotalSales = parseInt(localStorage.getItem("gameDistributionR2TotalSales") || "0", 10);
+  const r2RetailerOutstanding = parseInt(localStorage.getItem("gameDistributionR2RetailerOutstanding") || "0", 10);
+  const r2TradeSchemeSpend = parseInt(localStorage.getItem("gameDistributionR2TradeSchemeSpend") || "0", 10);
+  const r2NetPaymentReceived = parseInt(localStorage.getItem("gameDistributionR2NetPaymentReceived") || "0", 10);
 
-  // --- Trade Scheme (from Trade Scheme screen - reused in R2) ---
-  const quantityDiscount = parseFloat(localStorage.getItem("gameDistributionQuantityDiscount") || "0");
-  const retailDisplay = parseFloat(localStorage.getItem("gameDistributionRetailDisplay") || "0");
+  // --- Trade Scheme (from Round 3 Trade Scheme screen) ---
+  const quantityDiscount = parseFloat(localStorage.getItem("gameDistributionR3QuantityDiscount") || "0");
+  const retailDisplay = parseFloat(localStorage.getItem("gameDistributionR3RetailDisplay") || "0");
   const totalSchemePercent = quantityDiscount + retailDisplay;
 
-  // --- Credit Control (from Credit Control screen - reused in R2) ---
-  const earlyPaymentDiscount = parseFloat(localStorage.getItem("gameDistributionEarlyPaymentDiscount") || "0");
+  // --- Credit Control (from Round 3 Credit Control screen) ---
+  const creditDays = parseInt(localStorage.getItem("gameDistributionR3CreditDays") || "0", 10);
+  const maxCreditLimit = parseInt(localStorage.getItem("gameDistributionR3MaxCreditLimit") || "0", 10);
+  const earlyPaymentDiscount = parseFloat(localStorage.getItem("gameDistributionR3EarlyPaymentDiscount") || "0");
 
-  // --- Round 2 special rules ---
-  // Credit Days frozen at 30, then reduced by 5 for every 1% early discount
-  const baseCreditDays = 30;
-  const creditDays = Math.max(0, baseCreditDays - (earlyPaymentDiscount * 5));
+  // --- Sales Team (from Round 3 Sales Team screen) ---
+  const retailersToVisit = parseInt(localStorage.getItem("gameDistributionR3RetailersToVisit") || "0", 10);
+  const newRetailerEffort = parseInt(localStorage.getItem("gameDistributionR3NewRetailerEffort") || "0", 10);
+  const schemePushIntensity = parseInt(localStorage.getItem("gameDistributionR3SchemePushIntensity") || "0", 10);
 
-  // Max Credit Limit (from Credit Control screen)
-  const maxCreditLimit = parseInt(localStorage.getItem("gameDistributionMaxCreditLimit") || "0", 10);
+  // --- Supply Discipline (from Round 3 Supply Discipline screen) ---
+  const orderFulfilment = parseInt(localStorage.getItem("gameDistributionR3OrderFulfilment") || "0", 10);
 
-  // --- Sales Team ---
-  const retailersToVisit = parseInt(localStorage.getItem("gameDistributionRetailersToVisit") || "0", 10);
-  const newRetailerEffort = parseInt(localStorage.getItem("gameDistributionNewRetailerEffort") || "0", 10);
-  const schemePushIntensity = parseInt(localStorage.getItem("gameDistributionSchemePushIntensity") || "0", 10);
-
-  // --- Supply Discipline ---
-  const orderFulfilment = parseInt(localStorage.getItem("gameDistributionOrderFulfilment") || "0", 10);
-
-  // --- Round 2 Inputs (admin/config – same market data) ---
+  // --- Round 3 Market Data (expansion scenario) ---
+  // Increase in demand due to 1000 new outlets × 20 units Milk Chocolate minimum
   const monthlySales = {
-    milk: { units: 10000, sellingPrice: 54, totalSales: 540000 },
-    dark: { units: 7000, sellingPrice: 77, totalSales: 540000 },
+    milk: { units: 30000, sellingPrice: 54, totalSales: 1620000 },  // 10000 existing + 20000 new outlet demand
+    dark: { units: 7000, sellingPrice: 77, totalSales: 539000 },
     wafer: { units: 10000, sellingPrice: 32.4, totalSales: 324000 },
     gift: { units: 1000, sellingPrice: 216, totalSales: 216000 }
   };
 
   const costPrices = { milk: 100, dark: 150, wafer: 80, gift: 500 };
 
-  // Distributor Margin = 8% - Early Payment Discount (Round 2 formula)
-  const distributorMarginPercent = Math.max(0, 8 - earlyPaymentDiscount);
+  // Distributor Margin = 8% (standard)
+  const distributorMarginPercent = 8;
 
-  const totalCoverage = 1050;
+  // Total Coverage = 1050 existing + 1000 new
+  const totalCoverage = 2050;
   const deliveryWarehouseCost = 100000;
+
+  // Company reimburses 1 DSR salary
+  const reimbursedDSRSalary = 20000;
 
   // --- Calculations ---
   const productRows = [
@@ -97,7 +96,7 @@ const GameDistributionRound2Result = () => {
     ? totalSales - totalSales / (1 + distributorMarginPercent / 100)
     : 0;
 
-  // Net Distributor Rupee Gross Margin (no additional deduction in R2 since early discount is already baked into DM)
+  // Net Distributor Rupee Gross Margin
   const netDistributorRupeeGrossMargin = distributorRupeeGrossMargin;
 
   // Retailer Outstanding = Credit Days × Sales / 30
@@ -106,13 +105,14 @@ const GameDistributionRound2Result = () => {
   // Net Payment Received = Sales - Retailer Outstanding
   const netPaymentReceived = totalSales - retailerOutstanding;
 
-  // Opening Cash Balance = cash from Round 1 (after Round 2 inventory purchase)
+  // Opening Cash Balance = cash from after Round 3 inventory purchase
   const openingWorkingCapital = 5000000;
   const currentCash = parseInt(localStorage.getItem("gameDistributionCash") || `${openingWorkingCapital}`, 10);
   const inventoryInvestment = Math.max(0, openingWorkingCapital - currentCash);
 
-  // Cash in Hand = Opening Cash Balance + Payment Received (from R1) – Trade Scheme (from R1)
-  const cashInHand = currentCash + r1NetPaymentReceived - r1TradeSchemeSpend;
+  // Cash in Hand = Opening Cash Balance + Payment Received (from R2) – Trade Scheme (from R2)
+  // Company has reimbursed previous round scheme
+  const cashInHand = currentCash + r2NetPaymentReceived - r2TradeSchemeSpend;
 
   // Total Trade Scheme Spend
   let schemePushPercent = 0;
@@ -122,15 +122,17 @@ const GameDistributionRound2Result = () => {
 
   const totalTradeSchemeSpend = totalSales - totalSales / (1 + schemePushPercent / 100);
 
-  // New Outlets Opened
-  const newOutletsOpened = newRetailerEffort === 0 ? 2 : newRetailerEffort === 1 ? 5 : 10;
+  // New Outlets Opened (Round 3: aggressive expansion)
+  const newOutletsOpened = newRetailerEffort === 0 ? 200 : newRetailerEffort === 1 ? 500 : 1000;
 
   // Total Manpower
   const totalManpower = retailersToVisit > 0
     ? Math.round(totalCoverage / retailersToVisit)
     : 0;
 
-  const manpowerCost = totalManpower * 20000;
+  // Manpower Cost (minus 1 DSR reimbursed by company)
+  const rawManpowerCost = totalManpower * 20000;
+  const manpowerCost = Math.max(0, rawManpowerCost - reimbursedDSRSalary);
 
   // Distributor ROI
   const roiDenominator = 2000000 + inventoryInvestment + retailerOutstanding;
@@ -163,31 +165,33 @@ const GameDistributionRound2Result = () => {
     }).format(amount);
   };
 
-  // Save Round 2 results to localStorage so Round 3 can reference them
+  // Save Round 3 results to localStorage so Round 4 can reference them
   useEffect(() => {
-    localStorage.setItem("gameDistributionR2TotalSales", Math.round(monthlySalesTableTotal).toString());
-    localStorage.setItem("gameDistributionR2RetailerOutstanding", Math.round(retailerOutstanding).toString());
-    localStorage.setItem("gameDistributionR2TradeSchemeSpend", Math.round(totalTradeSchemeSpend).toString());
-    localStorage.setItem("gameDistributionR2NetPaymentReceived", Math.round(netPaymentReceived).toString());
-    localStorage.setItem("gameDistributionR2DistributorROI", distributorROI.toFixed(2));
-    localStorage.setItem("gameDistributionR2RetailerSatisfaction", getRetailerSatisfaction());
+    localStorage.setItem("gameDistributionR3TotalSales", Math.round(monthlySalesTableTotal).toString());
+    localStorage.setItem("gameDistributionR3RetailerOutstanding", Math.round(retailerOutstanding).toString());
+    localStorage.setItem("gameDistributionR3TradeSchemeSpend", Math.round(totalTradeSchemeSpend).toString());
+    localStorage.setItem("gameDistributionR3NetPaymentReceived", Math.round(netPaymentReceived).toString());
+    localStorage.setItem("gameDistributionR3DistributorROI", distributorROI.toFixed(2));
+    localStorage.setItem("gameDistributionR3RetailerSatisfaction", getRetailerSatisfaction());
   }, [monthlySalesTableTotal, retailerOutstanding, totalTradeSchemeSpend, netPaymentReceived, distributorROI]);
 
   const handleProceed = () => {
-    // Calculate ending inventory after sales
-    const closingInventory = {
-      milk: { ...inventory.milk, qty: inventory.milk.qty - salesValues.find(p => p.key === 'milk').units },
-      dark: { ...inventory.dark, qty: inventory.dark.qty - salesValues.find(p => p.key === 'dark').units },
-      wafer: { ...inventory.wafer, qty: inventory.wafer.qty - salesValues.find(p => p.key === 'wafer').units },
-      gift: { ...inventory.gift, qty: inventory.gift.qty - salesValues.find(p => p.key === 'gift').units }
-    };
-    localStorage.setItem("gameDistributionRound3Inventory", JSON.stringify(closingInventory));
-    localStorage.setItem("gameDistributionCurrentRound", "3");
-    navigate("/game-distribution/round3-intro");
+    // Clear all game distribution local storage keys to reset the game
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith("gameDistribution")) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach(key => localStorage.removeItem(key));
+    
+    // Navigate back to the start of the game simulation flow
+    navigate("/game-distribution/intro");
   };
 
   const handleBack = () => {
-    navigate("/game-distribution/supply-discipline");
+    navigate("/game-distribution/round3-supply-discipline");
   };
 
   return (
@@ -203,7 +207,7 @@ const GameDistributionRound2Result = () => {
         {/* Header */}
         <div className="text-center pt-8 pb-4 border-b-4 border-yellow-200/50">
           <h1 className="text-4xl font-extrabold text-red-600 tracking-wider uppercase drop-shadow-sm">
-            Round 2 – Market Disruption
+            Round 3 – Market Expansion Drive
           </h1>
         </div>
 
@@ -215,11 +219,12 @@ const GameDistributionRound2Result = () => {
           {/* Market Conditions */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10 max-w-3xl mx-auto">
             {[
-              { label: "Consumer Demand", value: "Moderate", color: "text-blue-700" },
-              { label: "Competitor Activity", value: "Normal", color: "text-blue-700" },
-              { label: "Season", value: "Regular Business Period", color: "text-amber-600" },
-              { label: "Retailer Sentiment", value: "Neutral", color: "text-gray-600" },
-              { label: "Supply Situation", value: "Stable", color: "text-emerald-700" }
+              { label: "Consumer Demand", value: "High", color: "text-emerald-700" },
+              { label: "Competitor Activity", value: "Aggressive", color: "text-red-600" },
+              { label: "Season", value: "Expansion Period", color: "text-blue-600" },
+              { label: "Retailer Sentiment", value: "Optimistic", color: "text-emerald-700" },
+              { label: "Supply Situation", value: "Strained", color: "text-amber-600" },
+              { label: "New Outlets Target", value: "1000", color: "text-blue-700" }
             ].map(item => (
               <div key={item.label} className="bg-yellow-50 p-3 rounded-xl border border-yellow-200 text-center">
                 <p className="text-sm text-gray-500 font-medium">{item.label}</p>
@@ -270,8 +275,8 @@ const GameDistributionRound2Result = () => {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
               {[
-                { label: "Distributor Margin (DM = 8% - Early Discount)", value: `${distributorMarginPercent}%` },
-                { label: "Credit Days (30 - 5×Early Discount%)", value: `${creditDays} Days` },
+                { label: "Distributor Margin", value: `${distributorMarginPercent}%` },
+                { label: "Credit Days", value: `${creditDays} Days` },
                 { label: "Distributor Rupee Gross Margin", value: formatCurrency(Math.round(distributorRupeeGrossMargin)) },
                 { label: "Net Distributor Rupee Gross Margin", value: formatCurrency(Math.round(netDistributorRupeeGrossMargin)) },
                 { label: "Retailer Outstanding", value: formatCurrency(Math.round(retailerOutstanding)) },
@@ -296,7 +301,9 @@ const GameDistributionRound2Result = () => {
                 { label: "Total Coverage", value: `${totalCoverage} Retailers` },
                 { label: "New Outlets Opened", value: `${newOutletsOpened}` },
                 { label: "Total Manpower", value: `${totalManpower}` },
-                { label: "Manpower Cost", value: formatCurrency(manpowerCost) },
+                { label: "Raw Manpower Cost", value: formatCurrency(rawManpowerCost) },
+                { label: "Company DSR Reimbursement", value: `- ${formatCurrency(reimbursedDSRSalary)}` },
+                { label: "Net Manpower Cost", value: formatCurrency(manpowerCost) },
                 { label: "Delivery & Warehouse Cost", value: formatCurrency(deliveryWarehouseCost) },
               ].map(item => (
                 <div key={item.label} className="bg-yellow-50 p-4 rounded-xl border-2 border-yellow-200 flex justify-between items-center">
@@ -317,7 +324,7 @@ const GameDistributionRound2Result = () => {
                   {distributorROI.toFixed(2)}%
                 </p>
                 <p className="text-gray-500 text-xs mt-2 italic">
-                  (Net Gross Margin − Manpower − Delivery) / (₹20,00,000 + Inventory + Outstanding)
+                  (Net Gross Margin − Net Manpower − Delivery) / (₹20,00,000 + Inventory + Outstanding)
                 </p>
               </div>
 
@@ -350,7 +357,7 @@ const GameDistributionRound2Result = () => {
               onClick={handleProceed}
               className="bg-green-500 hover:bg-green-600 text-white font-extrabold py-4 px-12 rounded-xl shadow-[0_6px_0_rgb(21,128,61)] hover:shadow-[0_3px_0_rgb(21,128,61)] hover:translate-y-[3px] active:shadow-none active:translate-y-[6px] transition-all text-2xl transform scale-110 tracking-widest"
             >
-              [ Proceed to Round 3 ]
+              [ Proceed to Round 4 ]
             </button>
           </div>
 
@@ -358,7 +365,7 @@ const GameDistributionRound2Result = () => {
 
         {/* Footer Info Strip */}
         <div className="bg-yellow-100 border-t-4 border-yellow-300 px-8 py-5 flex justify-center items-center text-lg font-bold text-gray-800">
-          <span>Round: <span className="text-emerald-700">2</span> of 7</span>
+          <span>Round: <span className="text-emerald-700">3</span> of 7</span>
         </div>
 
       </div>
@@ -366,4 +373,4 @@ const GameDistributionRound2Result = () => {
   );
 };
 
-export default GameDistributionRound2Result;
+export default GameDistributionRound3Result;

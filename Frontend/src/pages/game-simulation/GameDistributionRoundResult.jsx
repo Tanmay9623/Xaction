@@ -190,6 +190,14 @@ const GameDistributionRoundResult = () => {
   }, [monthlySalesTableTotal, retailerOutstanding, totalTradeSchemeSpend, netPaymentReceived, distributorROI]);
 
   const handleExit = () => {
+    // Calculate ending inventory after sales
+    const closingInventory = {
+      milk: { ...inventory.milk, qty: inventory.milk.qty - salesValues.find(p => p.key === 'milk').units },
+      dark: { ...inventory.dark, qty: inventory.dark.qty - salesValues.find(p => p.key === 'dark').units },
+      wafer: { ...inventory.wafer, qty: inventory.wafer.qty - salesValues.find(p => p.key === 'wafer').units },
+      gift: { ...inventory.gift, qty: inventory.gift.qty - salesValues.find(p => p.key === 'gift').units }
+    };
+    localStorage.setItem("gameDistributionRound2Inventory", JSON.stringify(closingInventory));
     // Set current round to 2 before navigating
     localStorage.setItem("gameDistributionCurrentRound", "2");
     navigate("/game-distribution/round2-intro");
