@@ -8,8 +8,23 @@ const GameDistributionAcquisition = () => {
   const stage = searchParams.get("stage") || "";
   const round = searchParams.get("round") || "1";
   
-  const inventoryKey = round === "3" ? "gameDistributionRound3Inventory" : round === "2" ? "gameDistributionRound2Inventory" : "gameDistributionInventory";
-  const hubRoute = round === "3" ? "/game-distribution/round3-inventory" : round === "2" ? "/game-distribution/round2-inventory" : "/game-distribution/inventory";
+  const inventoryKey = 
+    round === "7" ? "gameDistributionRound7Inventory" :
+    round === "6" ? "gameDistributionRound6Inventory" :
+    round === "5" ? "gameDistributionRound5Inventory" :
+    round === "4" ? "gameDistributionRound4Inventory" :
+    round === "3" ? "gameDistributionRound3Inventory" : 
+    round === "2" ? "gameDistributionRound2Inventory" : 
+    "gameDistributionInventory";
+
+  const hubRoute = 
+    round === "7" ? "/game-distribution/round7-inventory" :
+    round === "6" ? "/game-distribution/round6-inventory" :
+    round === "5" ? "/game-distribution/round5-inventory" :
+    round === "4" ? "/game-distribution/round4-inventory" :
+    round === "3" ? "/game-distribution/round3-inventory" : 
+    round === "2" ? "/game-distribution/round2-inventory" : 
+    "/game-distribution/inventory";
   
   // Initialize state from localStorage
   const [cash, setCash] = useState(() => {

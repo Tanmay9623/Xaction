@@ -141,7 +141,8 @@ const GameDistributionRound3Result = () => {
     : 0;
 
   // --- Retailer Satisfaction (weighted scoring) ---
-  const schemePushScore = (schemePushIntensity + 1) * 0.1;
+  const schemePushPoint = schemePushIntensity === 1 ? 3 : schemePushIntensity === 0 ? 2 : 1;
+  const schemePushScore = schemePushPoint * 0.1;
   const orderFulfilmentPoint = orderFulfilment > 90 ? 3 : orderFulfilment >= 80 ? 2 : 1;
   const orderFulfilmentScore = orderFulfilmentPoint * 0.3;
   const creditDaysPoint = creditDays > 30 ? 3 : creditDays >= 20 ? 2 : 1;
@@ -176,18 +177,21 @@ const GameDistributionRound3Result = () => {
   }, [monthlySalesTableTotal, retailerOutstanding, totalTradeSchemeSpend, netPaymentReceived, distributorROI]);
 
   const handleProceed = () => {
-    // Clear all game distribution local storage keys to reset the game
-    const keysToRemove = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith("gameDistribution")) {
-        keysToRemove.push(key);
-      }
-    }
-    keysToRemove.forEach(key => localStorage.removeItem(key));
+    // Calculate ending inventory after sales
+    const nextRoundInventory = {
+      milk: { ...inventory.milk, qty: 0 },
+      dark: { ...inventory.dark, qty: 0 },
+      wafer: { ...inventory.wafer, qty: 0 },
+      gift: { ...inventory.gift, qty: 0 }
+    };
     
-    // Navigate back to the start of the game simulation flow
-    navigate("/game-distribution/intro");
+    // Calculate closing cash: Purchase Remainder ONLY (as requested)
+    const closingCash = currentCash;
+    
+    localStorage.setItem("gameDistributionCash", Math.round(closingCash).toString());
+    localStorage.setItem("gameDistributionRound4Inventory", JSON.stringify(nextRoundInventory));
+    localStorage.setItem("gameDistributionCurrentRound", "4");
+    navigate("/game-distribution/round4-intro");
   };
 
   const handleBack = () => {

@@ -29,8 +29,7 @@ const GameDistributionRound4Intro = () => {
   // Opening Cash Balance (Status after R3 purchases)
   const r3ClosingCash = parseInt(localStorage.getItem("gameDistributionCash") || "5000000", 10);
   
-  // Cash in Hand = Opening Cash Balance + Payment Received (from last screen) – Trade Scheme
-  const cashInHand = r3ClosingCash + r3NetPaymentReceived - r3TradeSchemeSpend;
+  const cashInHand = parseInt(localStorage.getItem("gameDistributionCash") || "5000000", 10);
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-IN', {
@@ -41,7 +40,7 @@ const GameDistributionRound4Intro = () => {
   };
 
   const handleNext = () => {
-    navigate('/game-simulation'); 
+    navigate('/game-distribution/round4-inventory'); 
   };
 
   const handleBack = () => {

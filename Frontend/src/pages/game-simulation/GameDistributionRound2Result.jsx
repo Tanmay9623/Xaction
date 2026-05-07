@@ -70,13 +70,19 @@ const GameDistributionRound2Result = () => {
     { key: "gift", label: "Tedbury Gift Packs" }
   ];
 
+  const salesPercentages = {
+    milk: 40,
+    dark: 30,
+    wafer: 50,
+    gift: 43
+  };
+
   // Monthly Sales Table
   const salesValues = productRows.map(p => {
-    const salesUnits = monthlySales[p.key].units;
     const sellingPrice = monthlySales[p.key].sellingPrice;
     const invQty = inventory[p.key].qty;
 
-    const units = Math.min(invQty, salesUnits);
+    const units = Math.round((salesPercentages[p.key] / 100) * invQty);
     const value = units * sellingPrice;
 
     return {
@@ -139,7 +145,8 @@ const GameDistributionRound2Result = () => {
     : 0;
 
   // --- Retailer Satisfaction (weighted scoring) ---
-  const schemePushScore = (schemePushIntensity + 1) * 0.1;
+  const schemePushPoint = schemePushIntensity === 1 ? 3 : schemePushIntensity === 0 ? 2 : 1;
+  const schemePushScore = schemePushPoint * 0.1;
   const orderFulfilmentPoint = orderFulfilment > 90 ? 3 : orderFulfilment >= 80 ? 2 : 1;
   const orderFulfilmentScore = orderFulfilmentPoint * 0.3;
   const creditDaysPoint = creditDays > 30 ? 3 : creditDays >= 20 ? 2 : 1;
@@ -175,13 +182,18 @@ const GameDistributionRound2Result = () => {
 
   const handleProceed = () => {
     // Calculate ending inventory after sales
-    const closingInventory = {
-      milk: { ...inventory.milk, qty: inventory.milk.qty - salesValues.find(p => p.key === 'milk').units },
-      dark: { ...inventory.dark, qty: inventory.dark.qty - salesValues.find(p => p.key === 'dark').units },
-      wafer: { ...inventory.wafer, qty: inventory.wafer.qty - salesValues.find(p => p.key === 'wafer').units },
-      gift: { ...inventory.gift, qty: inventory.gift.qty - salesValues.find(p => p.key === 'gift').units }
+    const nextRoundInventory = {
+      milk: { ...inventory.milk, qty: 0 },
+      dark: { ...inventory.dark, qty: 0 },
+      wafer: { ...inventory.wafer, qty: 0 },
+      gift: { ...inventory.gift, qty: 0 }
     };
-    localStorage.setItem("gameDistributionRound3Inventory", JSON.stringify(closingInventory));
+    
+    // Calculate closing cash: Purchase Remainder ONLY (as requested)
+    const closingCash = currentCash;
+    
+    localStorage.setItem("gameDistributionCash", Math.round(closingCash).toString());
+    localStorage.setItem("gameDistributionRound3Inventory", JSON.stringify(nextRoundInventory));
     localStorage.setItem("gameDistributionCurrentRound", "3");
     navigate("/game-distribution/round3-intro");
   };

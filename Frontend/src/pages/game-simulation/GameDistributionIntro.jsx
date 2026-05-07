@@ -9,6 +9,13 @@ const GameDistributionIntro = () => {
   };
 
   const handleNext = () => {
+    // Clear previous game state to ensure a fresh start
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith("gameDistribution") && key !== "gameDistributionCurrentRound") {
+        localStorage.removeItem(key);
+      }
+    });
+    localStorage.setItem("gameDistributionCurrentRound", "1");
     navigate("/game-distribution/inventory");
   };
 

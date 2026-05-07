@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-const GameDistributionRound2Inventory = () => {
+const GameDistributionRound4Inventory = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const stage = searchParams.get('stage');
   
-  // Initialize state from localStorage or defaults
-  // Uses remaining cash from Round 1
+  // Uses remaining cash from Round 3 / R4 Intro calculation
   const [cash, setCash] = useState(() => {
     const saved = localStorage.getItem("gameDistributionCash");
     return saved !== null ? parseInt(saved, 10) : 5000000;
   });
 
   const [inventory, setInventory] = useState(() => {
-    const saved = localStorage.getItem("gameDistributionRound2Inventory");
+    const saved = localStorage.getItem("gameDistributionRound4Inventory");
     if (saved) return JSON.parse(saved);
+    
+    // Carry over from R3
+    const r3Saved = localStorage.getItem("gameDistributionRound3Inventory");
+    if (r3Saved) return JSON.parse(r3Saved);
+
     return {
       milk: { name: "Tedbury Milk Chocolate", price: 100, qty: 0 },
       dark: { name: "Tedbury Dark Chocolate", price: 150, qty: 0 },
@@ -26,30 +29,29 @@ const GameDistributionRound2Inventory = () => {
 
   // Track which product we are currently buying in the sequence
   const [currentStep, setCurrentStep] = useState(() => {
-    const saved = localStorage.getItem("gameDistributionStep");
+    const saved = localStorage.getItem("gameDistributionR4Step");
     return saved !== null ? parseInt(saved, 10) : 1; 
   });
 
   // Save to localStorage whenever state changes
   useEffect(() => {
     localStorage.setItem("gameDistributionCash", cash.toString());
-    localStorage.setItem("gameDistributionR2PurchaseRemainder", cash.toString());
-    localStorage.setItem("gameDistributionRound2Inventory", JSON.stringify(inventory));
-    localStorage.setItem("gameDistributionStep", currentStep.toString());
+    localStorage.setItem("gameDistributionRound4Inventory", JSON.stringify(inventory));
+    localStorage.setItem("gameDistributionR4Step", currentStep.toString());
   }, [cash, inventory, currentStep]);
 
   const handleBuy = (productId) => {
-    // Navigate to the acquisition screen for the selected product, maybe pass round=2 or something if need to go somewhere else later
-    navigate(`/game-distribution/acquisition?product=${productId}&round=2`);
+    // Navigate to the acquisition screen for the selected product, passing round=4
+    navigate(`/game-distribution/acquisition?product=${productId}&round=4`);
   };
 
   const handleOK = () => {
-    // Navigate to appropriate screen for Round 2 next step. Assuming Trade Scheme for now.
-    navigate("/game-distribution/trade-scheme");
+    // Navigate to Trade Scheme for Round 4
+    navigate("/game-distribution/round4-trade-scheme");
   };
 
   const handleBack = () => {
-    navigate("/game-distribution/round2-intro");
+    navigate("/game-distribution/round4-intro");
   };
 
   const handleExit = () => {
@@ -80,7 +82,7 @@ const GameDistributionRound2Inventory = () => {
         {/* Header */}
         <div className="text-center pt-8 pb-4">
           <h1 className="text-4xl font-extrabold text-red-600 tracking-wider uppercase drop-shadow-sm">
-            Round 2: Inventory/Purchasing
+            Round 4: Inventory / Purchasing
           </h1>
         </div>
 
@@ -90,16 +92,16 @@ const GameDistributionRound2Inventory = () => {
           {/* Context & Guidelines */}
           <div className="bg-white border-4 border-yellow-300 rounded-xl p-6 sm:p-8 mb-10 shadow-sm max-w-4xl mx-auto space-y-6">
             <div className="text-gray-800 text-lg sm:text-xl font-medium leading-relaxed">
-              <span className="font-bold text-emerald-800">As Sunshine Agency</span>, you have <span className="font-bold text-emerald-700">{formatCurrency(cash)}</span> remaining capital to invest in inventory to respond to the <span className="font-bold text-red-600">Rainfall Impact</span>.
+              <span className="font-bold text-emerald-800">As Sunshine Agency</span>, your operations are impacted by <span className="font-bold text-red-600">Manpower Attrition</span>. You have <span className="font-bold text-emerald-700">{formatCurrency(cash)}</span> available capital to invest in inventory.
             </div>
             
-            <div className="bg-yellow-50 border-l-4 border-amber-500 p-4">
-              <h3 className="font-bold text-amber-800 text-xl flex items-center mb-2">
-                <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                Buying Guidelines:
+            <div className="bg-red-50 border-l-4 border-red-500 p-4">
+              <h3 className="font-bold text-red-800 text-xl flex items-center mb-2">
+                <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                Market Situation:
               </h3>
               <p className="text-gray-700 leading-relaxed font-medium">
-                Adjust your inventory stock keeping in mind the slower sales turnaround time due to heavy rain and potential liquidity constraints.
+                With <span className="font-bold text-red-600">2 salesmen resigned</span>, order generation may be uneven. Avoid over-stocking while ensuring you don't miss sales opportunities in high-value outlets.
               </p>
             </div>
           </div>
@@ -204,12 +206,11 @@ const GameDistributionRound2Inventory = () => {
         {/* Footer Info Strip */}
         <div className="bg-yellow-100 border-t-2 border-yellow-300 px-8 py-4 flex justify-between items-center text-lg font-bold text-gray-800">
           <div className="flex flex-col">
-            <span>Round: 2 of 7</span>
+            <span>Round: 4 of 7</span>
             <span>Cash Available: {formatCurrency(cash)}</span>
           </div>
           <div className="flex flex-col text-right">
-            <span>Market Temperature: Disrupted</span>
-            <span>Market Condition: Slow/Rainfall</span>
+            <span>Market Condition: Manpower Shortage</span>
           </div>
         </div>
 
@@ -218,4 +219,4 @@ const GameDistributionRound2Inventory = () => {
   );
 };
 
-export default GameDistributionRound2Inventory;
+export default GameDistributionRound4Inventory;

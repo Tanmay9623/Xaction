@@ -30,6 +30,33 @@ import GameDistributionRound3SalesTeam from './pages/game-simulation/GameDistrib
 import GameDistributionRound3SupplyDiscipline from './pages/game-simulation/GameDistributionRound3SupplyDiscipline';
 import GameDistributionRound3Result from './pages/game-simulation/GameDistributionRound3Result';
 import GameDistributionRound4Intro from './pages/game-simulation/GameDistributionRound4Intro';
+import GameDistributionRound4Inventory from './pages/game-simulation/GameDistributionRound4Inventory';
+import GameDistributionRound4TradeScheme from './pages/game-simulation/GameDistributionRound4TradeScheme';
+import GameDistributionRound4CreditControl from './pages/game-simulation/GameDistributionRound4CreditControl';
+import GameDistributionRound4SalesTeam from './pages/game-simulation/GameDistributionRound4SalesTeam';
+import GameDistributionRound4SupplyDiscipline from './pages/game-simulation/GameDistributionRound4SupplyDiscipline';
+import GameDistributionRound4Result from './pages/game-simulation/GameDistributionRound4Result';
+import GameDistributionRound5Intro from './pages/game-simulation/GameDistributionRound5Intro';
+import GameDistributionRound5Inventory from './pages/game-simulation/GameDistributionRound5Inventory';
+import GameDistributionRound5TradeScheme from './pages/game-simulation/GameDistributionRound5TradeScheme';
+import GameDistributionRound5CreditControl from './pages/game-simulation/GameDistributionRound5CreditControl';
+import GameDistributionRound5SalesTeam from './pages/game-simulation/GameDistributionRound5SalesTeam';
+import GameDistributionRound5SupplyDiscipline from './pages/game-simulation/GameDistributionRound5SupplyDiscipline';
+import GameDistributionRound5Result from './pages/game-simulation/GameDistributionRound5Result';
+import GameDistributionRound6Intro from "./pages/game-simulation/GameDistributionRound6Intro";
+import GameDistributionRound6Inventory from "./pages/game-simulation/GameDistributionRound6Inventory";
+import GameDistributionRound6TradeScheme from "./pages/game-simulation/GameDistributionRound6TradeScheme";
+import GameDistributionRound6CreditControl from "./pages/game-simulation/GameDistributionRound6CreditControl";
+import GameDistributionRound6SalesTeam from "./pages/game-simulation/GameDistributionRound6SalesTeam";
+import GameDistributionRound6SupplyDiscipline from "./pages/game-simulation/GameDistributionRound6SupplyDiscipline";
+import GameDistributionRound6Result from "./pages/game-simulation/GameDistributionRound6Result";
+import GameDistributionRound7Intro from "./pages/game-simulation/GameDistributionRound7Intro";
+import GameDistributionRound7Inventory from "./pages/game-simulation/GameDistributionRound7Inventory";
+import GameDistributionRound7TradeScheme from "./pages/game-simulation/GameDistributionRound7TradeScheme";
+import GameDistributionRound7CreditControl from "./pages/game-simulation/GameDistributionRound7CreditControl";
+import GameDistributionRound7SalesTeam from "./pages/game-simulation/GameDistributionRound7SalesTeam";
+import GameDistributionRound7SupplyDiscipline from "./pages/game-simulation/GameDistributionRound7SupplyDiscipline";
+import GameDistributionRound7Result from "./pages/game-simulation/GameDistributionRound7Result";
 import Registration from './pages/Registration';
 import Login from './pages/Login';
 import CorporateLogin from './pages/CorporateLogin';
@@ -99,6 +126,33 @@ function App() {
         <Route path="/game-distribution/round3-supply-discipline" element={<GameDistributionRound3SupplyDiscipline />} />
         <Route path="/game-distribution/round3-result" element={<GameDistributionRound3Result />} />
         <Route path="/game-distribution/round4-intro" element={<GameDistributionRound4Intro />} />
+        <Route path="/game-distribution/round4-inventory" element={<GameDistributionRound4Inventory />} />
+        <Route path="/game-distribution/round4-trade-scheme" element={<GameDistributionRound4TradeScheme />} />
+        <Route path="/game-distribution/round4-credit-control" element={<GameDistributionRound4CreditControl />} />
+        <Route path="/game-distribution/round4-sales-team" element={<GameDistributionRound4SalesTeam />} />
+        <Route path="/game-distribution/round4-supply-discipline" element={<GameDistributionRound4SupplyDiscipline />} />
+        <Route path="/game-distribution/round4-result" element={<GameDistributionRound4Result />} />
+        <Route path="/game-distribution/round5-intro" element={<GameDistributionRound5Intro />} />
+        <Route path="/game-distribution/round5-inventory" element={<GameDistributionRound5Inventory />} />
+        <Route path="/game-distribution/round5-trade-scheme" element={<GameDistributionRound5TradeScheme />} />
+        <Route path="/game-distribution/round5-credit-control" element={<GameDistributionRound5CreditControl />} />
+        <Route path="/game-distribution/round5-sales-team" element={<GameDistributionRound5SalesTeam />} />
+        <Route path="/game-distribution/round5-supply-discipline" element={<GameDistributionRound5SupplyDiscipline />} />
+        <Route path="/game-distribution/round5-result" element={<GameDistributionRound5Result />} />
+        <Route path="/game-distribution/round6-intro" element={<GameDistributionRound6Intro />} />
+        <Route path="/game-distribution/round6-inventory" element={<GameDistributionRound6Inventory />} />
+        <Route path="/game-distribution/round6-trade-scheme" element={<GameDistributionRound6TradeScheme />} />
+        <Route path="/game-distribution/round6-credit-control" element={<GameDistributionRound6CreditControl />} />
+        <Route path="/game-distribution/round6-sales-team" element={<GameDistributionRound6SalesTeam />} />
+        <Route path="/game-distribution/round6-supply-discipline" element={<GameDistributionRound6SupplyDiscipline />} />
+        <Route path="/game-distribution/round6-result" element={<GameDistributionRound6Result />} />
+        <Route path="/game-distribution/round7-intro" element={<GameDistributionRound7Intro />} />
+        <Route path="/game-distribution/round7-inventory" element={<GameDistributionRound7Inventory />} />
+        <Route path="/game-distribution/round7-trade-scheme" element={<GameDistributionRound7TradeScheme />} />
+        <Route path="/game-distribution/round7-credit-control" element={<GameDistributionRound7CreditControl />} />
+        <Route path="/game-distribution/round7-sales-team" element={<GameDistributionRound7SalesTeam />} />
+        <Route path="/game-distribution/round7-supply-discipline" element={<GameDistributionRound7SupplyDiscipline />} />
+        <Route path="/game-distribution/round7-result" element={<GameDistributionRound7Result />} />
         <Route path="/login" element={<Login />} />
         <Route path="/corporate-login" element={<CorporateLogin />} />
 

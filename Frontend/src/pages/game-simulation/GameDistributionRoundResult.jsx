@@ -147,8 +147,9 @@ const GameDistributionRoundResult = () => {
 
   // --- Retailer Satisfaction (weighted scoring) ---
 
-  // Scheme Push: Low(0)=1, Medium(1)=2, High(2)=3 → weight 0.1
-  const schemePushScore = (schemePushIntensity + 1) * 0.1;
+  // Scheme Push: Medium=3, Low=2, High=1 -> weight 0.1
+  const schemePushPoint = schemePushIntensity === 1 ? 3 : schemePushIntensity === 0 ? 2 : 1;
+  const schemePushScore = schemePushPoint * 0.1;
 
   // Order Fulfillment: >90%→3, 80-90%→2, <80%→1 → weight 0.3
   const orderFulfilmentPoint = orderFulfilment > 90 ? 3 : orderFulfilment >= 80 ? 2 : 1;
@@ -191,14 +192,18 @@ const GameDistributionRoundResult = () => {
 
   const handleExit = () => {
     // Calculate ending inventory after sales
-    const closingInventory = {
-      milk: { ...inventory.milk, qty: inventory.milk.qty - salesValues.find(p => p.key === 'milk').units },
-      dark: { ...inventory.dark, qty: inventory.dark.qty - salesValues.find(p => p.key === 'dark').units },
-      wafer: { ...inventory.wafer, qty: inventory.wafer.qty - salesValues.find(p => p.key === 'wafer').units },
-      gift: { ...inventory.gift, qty: inventory.gift.qty - salesValues.find(p => p.key === 'gift').units }
+    const nextRoundInventory = {
+      milk: { ...inventory.milk, qty: 0 },
+      dark: { ...inventory.dark, qty: 0 },
+      wafer: { ...inventory.wafer, qty: 0 },
+      gift: { ...inventory.gift, qty: 0 }
     };
-    localStorage.setItem("gameDistributionRound2Inventory", JSON.stringify(closingInventory));
-    // Set current round to 2 before navigating
+    
+    // Calculate closing cash: Purchase Remainder ONLY (as requested)
+    const closingCash = currentCash;
+    
+    localStorage.setItem("gameDistributionCash", Math.round(closingCash).toString());
+    localStorage.setItem("gameDistributionRound2Inventory", JSON.stringify(nextRoundInventory));
     localStorage.setItem("gameDistributionCurrentRound", "2");
     navigate("/game-distribution/round2-intro");
   };

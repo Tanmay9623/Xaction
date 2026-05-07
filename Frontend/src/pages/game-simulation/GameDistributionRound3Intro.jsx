@@ -25,7 +25,7 @@ const GameDistributionRound3Intro = () => {
   const r2ClosingCash = parseInt(localStorage.getItem("gameDistributionCash") || "5000000", 10);
   
   // Cash in Hand = Opening Cash Balance + Payment Received (from R2) – Trade Scheme (from R2)
-  const cashInHand = r2ClosingCash + r2NetPaymentReceived - r2TradeSchemeSpend;
+  const cashInHand = parseInt(localStorage.getItem("gameDistributionCash") || "5000000", 10);
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-IN', {
