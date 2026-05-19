@@ -4,15 +4,19 @@ import { useNavigate } from "react-router-dom";
 const GameDistributionRound6Result = () => {
   const navigate = useNavigate();
 
-  // --- Round 6 Inventory ---
+  // --- Round 6 Inventory + Opening Stock ---
   const [inventory] = useState(() => {
-    const saved = localStorage.getItem("gameDistributionRound6Inventory");
-    if (saved) return JSON.parse(saved);
+    const savedPurchases = localStorage.getItem("gameDistributionRound6Inventory");
+    const savedOpening = localStorage.getItem("gameDistributionR6OpeningStock");
+    
+    const purchases = savedPurchases ? JSON.parse(savedPurchases) : null;
+    const opening = savedOpening ? JSON.parse(savedOpening) : null;
+    
     return {
-      milk: { name: "Tedbury Milk Chocolate", qty: 0 },
-      dark: { name: "Tedbury Dark Chocolate", qty: 0 },
-      wafer: { name: "Tedbury Wafer Chocolate", qty: 0 },
-      gift: { name: "Tedbury Gift Packs", qty: 0 }
+      milk: { name: "Tedbury Milk Chocolate", qty: (purchases?.milk?.qty || 0) },
+      dark: { name: "Tedbury Dark Chocolate", qty: (purchases?.dark?.qty || 0) },
+      wafer: { name: "Tedbury Wafer Chocolate", qty: (purchases?.wafer?.qty || 0) },
+      gift: { name: "Tedbury Gift Packs", qty: (purchases?.gift?.qty || 0) }
     };
   });
 
@@ -128,8 +132,14 @@ const GameDistributionRound6Result = () => {
   }, [totalSales, retailerOutstanding, totalTradeSchemeSpend, netPaymentReceived, distributorROI]);
 
   const handleProceed = () => {
-    // Calculate ending inventory after sales
-    const nextRoundInventory = {
+    // Calculate ending inventory after sales (Carry Forward: Opening Stock + Purchase - Sales)
+    const carryForwardInventory = {
+      milk: { ...inventory.milk, qty: milkTotalStock - salesUnits.milk },
+      dark: { ...inventory.dark, qty: darkTotalStock - salesUnits.dark },
+      wafer: { ...inventory.wafer, qty: waferTotalStock - salesUnits.wafer },
+      gift: { ...inventory.gift, qty: giftTotalStock - salesUnits.gift }
+    };
+    const emptyInventory = {
       milk: { ...inventory.milk, qty: 0 },
       dark: { ...inventory.dark, qty: 0 },
       wafer: { ...inventory.wafer, qty: 0 },
@@ -140,7 +150,8 @@ const GameDistributionRound6Result = () => {
     const closingCash = currentCash;
     
     localStorage.setItem("gameDistributionCash", Math.round(closingCash).toString());
-    localStorage.setItem("gameDistributionRound7Inventory", JSON.stringify(nextRoundInventory));
+    localStorage.setItem("gameDistributionR7OpeningStock", JSON.stringify(carryForwardInventory));
+    localStorage.setItem("gameDistributionRound7Inventory", JSON.stringify(emptyInventory));
     localStorage.setItem("gameDistributionCurrentRound", "7");
     navigate("/game-distribution/round7-intro");
   };
@@ -231,7 +242,7 @@ const GameDistributionRound6Result = () => {
               <div className="bg-amber-50 p-6 rounded-2xl border-4 border-amber-300 text-center shadow-lg transform hover:scale-105 transition-transform">
                 <p className="text-gray-600 font-bold text-xs mb-1 uppercase">Retailer Satisfaction</p>
                 <p className={`text-5xl font-black ${getRetailerSatisfaction() === 'High' ? 'text-emerald-700' : getRetailerSatisfaction() === 'Medium' ? 'text-amber-600' : 'text-red-600'}`}>
-                  {getRetailerSatisfaction()}
+                   {getRetailerSatisfaction()}
                 </p>
               </div>
             </div>

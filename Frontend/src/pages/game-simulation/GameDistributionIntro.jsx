@@ -1,8 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { checkIfGameCompleted } from './dbUtils';
 
 const GameDistributionIntro = () => {
   const navigate = useNavigate();
+  const [isChecking, setIsChecking] = useState(true);
+  const [alreadyPlayed, setAlreadyPlayed] = useState(false);
+
+  useEffect(() => {
+    const checkStatus = async () => {
+      const userId = localStorage.getItem("userId") || localStorage.getItem("userEmail");
+      if (userId) {
+        const completed = await checkIfGameCompleted(userId);
+        if (completed) {
+          setAlreadyPlayed(true);
+          alert("You have already completed this simulation. Each user is allowed only one attempt.");
+          navigate("/game-simulation");
+        }
+      }
+      setIsChecking(false);
+    };
+    checkStatus();
+  }, [navigate]);
 
   const handleBack = () => {
     navigate("/game-simulation");
@@ -18,6 +37,17 @@ const GameDistributionIntro = () => {
     localStorage.setItem("gameDistributionCurrentRound", "1");
     navigate("/game-distribution/inventory");
   };
+
+  if (isChecking) {
+    return (
+      <div className="min-h-screen bg-emerald-50 flex items-center justify-center">
+        <div className="text-emerald-600 font-bold text-xl animate-pulse text-center">
+          <div className="w-16 h-16 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          Verifying Simulation Access...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">

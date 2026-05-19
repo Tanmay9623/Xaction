@@ -53,94 +53,187 @@ const GameDistributionRound7SalesTeam = () => {
 
   return (
     <div className="min-h-screen bg-emerald-50 flex items-center justify-center p-4 font-sans">
-      <div className="w-full max-w-2xl bg-yellow-100 rounded-3xl shadow-2xl overflow-hidden border-8 border-yellow-200">
-        <div className="bg-emerald-700 text-emerald-50 px-4 py-2 flex justify-between items-center text-[10px] font-bold tracking-widest uppercase border-b-4 border-emerald-800">
+      
+      {/* Main Game Container */}
+      <div className="w-full max-w-4xl bg-yellow-100 rounded-3xl shadow-2xl overflow-hidden border-8 border-yellow-200">
+        
+        <div className="bg-emerald-700 text-emerald-50 px-6 py-3 flex justify-between items-center text-sm font-bold tracking-widest uppercase border-b-4 border-emerald-800">
           <span>Game Simulation</span>
         </div>
 
-        <div className="text-center py-6">
-          <h1 className="text-3xl font-black text-red-600 tracking-tighter uppercase px-4 italic underline decoration-yellow-300">
+        {/* Header */}
+        <div className="text-center pt-8 pb-4 border-b-4 border-yellow-200/50">
+          <h1 className="text-4xl font-extrabold text-red-600 tracking-wider uppercase drop-shadow-sm">
             Round 7 – Sales Team Deployment
           </h1>
         </div>
 
-        <div className="px-8 pb-10 space-y-6">
-          <div className="text-center space-y-3">
-            <p className="text-[11px] text-gray-700 font-black uppercase tracking-tighter">
+        {/* Content Area */}
+        <div className="p-8 sm:p-12">
+          
+          {/* Description */}
+          <div className="text-center mb-4">
+            <p className="text-lg text-gray-700 leading-relaxed max-w-2xl mx-auto">
               Push for secondary sales to liquidate the forced inventory and protect your ROI.
             </p>
           </div>
 
-          <div className="space-y-4">
-            <div className="bg-yellow-50 p-4 rounded-2xl border border-yellow-200 shadow-sm relative text-center">
-              <h3 className="text-sm font-bold text-gray-800 mb-2 uppercase tracking-tighter italic">Retailers to Visit:</h3>
-              <div className="flex items-center justify-center space-x-6">
-                <span className="text-3xl font-black text-emerald-700 italic">{retailersToVisit}</span>
-                <button onClick={() => setRetailersToVisit(prev => prev + 10)} className="bg-green-50 hover:bg-green-100 text-green-400 font-black w-8 h-8 rounded-full border border-green-200 text-lg flex items-center justify-center transition-all active:scale-90">+</button>
-                <span className="text-[10px] text-gray-500 absolute right-4 top-1/2 -translate-y-1/2 font-black uppercase tracking-widest">Retailers</span>
-              </div>
-            </div>
-
-            <div className="bg-yellow-50 p-4 rounded-2xl border border-yellow-200 shadow-sm">
-              <h3 className="text-sm font-bold text-gray-800 mb-2 uppercase tracking-tighter italic">Acquisition Effort:</h3>
-              <div className="flex flex-col items-center">
-                <div className="flex items-center space-x-6 mb-3">
-                  <button onClick={() => setNewRetailerEffort(prev => Math.max(0, prev - 1))} className="bg-red-50 hover:bg-red-100 text-red-400 font-black w-10 h-10 rounded-full border border-red-200 text-2xl flex items-center justify-center">−</button>
-                  <span className="text-3xl font-black text-emerald-700 min-w-[120px] text-center italic">{levelLabels[newRetailerEffort]}</span>
-                  <button onClick={() => setNewRetailerEffort(prev => Math.min(2, prev + 1))} className="bg-green-50 hover:bg-green-100 text-green-400 font-black w-10 h-10 rounded-full border border-green-200 text-2xl flex items-center justify-center">+</button>
-                </div>
-                <div className="flex justify-center space-x-3">
-                  {levelLabels.map((label, idx) => (
-                    <button
-                      key={label}
-                      onClick={() => setNewRetailerEffort(idx)}
-                      className={`px-6 py-1 rounded-full text-[10px] font-black border transition-all uppercase tracking-tighter
-                        ${newRetailerEffort === idx ? 'bg-emerald-600 text-white border-emerald-700 shadow-inner' : 'bg-yellow-50 text-gray-400 border-yellow-300'}
-                      `}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-yellow-50 p-4 rounded-2xl border border-yellow-200 shadow-sm">
-              <h3 className="text-sm font-bold text-gray-800 mb-2 uppercase tracking-tighter italic">Scheme Push Intensity:</h3>
-              <div className="flex flex-col items-center">
-                <div className="flex items-center space-x-6 mb-3">
-                  <button onClick={() => setSchemePushIntensity(prev => Math.max(0, prev - 1))} className="bg-red-50 hover:bg-red-100 text-red-400 font-black w-10 h-10 rounded-full border border-red-200 text-2xl flex items-center justify-center">−</button>
-                  <span className="text-3xl font-black text-emerald-700 min-w-[120px] text-center italic">{levelLabels[schemePushIntensity]}</span>
-                  <button onClick={() => setSchemePushIntensity(prev => Math.min(2, prev + 1))} className="bg-green-50 hover:bg-green-100 text-green-400 font-black w-10 h-10 rounded-full border border-green-200 text-2xl flex items-center justify-center">+</button>
-                </div>
-                <div className="flex justify-center space-x-3">
-                  {levelLabels.map((label, idx) => (
-                    <button
-                      key={label}
-                      onClick={() => setSchemePushIntensity(idx)}
-                      className={`px-6 py-1 rounded-full text-[10px] font-black border transition-all uppercase tracking-tighter
-                        ${schemePushIntensity === idx ? 'bg-emerald-600 text-white border-emerald-700 shadow-inner' : 'bg-yellow-50 text-gray-400 border-yellow-300'}
-                      `}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
+          <div className="text-center mb-10">
+            <p className="text-md text-gray-600 italic">
+              Strategic deployment is critical to maximize this rare market opening.
+            </p>
           </div>
 
-          <div className="flex justify-between items-center gap-2 pt-4">
-            <button onClick={handleExit} className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg shadow-md text-xs uppercase tracking-tighter">[ Exit Market ]</button>
-            <button onClick={handleOK} className="bg-emerald-500 hover:bg-emerald-600 text-white font-black py-3 px-16 rounded-xl shadow-lg text-2xl tracking-tighter uppercase">[ OK ]</button>
-            <button onClick={handleBack} className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg shadow-md text-xs uppercase tracking-tighter">[ Back ]</button>
+          {/* Controls */}
+          <div className="flex flex-col items-center max-w-2xl mx-auto space-y-6">
+            
+            {/* Retailers to Visit per Salesperson */}
+            <div className="w-full bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-800 mb-3">Retailers to Visit per Salesperson:</h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => setRetailersToVisit(prev => Math.max(0, prev - 10))}
+                    className="bg-red-100 hover:bg-red-200 text-red-700 font-bold w-12 h-12 rounded-xl border-2 border-red-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    −
+                  </button>
+                  <span className="text-4xl font-extrabold text-emerald-700 min-w-[100px] text-center">
+                    {retailersToVisit}
+                  </span>
+                  <button
+                    onClick={() => setRetailersToVisit(prev => prev + 10)}
+                    className="bg-green-100 hover:bg-green-200 text-green-700 font-bold w-12 h-12 rounded-xl border-2 border-green-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    +
+                  </button>
+                </div>
+                <p className="text-gray-600 font-bold text-right text-lg">Retailers</p>
+              </div>
+            </div>
+
+            {/* New Retailer Acquisition Effort */}
+            <div className="w-full bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-800 mb-3">New Retailer Acquisition Effort:</h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => setNewRetailerEffort(prev => Math.max(0, prev - 1))}
+                    className="bg-red-100 hover:bg-red-200 text-red-700 font-bold w-12 h-12 rounded-xl border-2 border-red-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    −
+                  </button>
+                  <span className="text-4xl font-extrabold text-emerald-700 min-w-[100px] text-center">
+                    {levelLabels[newRetailerEffort]}
+                  </span>
+                  <button
+                    onClick={() => setNewRetailerEffort(prev => Math.min(2, prev + 1))}
+                    className="bg-green-100 hover:bg-green-200 text-green-700 font-bold w-12 h-12 rounded-xl border-2 border-green-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    +
+                  </button>
+                </div>
+                <p className="text-gray-600 font-bold text-right text-lg">Level</p>
+              </div>
+              <div className="flex justify-center space-x-6 mt-3">
+                {levelLabels.map((label, idx) => (
+                  <span
+                    key={label}
+                    className={`px-4 py-1 rounded-full text-sm font-bold border-2 cursor-pointer transition-all
+                      ${newRetailerEffort === idx
+                        ? 'bg-emerald-600 text-white border-emerald-700 shadow-md'
+                        : 'bg-yellow-100 text-gray-500 border-yellow-300 hover:border-emerald-300'
+                      }`}
+                    onClick={() => setNewRetailerEffort(idx)}
+                  >
+                    {label}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Scheme Push Intensity */}
+            <div className="w-full bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-800 mb-3">Scheme Push Intensity:</h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => setSchemePushIntensity(prev => Math.max(0, prev - 1))}
+                    className="bg-red-100 hover:bg-red-200 text-red-700 font-bold w-12 h-12 rounded-xl border-2 border-red-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    −
+                  </button>
+                  <span className="text-4xl font-extrabold text-emerald-700 min-w-[100px] text-center">
+                    {levelLabels[schemePushIntensity]}
+                  </span>
+                  <button
+                    onClick={() => setSchemePushIntensity(prev => Math.min(2, prev + 1))}
+                    className="bg-green-100 hover:bg-green-200 text-green-700 font-bold w-12 h-12 rounded-xl border-2 border-green-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    +
+                  </button>
+                </div>
+                <p className="text-gray-600 font-bold text-right text-lg">Level</p>
+              </div>
+              <div className="flex justify-center space-x-6 mt-3">
+                {levelLabels.map((label, idx) => (
+                  <span
+                    key={label}
+                    className={`px-4 py-1 rounded-full text-sm font-bold border-2 cursor-pointer transition-all
+                      ${schemePushIntensity === idx
+                        ? 'bg-emerald-600 text-white border-emerald-700 shadow-md'
+                        : 'bg-yellow-100 text-gray-500 border-yellow-300 hover:border-emerald-300'
+                      }`}
+                    onClick={() => setSchemePushIntensity(idx)}
+                  >
+                    {label}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+          </div>
+
+          {/* Action Buttons Row */}
+          <div className="mt-10 flex flex-wrap justify-between items-center gap-4 max-w-2xl mx-auto px-4">
+            <button 
+              onClick={handleExit}
+              className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(153,27,27)] hover:shadow-[0_2px_0_rgb(153,27,27)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl"
+            >
+              [ Exit Market ]
+            </button>
+
+            <button 
+              onClick={handleOK}
+              className="bg-green-500 hover:bg-green-600 text-white font-extrabold py-4 px-16 rounded-xl shadow-[0_6px_0_rgb(21,128,61)] hover:shadow-[0_3px_0_rgb(21,128,61)] hover:translate-y-[3px] active:shadow-none active:translate-y-[6px] transition-all text-4xl transform scale-110 tracking-widest"
+            >
+              [ OK ]
+            </button>
+
+            <button 
+              onClick={handleBack}
+              className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(75,85,99)] hover:shadow-[0_2px_0_rgb(75,85,99)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl"
+            >
+              [ Back ]
+            </button>
+          </div>
+
+        </div>
+
+        {/* Footer Info Strip */}
+        <div className="bg-yellow-100 border-t-4 border-yellow-300 px-8 py-5 flex justify-between items-center text-lg font-bold text-gray-800">
+          <div className="flex flex-col space-y-1">
+            <span>Round: <span className="text-emerald-700">7</span> of 7</span>
+            <span>Sales Team Available: <span className="text-emerald-700">{salesTeamAvailable}</span></span>
+          </div>
+          <div className="flex flex-col items-center space-y-1">
+            <span>Total Manpower: <span className="text-emerald-700 text-2xl">{totalManpower}</span></span>
+          </div>
+          <div className="flex flex-col text-right space-y-1">
+            <span>Total Coverage: <span className="text-blue-700">{totalCoverage}</span></span>
           </div>
         </div>
 
-        <div className="bg-yellow-200/50 border-t-2 border-yellow-300 px-6 py-3 flex justify-between items-center text-[10px] font-bold text-gray-800 uppercase italic">
-          <span>Round: 7 of 7</span>
-          <span>Coverage: {totalCoverage}</span>
-        </div>
       </div>
     </div>
   );

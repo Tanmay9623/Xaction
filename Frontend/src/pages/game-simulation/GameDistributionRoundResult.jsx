@@ -191,8 +191,15 @@ const GameDistributionRoundResult = () => {
   }, [monthlySalesTableTotal, retailerOutstanding, totalTradeSchemeSpend, netPaymentReceived, distributorROI]);
 
   const handleExit = () => {
-    // Calculate ending inventory after sales
-    const nextRoundInventory = {
+    // Calculate ending inventory after sales (Carry Forward: Opening Stock + Purchase - Sales)
+    const getSoldUnits = (key) => salesValues.find(p => p.key === key).units;
+    const carryForwardInventory = {
+      milk: { ...inventory.milk, qty: inventory.milk.qty - getSoldUnits('milk') },
+      dark: { ...inventory.dark, qty: inventory.dark.qty - getSoldUnits('dark') },
+      wafer: { ...inventory.wafer, qty: inventory.wafer.qty - getSoldUnits('wafer') },
+      gift: { ...inventory.gift, qty: inventory.gift.qty - getSoldUnits('gift') }
+    };
+    const emptyInventory = {
       milk: { ...inventory.milk, qty: 0 },
       dark: { ...inventory.dark, qty: 0 },
       wafer: { ...inventory.wafer, qty: 0 },
@@ -203,7 +210,8 @@ const GameDistributionRoundResult = () => {
     const closingCash = currentCash;
     
     localStorage.setItem("gameDistributionCash", Math.round(closingCash).toString());
-    localStorage.setItem("gameDistributionRound2Inventory", JSON.stringify(nextRoundInventory));
+    localStorage.setItem("gameDistributionR2OpeningStock", JSON.stringify(carryForwardInventory));
+    localStorage.setItem("gameDistributionRound2Inventory", JSON.stringify(emptyInventory));
     localStorage.setItem("gameDistributionCurrentRound", "2");
     navigate("/game-distribution/round2-intro");
   };

@@ -15,9 +15,6 @@ const GameDistributionRound3Inventory = () => {
   const [inventory, setInventory] = useState(() => {
     const saved = localStorage.getItem("gameDistributionRound3Inventory");
     if (saved) return JSON.parse(saved);
-    // Alternatively grab Round 2 ending inventory if resuming
-    const r2Saved = localStorage.getItem("gameDistributionRound2Inventory");
-    if (r2Saved) return JSON.parse(r2Saved);
 
     return {
       milk: { name: "Tedbury Milk Chocolate", price: 100, qty: 0 },

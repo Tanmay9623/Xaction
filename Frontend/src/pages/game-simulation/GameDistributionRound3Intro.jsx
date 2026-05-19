@@ -10,10 +10,12 @@ const GameDistributionRound3Intro = () => {
   const r2TradeSchemeSpend = parseInt(localStorage.getItem("gameDistributionR2TradeSchemeSpend") || "0", 10);
   const r2NetPaymentReceived = parseInt(localStorage.getItem("gameDistributionR2NetPaymentReceived") || "0", 10);
 
-  // --- Round 3 Opening Inventory ---
+  // --- Round 3 Opening Inventory (Carried over from R2 closing) ---
   const [inventory] = useState(() => {
-    const saved = localStorage.getItem("gameDistributionRound3Inventory");
-    if (saved) return JSON.parse(saved);
+    const saved = localStorage.getItem("gameDistributionR3OpeningStock") || localStorage.getItem("gameDistributionRound3Inventory");
+    if (saved) {
+        return JSON.parse(saved);
+    }
     return {
       milk: { qty: 0 }, dark: { qty: 0 }, wafer: { qty: 0 }, gift: { qty: 0 }
     };

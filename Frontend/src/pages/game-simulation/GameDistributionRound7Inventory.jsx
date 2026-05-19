@@ -13,14 +13,11 @@ const GameDistributionRound7Inventory = () => {
     const saved = localStorage.getItem("gameDistributionRound7Inventory");
     if (saved) return JSON.parse(saved);
     
-    // Carry over from R6 (Calculated in Intro)
-    const r6Saved = localStorage.getItem("gameDistributionRound6Inventory");
-    let baseInventory = r6Saved ? JSON.parse(r6Saved) : { milk: { qty: 0 }, dark: { qty: 0 }, wafer: { qty: 0 }, gift: { qty: 0 } };
     return {
-      milk: { ...baseInventory.milk, qty: Math.round(baseInventory.milk.qty * 1.2) },
-      dark: { ...baseInventory.dark, qty: Math.round(baseInventory.dark.qty * 1.2) },
-      wafer: { ...baseInventory.wafer, qty: Math.round(baseInventory.wafer.qty * 1.2) },
-      gift: { ...baseInventory.gift, qty: Math.round(baseInventory.gift.qty * 1.2) }
+      milk: { name: "Tedbury Milk Chocolate", price: 100, qty: 0 },
+      dark: { name: "Tedbury Dark Chocolate", price: 150, qty: 0 },
+      wafer: { name: "Tedbury Wafer Chocolate", price: 80, qty: 0 },
+      gift: { name: "Tedbury Gift Packs", price: 500, qty: 0 }
     };
   });
 

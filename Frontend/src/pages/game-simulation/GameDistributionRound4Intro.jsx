@@ -12,11 +12,8 @@ const GameDistributionRound4Intro = () => {
 
   // --- Round 4 Opening Inventory (Carried over from R3 closing) ---
   const [inventory] = useState(() => {
-    const saved = localStorage.getItem("gameDistributionRound3Inventory");
+    const saved = localStorage.getItem("gameDistributionR4OpeningStock") || localStorage.getItem("gameDistributionRound4Inventory");
     if (saved) {
-        // Logic to calculate remaining stock after R3 would ideally be here, 
-        // but for Intro we often show the "Opening" as what was starting or remaining.
-        // Consistency with R3Intro: load "gameDistributionRound3Inventory"
         return JSON.parse(saved);
     }
     return {

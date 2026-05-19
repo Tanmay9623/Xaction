@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import GameSimulationAdminPanel from "./game-simulation/GameSimulationAdminPanel";
 
 /**
  * Game Simulation Page
@@ -10,6 +11,24 @@ import { useNavigate } from "react-router-dom";
 const GameSimulation = () => {
   const navigate = useNavigate();
   const [hoveredCard, setHoveredCard] = useState(null);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+
+  // Ctrl + Shift + A opens the admin panel card
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key === "A") {
+        e.preventDefault();
+        setShowAdminCard((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const [showAdminCard, setShowAdminCard] = useState(false);
+  const handleAdminLoginRedirect = () => {
+    navigate("/admin/login");
+  };
 
   const gameSimulations = [
     {
@@ -63,7 +82,36 @@ const GameSimulation = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 relative">
+        {/* Admin Panel Card - Fixed in bottom-right corner */}
+        {showAdminCard && (
+          <div
+            className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 p-4 rounded-xl shadow-2xl w-64 sm:w-72 transition-all duration-300"
+            style={{ animation: 'fadeIn 0.3s ease-in-out' }}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="bg-green-200 text-green-800 px-2 py-1 rounded-full text-xs font-semibold">
+                Admin
+              </span>
+              <div className="text-green-600">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              </div>
+            </div>
+            
+            <h2 className="text-lg font-bold text-green-700 mb-2">Admin Panel</h2>
+            <p className="text-gray-600 text-xs mb-4">Manage simulations, quizzes, and analytics.</p>
+            
+            <button 
+              onClick={handleAdminLoginRedirect}
+              className="w-full text-green-700 font-semibold py-2 px-3 rounded-lg border-2 border-green-300 hover:bg-green-100 transition-colors text-sm"
+            >
+              Admin Login →
+            </button>
+          </div>
+        )}
       {/* Header Section */}
       <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-12 sm:py-16 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -188,6 +236,13 @@ const GameSimulation = () => {
         </div>
       </div>
     </div>
+
+
+    {/* Game Simulation Admin Panel - opens with Ctrl+Shift+A */}
+    {showAdminPanel && (
+      <GameSimulationAdminPanel onClose={() => setShowAdminPanel(false)} />
+    )}
+  </>
   );
 };
 

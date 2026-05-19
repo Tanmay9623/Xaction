@@ -12,7 +12,7 @@ const GameDistributionRound2Intro = () => {
 
   // --- Round 2 Opening Inventory ---
   const [inventory] = useState(() => {
-    const saved = localStorage.getItem("gameDistributionRound2Inventory");
+    const saved = localStorage.getItem("gameDistributionR2OpeningStock") || localStorage.getItem("gameDistributionRound2Inventory");
     if (saved) return JSON.parse(saved);
     return {
       milk: { qty: 0 }, dark: { qty: 0 }, wafer: { qty: 0 }, gift: { qty: 0 }

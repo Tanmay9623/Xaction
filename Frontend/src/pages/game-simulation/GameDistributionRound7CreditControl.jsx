@@ -49,92 +49,190 @@ const GameDistributionRound7CreditControl = () => {
 
   return (
     <div className="min-h-screen bg-emerald-50 flex items-center justify-center p-4 font-sans">
-      <div className="w-full max-w-2xl bg-yellow-100 rounded-3xl shadow-2xl overflow-hidden border-8 border-yellow-200">
-        <div className="bg-emerald-700 text-emerald-50 px-4 py-2 flex justify-between items-center text-[10px] font-bold tracking-widest uppercase border-b-4 border-emerald-800">
+      
+      {/* Main Game Container */}
+      <div className="w-full max-w-4xl bg-yellow-100 rounded-3xl shadow-2xl overflow-hidden border-8 border-yellow-200">
+        
+        <div className="bg-emerald-700 text-emerald-50 px-6 py-3 flex justify-between items-center text-sm font-bold tracking-widest uppercase border-b-4 border-emerald-800">
           <span>Game Simulation</span>
         </div>
 
-        <div className="text-center py-6">
-          <h1 className="text-3xl font-black text-red-600 tracking-tighter uppercase px-4 italic underline decoration-yellow-300">
+        {/* Header */}
+        <div className="text-center pt-8 pb-4 border-b-4 border-yellow-200/50">
+          <h1 className="text-4xl font-extrabold text-red-600 tracking-wider uppercase drop-shadow-sm">
             Round 7 – Credit Control
           </h1>
         </div>
 
-        <div className="px-8 pb-10 space-y-6">
-          <div className="text-center">
-            <p className="text-[11px] text-gray-700 font-black uppercase tracking-tighter">
+        {/* Content Area */}
+        <div className="p-8 sm:p-12">
+          
+          {/* Description */}
+          <div className="text-center mb-4">
+            <p className="text-lg text-gray-700 leading-relaxed max-w-2xl mx-auto">
               Manage cash flow efficiently during the year-end push.
             </p>
           </div>
 
-          <div className="space-y-4">
-            <div className="bg-yellow-50 p-4 rounded-2xl border border-yellow-200 shadow-sm relative">
-              <h3 className="text-sm font-bold text-gray-800 mb-2 uppercase tracking-tighter italic">Credit Days:</h3>
-              <div className="flex items-center justify-center space-x-6">
-                <button onClick={() => setCreditDays(prev => Math.max(0, prev - 1))} className="bg-red-50 hover:bg-red-100 text-red-400 font-bold w-8 h-8 rounded-full border border-red-200 text-xl flex items-center justify-center">−</button>
-                <span className="text-3xl font-black text-emerald-700 min-w-[60px] text-center italic">{creditDays}</span>
-                <button onClick={() => setCreditDays(prev => prev + 1)} className="bg-green-50 hover:bg-green-100 text-green-400 font-bold w-8 h-8 rounded-full border border-green-200 text-xl flex items-center justify-center">+</button>
-                <span className="text-[10px] text-gray-500 absolute right-4 top-1/2 -translate-y-1/2 font-black uppercase">Days</span>
-              </div>
-            </div>
-
-            <div className="bg-yellow-50 p-4 rounded-2xl border border-yellow-200 shadow-sm relative">
-              <h3 className="text-sm font-bold text-gray-800 mb-2 uppercase tracking-tighter italic">Max Credit Limit:</h3>
-              <div className="flex items-center justify-center space-x-4">
-                <button onClick={() => setMaxCreditLimit(prev => Math.max(0, prev - 5000))} className="bg-red-50 hover:bg-red-100 text-red-400 font-bold w-8 h-8 rounded-full border border-red-200 text-xl flex items-center justify-center">−</button>
-                <span className="text-2xl font-black text-emerald-700 min-w-[120px] text-center italic">₹{maxCreditLimit.toLocaleString('en-IN')}</span>
-                <button onClick={() => setMaxCreditLimit(prev => prev + 5000)} className="bg-green-50 hover:bg-green-100 text-green-400 font-bold w-8 h-8 rounded-full border border-green-200 text-xl flex items-center justify-center">+</button>
-                <span className="text-[10px] text-gray-500 absolute right-4 top-1/2 -translate-y-1/2 font-black uppercase">Amount</span>
-              </div>
-            </div>
-
-            <div className="bg-yellow-50 p-4 rounded-2xl border border-yellow-200 shadow-sm">
-              <h3 className="text-sm font-bold text-gray-800 mb-2 uppercase tracking-tighter italic">Credit Enforcement:</h3>
-              <div className="flex flex-col items-center">
-                <div className="flex items-center space-x-6 mb-3">
-                  <button onClick={() => setCreditEnforcement(prev => Math.max(0, prev - 1))} className="bg-red-50 hover:bg-red-100 text-red-400 font-bold w-10 h-10 rounded-full border border-red-200 text-2xl flex items-center justify-center">−</button>
-                  <span className="text-3xl font-black text-emerald-700 min-w-[150px] text-center italic">{enforcementLabels[creditEnforcement]}</span>
-                  <button onClick={() => setCreditEnforcement(prev => Math.min(2, prev + 1))} className="bg-green-50 hover:bg-green-100 text-green-400 font-bold w-10 h-10 rounded-full border border-green-200 text-2xl flex items-center justify-center">+</button>
-                </div>
-                <div className="flex justify-center space-x-3">
-                  {enforcementLabels.map((label, idx) => (
-                    <button
-                      key={label}
-                      onClick={() => setCreditEnforcement(idx)}
-                      className={`px-6 py-1 rounded-full text-[10px] font-black border transition-all uppercase tracking-tighter
-                        ${creditEnforcement === idx
-                          ? 'bg-emerald-600 text-white border-emerald-700 shadow-md scale-105'
-                          : 'bg-yellow-50 text-gray-400 border-yellow-300'
-                        }`}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-yellow-50 p-4 rounded-2xl border border-yellow-200 shadow-sm relative">
-              <h3 className="text-sm font-bold text-gray-800 mb-2 uppercase tracking-tighter italic">Early Payment Discount:</h3>
-              <div className="flex items-center justify-center space-x-6">
-                <button onClick={() => setEarlyPaymentDiscount(prev => Math.max(0, prev - 0.5))} className="bg-red-50 hover:bg-red-100 text-red-400 font-bold w-8 h-8 rounded-full border border-red-200 text-xl flex items-center justify-center">−</button>
-                <span className="text-3xl font-black text-emerald-700 min-w-[60px] text-center italic">{earlyPaymentDiscount}%</span>
-                <button onClick={() => setEarlyPaymentDiscount(prev => Math.min(5, prev + 0.5))} className="bg-green-50 hover:bg-green-100 text-green-400 font-bold w-8 h-8 rounded-full border border-green-200 text-xl flex items-center justify-center">+</button>
-                <span className="text-[10px] text-gray-500 absolute right-4 top-1/2 -translate-y-1/2 font-black uppercase">Percent</span>
-              </div>
-            </div>
+          <div className="text-center mb-10">
+            <p className="text-md text-gray-600 italic">
+              Adjust the credit policy carefully to balance sales growth, collections, and cash flow.
+            </p>
           </div>
 
-          <div className="flex justify-between items-center gap-2 pt-4">
-            <button onClick={handleExit} className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg shadow-md text-xs uppercase tracking-tighter">[ Exit Market ]</button>
-            <button onClick={handleOK} className="bg-emerald-500 hover:bg-emerald-600 text-white font-black py-3 px-16 rounded-xl shadow-lg text-2xl tracking-tighter uppercase">[ OK ]</button>
-            <button onClick={handleBack} className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg shadow-md text-xs uppercase tracking-tighter">[ Back ]</button>
+          {/* Controls */}
+          <div className="flex flex-col items-center max-w-2xl mx-auto space-y-6">
+            
+            {/* Credit Days */}
+            <div className="w-full bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-800 mb-3">Credit Days for Retailers:</h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => setCreditDays(prev => Math.max(0, prev - 1))}
+                    className="bg-red-100 hover:bg-red-200 text-red-700 font-bold w-12 h-12 rounded-xl border-2 border-red-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    −
+                  </button>
+                  <span className="text-4xl font-extrabold text-emerald-700 min-w-[100px] text-center">
+                    {creditDays}
+                  </span>
+                  <button
+                    onClick={() => setCreditDays(prev => prev + 1)}
+                    className="bg-green-100 hover:bg-green-200 text-green-700 font-bold w-12 h-12 rounded-xl border-2 border-green-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    +
+                  </button>
+                </div>
+                <p className="text-gray-600 font-bold text-right text-lg">Days</p>
+              </div>
+            </div>
+
+            {/* Maximum Credit Limit per Retailer */}
+            <div className="w-full bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-800 mb-3">Maximum Credit Limit per Retailer:</h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => setMaxCreditLimit(prev => Math.max(0, prev - 5000))}
+                    className="bg-red-100 hover:bg-red-200 text-red-700 font-bold w-12 h-12 rounded-xl border-2 border-red-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    −
+                  </button>
+                  <span className="text-3xl font-extrabold text-emerald-700 min-w-[140px] text-center">
+                    ₹{maxCreditLimit.toLocaleString('en-IN')}
+                  </span>
+                  <button
+                    onClick={() => setMaxCreditLimit(prev => prev + 5000)}
+                    className="bg-green-100 hover:bg-green-200 text-green-700 font-bold w-12 h-12 rounded-xl border-2 border-green-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    +
+                  </button>
+                </div>
+                <p className="text-gray-600 font-bold text-right text-lg">Total Outstanding Allowed</p>
+              </div>
+            </div>
+
+            {/* Credit Enforcement */}
+            <div className="w-full bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-800 mb-3">Credit Enforcement:</h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => setCreditEnforcement(prev => Math.max(0, prev - 1))}
+                    className="bg-red-100 hover:bg-red-200 text-red-700 font-bold w-12 h-12 rounded-xl border-2 border-red-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    −
+                  </button>
+                  <span className="text-4xl font-extrabold text-emerald-700 min-w-[100px] text-center">
+                    {enforcementLabels[creditEnforcement]}
+                  </span>
+                  <button
+                    onClick={() => setCreditEnforcement(prev => Math.min(2, prev + 1))}
+                    className="bg-green-100 hover:bg-green-200 text-green-700 font-bold w-12 h-12 rounded-xl border-2 border-green-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    +
+                  </button>
+                </div>
+                <p className="text-gray-600 font-bold text-right text-lg">Level</p>
+              </div>
+              <div className="flex justify-center space-x-6 mt-3">
+                {enforcementLabels.map((label, idx) => (
+                  <span
+                    key={label}
+                    className={`px-4 py-1 rounded-full text-sm font-bold border-2 cursor-pointer transition-all
+                      ${creditEnforcement === idx
+                        ? 'bg-emerald-600 text-white border-emerald-700 shadow-md'
+                        : 'bg-yellow-100 text-gray-500 border-yellow-300 hover:border-emerald-300'
+                      }`}
+                    onClick={() => setCreditEnforcement(idx)}
+                  >
+                    {label}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Early Payment Discount */}
+            <div className="w-full bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-800 mb-3">Early Payment Discount:</h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => setEarlyPaymentDiscount(prev => Math.max(0, prev - 0.5))}
+                    className="bg-red-100 hover:bg-red-200 text-red-700 font-bold w-12 h-12 rounded-xl border-2 border-red-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    −
+                  </button>
+                  <span className="text-4xl font-extrabold text-emerald-700 min-w-[100px] text-center">
+                    {earlyPaymentDiscount}%
+                  </span>
+                  <button
+                    onClick={() => setEarlyPaymentDiscount(prev => Math.min(5, prev + 0.5))}
+                    className="bg-green-100 hover:bg-green-200 text-green-700 font-bold w-12 h-12 rounded-xl border-2 border-green-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    +
+                  </button>
+                </div>
+                <p className="text-gray-600 font-bold text-right text-lg">Discount Percent</p>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Action Buttons Row */}
+          <div className="mt-10 flex flex-wrap justify-between items-center gap-4 max-w-2xl mx-auto px-4">
+            <button 
+              onClick={handleExit}
+              className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(153,27,27)] hover:shadow-[0_2px_0_rgb(153,27,27)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl"
+            >
+              [ Exit Market ]
+            </button>
+
+            <button 
+              onClick={handleOK}
+              className="bg-green-500 hover:bg-green-600 text-white font-extrabold py-4 px-16 rounded-xl shadow-[0_6px_0_rgb(21,128,61)] hover:shadow-[0_3px_0_rgb(21,128,61)] hover:translate-y-[3px] active:shadow-none active:translate-y-[6px] transition-all text-4xl transform scale-110 tracking-widest"
+            >
+              [ OK ]
+            </button>
+
+            <button 
+              onClick={handleBack}
+              className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(75,85,99)] hover:shadow-[0_2px_0_rgb(75,85,99)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl"
+            >
+              [ Back ]
+            </button>
+          </div>
+
+        </div>
+
+        {/* Footer Info Strip */}
+        <div className="bg-yellow-100 border-t-4 border-yellow-300 px-8 py-5 flex justify-between items-center text-lg font-bold text-gray-800">
+          <div className="flex flex-col space-y-1">
+            <span>Round: <span className="text-emerald-700">7</span> of 7</span>
           </div>
         </div>
 
-        <div className="bg-yellow-200/50 border-t-2 border-yellow-300 px-6 py-3 flex justify-center items-center text-[10px] font-bold text-gray-800 uppercase italic">
-          <span>Round: 7 of 7</span>
-        </div>
       </div>
     </div>
   );

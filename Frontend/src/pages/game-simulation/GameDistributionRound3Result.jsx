@@ -4,15 +4,19 @@ import { useNavigate } from "react-router-dom";
 const GameDistributionRound3Result = () => {
   const navigate = useNavigate();
 
-  // --- Round 3 Inventory (from Round 3 Inventory screen) ---
+  // --- Round 3 Inventory (from Round 3 Inventory screen) + Opening Stock ---
   const [inventory] = useState(() => {
-    const saved = localStorage.getItem("gameDistributionRound3Inventory");
-    if (saved) return JSON.parse(saved);
+    const savedPurchases = localStorage.getItem("gameDistributionRound3Inventory");
+    const savedOpening = localStorage.getItem("gameDistributionR3OpeningStock");
+    
+    const purchases = savedPurchases ? JSON.parse(savedPurchases) : null;
+    const opening = savedOpening ? JSON.parse(savedOpening) : null;
+    
     return {
-      milk: { name: "Tedbury Milk Chocolate", qty: 0 },
-      dark: { name: "Tedbury Dark Chocolate", qty: 0 },
-      wafer: { name: "Tedbury Wafer Chocolate", qty: 0 },
-      gift: { name: "Tedbury Gift Packs", qty: 0 }
+      milk: { name: "Tedbury Milk Chocolate", qty: (purchases?.milk?.qty || 0) },
+      dark: { name: "Tedbury Dark Chocolate", qty: (purchases?.dark?.qty || 0) },
+      wafer: { name: "Tedbury Wafer Chocolate", qty: (purchases?.wafer?.qty || 0) },
+      gift: { name: "Tedbury Gift Packs", qty: (purchases?.gift?.qty || 0) }
     };
   });
 
@@ -43,10 +47,17 @@ const GameDistributionRound3Result = () => {
   // --- Round 3 Market Data (expansion scenario) ---
   // Increase in demand due to 1000 new outlets × 20 units Milk Chocolate minimum
   const monthlySales = {
-    milk: { units: 30000, sellingPrice: 54, totalSales: 1620000 },  // 10000 existing + 20000 new outlet demand
-    dark: { units: 7000, sellingPrice: 77, totalSales: 539000 },
-    wafer: { units: 10000, sellingPrice: 32.4, totalSales: 324000 },
-    gift: { units: 1000, sellingPrice: 216, totalSales: 216000 }
+    milk: { sellingPrice: 54 },
+    dark: { sellingPrice: 77 },
+    wafer: { sellingPrice: 32.4 },
+    gift: { sellingPrice: 216 }
+  };
+
+  const salesPercentages = {
+    milk: 100,
+    dark: 20,
+    wafer: 40,
+    gift: 35
   };
 
   const costPrices = { milk: 100, dark: 150, wafer: 80, gift: 500 };
@@ -71,11 +82,10 @@ const GameDistributionRound3Result = () => {
 
   // Monthly Sales Table
   const salesValues = productRows.map(p => {
-    const salesUnits = monthlySales[p.key].units;
     const sellingPrice = monthlySales[p.key].sellingPrice;
     const invQty = inventory[p.key].qty;
 
-    const units = Math.min(invQty, salesUnits);
+    const units = Math.round((salesPercentages[p.key] / 100) * invQty);
     const value = units * sellingPrice;
 
     return {
@@ -177,8 +187,15 @@ const GameDistributionRound3Result = () => {
   }, [monthlySalesTableTotal, retailerOutstanding, totalTradeSchemeSpend, netPaymentReceived, distributorROI]);
 
   const handleProceed = () => {
-    // Calculate ending inventory after sales
-    const nextRoundInventory = {
+    // Calculate ending inventory after sales (Carry Forward: Opening Stock + Purchase - Sales)
+    const getSoldUnits = (key) => salesValues.find(p => p.key === key).units;
+    const carryForwardInventory = {
+      milk: { ...inventory.milk, qty: inventory.milk.qty - getSoldUnits('milk') },
+      dark: { ...inventory.dark, qty: inventory.dark.qty - getSoldUnits('dark') },
+      wafer: { ...inventory.wafer, qty: inventory.wafer.qty - getSoldUnits('wafer') },
+      gift: { ...inventory.gift, qty: inventory.gift.qty - getSoldUnits('gift') }
+    };
+    const emptyInventory = {
       milk: { ...inventory.milk, qty: 0 },
       dark: { ...inventory.dark, qty: 0 },
       wafer: { ...inventory.wafer, qty: 0 },
@@ -189,7 +206,8 @@ const GameDistributionRound3Result = () => {
     const closingCash = currentCash;
     
     localStorage.setItem("gameDistributionCash", Math.round(closingCash).toString());
-    localStorage.setItem("gameDistributionRound4Inventory", JSON.stringify(nextRoundInventory));
+    localStorage.setItem("gameDistributionR4OpeningStock", JSON.stringify(carryForwardInventory));
+    localStorage.setItem("gameDistributionRound4Inventory", JSON.stringify(emptyInventory));
     localStorage.setItem("gameDistributionCurrentRound", "4");
     navigate("/game-distribution/round4-intro");
   };
@@ -318,6 +336,7 @@ const GameDistributionRound3Result = () => {
             </div>
           </div>
 
+          {/* Key Results */}
           {/* Key Results */}
           <div className="mb-8 max-w-3xl mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

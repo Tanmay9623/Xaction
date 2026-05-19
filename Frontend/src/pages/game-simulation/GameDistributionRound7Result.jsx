@@ -1,14 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { saveFinalResult } from './dbUtils';
 
 const GameDistributionRound7Result = () => {
   const navigate = useNavigate();
 
-  // --- Round 7 Inventory ---
+  // --- Round 7 Inventory + Opening Stock ---
   const [inventory] = useState(() => {
-    const saved = localStorage.getItem("gameDistributionRound7Inventory");
-    if (saved) return JSON.parse(saved);
-    return { milk: { qty: 0 }, dark: { qty: 0 }, wafer: { qty: 0 }, gift: { qty: 0 } };
+    const savedPurchases = localStorage.getItem("gameDistributionRound7Inventory");
+    const savedOpening = localStorage.getItem("gameDistributionR7OpeningStock");
+    
+    const purchases = savedPurchases ? JSON.parse(savedPurchases) : null;
+    const opening = savedOpening ? JSON.parse(savedOpening) : null;
+    
+    return {
+      milk: { name: "Tedbury Milk Chocolate", qty: (purchases?.milk?.qty || 0) },
+      dark: { name: "Tedbury Dark Chocolate", qty: (purchases?.dark?.qty || 0) },
+      wafer: { name: "Tedbury Wafer Chocolate", qty: (purchases?.wafer?.qty || 0) },
+      gift: { name: "Tedbury Gift Packs", qty: (purchases?.gift?.qty || 0) }
+    };
   });
 
   // --- Round 6 Data ---
@@ -69,9 +79,9 @@ const GameDistributionRound7Result = () => {
   // Round 7 Margin: 8% - Early Payment Discount
   const marginPercent = 8 - earlyPaymentDiscount;
   const grossMargin = marginPercent > 0 ? totalSales - (totalSales / (1 + marginPercent / 100)) : 0;
-  
+
   const netMargin = grossMargin * (1 - (earlyPaymentDiscount / 100) * (1 - creditDays / 30));
-  
+
   const retailerOutstanding = (creditDays * totalSales) / 30;
   const netPaymentReceived = totalSales - retailerOutstanding;
   const cashInHand = currentCash + r6NetPaymentReceived - r6TradeSchemeSpend;
@@ -116,9 +126,40 @@ const GameDistributionRound7Result = () => {
     localStorage.setItem("gameDistributionR7RetailerSatisfaction", getRetailerSatisfaction());
   }, [totalSales, retailerOutstanding, netPaymentReceived, distributorROI]);
 
-  const handleFinish = () => {
-    alert("Congratulations! You have completed the Game Distribution Simulation.");
-    navigate("/simulation");
+  const handleFinish = async () => {
+    // Ensure we use a stable ID (userEmail is used for the testgame45 bypass)
+    const userId = localStorage.getItem("userId") || localStorage.getItem("userEmail") || "Guest_" + Date.now();
+    const userName = localStorage.getItem("userName") || "Guest User";
+
+    const finalResults = {
+      total_score: Math.round(totalSales),
+      distributor_roi: parseFloat(distributorROI.toFixed(2)),
+      market_share: 95, // From your target status logic
+      retailer_satisfaction: parseFloat(satisfactionScore.toFixed(2)),
+      cash_flow_health: currentCash > 0 ? "Healthy" : "Critical",
+      user_name: userName,
+      final_state_data: {
+        inventory,
+        cashInHand,
+        totalSales,
+        satisfaction: getRetailerSatisfaction()
+      }
+    };
+
+    const { success, error, alreadyExists } = await saveFinalResult(userId, finalResults);
+
+    if (success) {
+      if (alreadyExists) {
+        alert("Results already submitted previously. Returning to dashboard.");
+      } else {
+        alert("Congratulations! Your game results have been saved.");
+      }
+    } else {
+      console.error("Supabase Save Error:", error);
+      alert("Game completed! Note: There was an issue saving results to the cloud database.");
+    }
+
+    navigate("/game-simulation");
   };
 
   const handleBack = () => {
@@ -137,7 +178,7 @@ const GameDistributionRound7Result = () => {
           </h1>
         </div>
         <div className="p-8 sm:p-10">
-          
+
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10 max-w-4xl mx-auto">
             {[
               { label: "Final Margin", value: `${marginPercent.toFixed(1)}%`, color: "text-emerald-700" },
@@ -146,8 +187,8 @@ const GameDistributionRound7Result = () => {
               { label: "Final Push", value: getRetailerSatisfaction(), color: "text-amber-600" }
             ].map(item => (
               <div key={item.label} className="bg-yellow-50 p-3 rounded-xl border border-yellow-200 text-center">
-                <p className="text-[10px] text-gray-500 font-black uppercase tracking-tighter mb-1">{item.label}</p>
-                <p className={`text-lg font-black italic underline decoration-yellow-300 ${item.color}`}>{item.value}</p>
+                <p className="text-xs text-gray-500 font-black uppercase tracking-tighter mb-1">{item.label}</p>
+                <p className={`text-xl font-black italic underline decoration-yellow-300 ${item.color}`}>{item.value}</p>
               </div>
             ))}
           </div>
@@ -157,7 +198,7 @@ const GameDistributionRound7Result = () => {
             <div className="bg-yellow-50 rounded-2xl border-2 border-yellow-200 overflow-hidden shadow-inner">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b-2 border-yellow-200 bg-yellow-100 uppercase text-[10px]">
+                  <tr className="border-b-2 border-yellow-200 bg-yellow-100 uppercase text-xs">
                     <th className="px-5 py-3 text-gray-700 font-black italic">Product Line</th>
                     <th className="px-5 py-3 text-gray-700 font-black text-right italic">Units Moved</th>
                     <th className="px-5 py-3 text-gray-700 font-black text-right italic">Total Value</th>
@@ -166,47 +207,50 @@ const GameDistributionRound7Result = () => {
                 <tbody>
                   {salesValues.map(p => (
                     <tr key={p.key} className="border-b border-yellow-100 hover:bg-yellow-100/50 transition-colors">
-                      <td className="px-5 py-3 font-bold text-gray-800 uppercase text-[12px] tracking-tighter">{p.label}</td>
-                      <td className="px-5 py-3 text-right text-emerald-700 font-black italic">{p.units.toLocaleString('en-IN')}</td>
-                      <td className="px-5 py-3 text-right font-black text-gray-800">{formatCurrency(p.value)}</td>
+                      <td className="px-5 py-3 font-bold text-gray-800 uppercase text-sm tracking-tighter">{p.label}</td>
+                      <td className="px-5 py-3 text-right text-emerald-700 font-black italic text-lg">{p.units.toLocaleString('en-IN')}</td>
+                      <td className="px-5 py-3 text-right font-black text-gray-800 text-lg">{formatCurrency(p.value)}</td>
                     </tr>
                   ))}
                 </tbody>
                 <tfoot>
                   <tr className="bg-emerald-50 border-t-4 border-emerald-200">
-                    <td className="px-5 py-3 font-black text-gray-900 text-xl italic uppercase underline tracking-widest" colSpan={2}>Grand Total Sales</td>
-                    <td className="px-5 py-3 text-right font-black text-emerald-700 text-2xl italic tracking-tighter">{formatCurrency(totalSales)}</td>
+                    <td className="px-5 py-3 font-black text-gray-900 text-2xl italic uppercase underline tracking-widest" colSpan={2}>Grand Total Sales</td>
+                    <td className="px-5 py-3 text-right font-black text-emerald-700 text-3xl italic tracking-tighter">{formatCurrency(totalSales)}</td>
                   </tr>
                 </tfoot>
               </table>
             </div>
           </div>
 
-          <div className="mb-8 max-w-3xl mx-auto">
-             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="mb-10 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {[
                 { label: "Opening Cash", value: formatCurrency(cashInHand) },
                 { label: "Primary Push Investment", value: formatCurrency(totalClosingStockValue) },
                 { label: "Net Secondary Sales", value: formatCurrency(Math.round(netPaymentReceived)) },
                 { label: "Annual Net Margin", value: formatCurrency(Math.round(grossMargin)) },
               ].map(item => (
-                <div key={item.label} className="bg-yellow-50 p-4 rounded-xl border-2 border-yellow-200 flex justify-between items-center shadow-sm">
-                  <span className="text-gray-700 font-black text-[10px] uppercase tracking-tighter italic">{item.label}</span>
-                  <span className="text-emerald-700 font-black text-lg italic underline decoration-yellow-300">{item.value}</span>
+                <div key={item.label} className="bg-yellow-50 p-6 rounded-2xl border-4 border-yellow-200 flex justify-between items-center shadow-md">
+                  <span className="text-gray-700 font-black text-sm uppercase tracking-tighter italic">{item.label}</span>
+                  <span className="text-emerald-700 font-black text-3xl italic underline decoration-yellow-300">{item.value}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="mb-10 max-w-3xl mx-auto">
+          <div className="mb-10 max-w-4xl mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              <div className="bg-emerald-50 p-8 rounded-3xl border-4 border-emerald-400 text-center shadow-xl transform rotate-1">
-                <p className="text-emerald-600 font-black text-xs mb-1 uppercase tracking-widest underline decoration-yellow-400">Final ROI</p>
-                <p className="text-6xl font-black text-emerald-800 italic tracking-tighter">{distributorROI.toFixed(2)}%</p>
+              {/* ROI Box */}
+              <div className="bg-emerald-50 p-8 rounded-[2.5rem] border-[10px] border-emerald-500 text-center shadow-[0_20px_50px_-12px_rgba(16,185,129,0.4)] transition-all hover:scale-105 active:scale-95 ring-4 ring-emerald-100 ring-offset-2">
+                <p className="text-emerald-600 font-black text-sm mb-3 uppercase tracking-[0.2em] underline decoration-yellow-400 decoration-4">Final ROI</p>
+                <p className="text-7xl font-black text-emerald-900 italic tracking-tighter drop-shadow-lg">{distributorROI.toFixed(2)}%</p>
               </div>
-              <div className="bg-amber-50 p-8 rounded-3xl border-4 border-amber-400 text-center shadow-xl transform -rotate-1">
-                <p className="text-amber-600 font-black text-xs mb-1 uppercase tracking-widest underline decoration-yellow-400">Final Push Rating</p>
-                <p className={`text-6xl font-black italic tracking-tighter ${getRetailerSatisfaction() === 'High' ? 'text-emerald-700' : getRetailerSatisfaction() === 'Medium' ? 'text-amber-600' : 'text-red-600'}`}>
+
+              {/* Push Rating Box */}
+              <div className="bg-amber-50 p-8 rounded-[2.5rem] border-[10px] border-amber-500 text-center shadow-[0_20px_50px_-12px_rgba(245,158,11,0.4)] transition-all hover:scale-105 active:scale-95 ring-4 ring-amber-100 ring-offset-2">
+                <p className="text-amber-600 font-black text-sm mb-3 uppercase tracking-[0.2em] underline decoration-yellow-400 decoration-4">Final Push Rating</p>
+                <p className={`text-7xl font-black italic tracking-tighter drop-shadow-lg ${getRetailerSatisfaction() === 'High' ? 'text-emerald-700' : getRetailerSatisfaction() === 'Medium' ? 'text-amber-600' : 'text-red-600'}`}>
                   {getRetailerSatisfaction()}
                 </p>
               </div>
@@ -215,7 +259,7 @@ const GameDistributionRound7Result = () => {
 
           <div className="mt-12 flex justify-between items-center max-w-2xl mx-auto px-4">
             <button onClick={handleBack} className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-10 rounded-xl shadow-[0_4px_0_rgb(75,85,99)] text-xl uppercase tracking-tighter">[ Back ]</button>
-            <button onClick={handleFinish} className="bg-emerald-600 hover:bg-emerald-700 text-white font-black py-5 px-16 rounded-2xl shadow-[0_8px_0_rgb(5,150,105)] text-3xl tracking-widest uppercase transform scale-110 hover:scale-115 transition-transform">[ Finish Game ]</button>
+            <button onClick={handleFinish} className="bg-emerald-600 hover:bg-emerald-700 text-white font-black py-5 px-16 rounded-2xl shadow-[0_8px_0_rgb(5,150,105)] text-3xl tracking-widest uppercase transform scale-110 hover:scale-115 transition-transform">[ Exit Game ]</button>
           </div>
         </div>
         <div className="bg-yellow-100 border-t-4 border-yellow-300 px-8 py-5 flex justify-center items-center text-lg font-bold text-gray-800 uppercase italic">

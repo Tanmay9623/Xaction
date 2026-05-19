@@ -24,7 +24,6 @@ const GameDistributionRound7Intro = () => {
       gift: { ...baseInventory.gift, qty: Math.round(baseInventory.gift.qty * 1.2) }
     };
     
-    localStorage.setItem("gameDistributionRound7Inventory", JSON.stringify(pushedInventory));
     return pushedInventory;
   });
   

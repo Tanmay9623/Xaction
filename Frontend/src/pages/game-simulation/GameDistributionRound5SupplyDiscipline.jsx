@@ -51,97 +51,190 @@ const GameDistributionRound5SupplyDiscipline = () => {
 
   return (
     <div className="min-h-screen bg-emerald-50 flex items-center justify-center p-4 font-sans">
-      <div className="w-full max-w-2xl bg-yellow-100 rounded-3xl shadow-2xl overflow-hidden border-8 border-yellow-200">
-        <div className="bg-emerald-700 text-emerald-50 px-4 py-2 flex justify-between items-center text-[10px] font-bold tracking-widest uppercase border-b-4 border-emerald-800">
+      
+      {/* Main Game Container */}
+      <div className="w-full max-w-4xl bg-yellow-100 rounded-3xl shadow-2xl overflow-hidden border-8 border-yellow-200">
+        
+        <div className="bg-emerald-700 text-emerald-50 px-6 py-3 flex justify-between items-center text-sm font-bold tracking-widest uppercase border-b-4 border-emerald-800">
           <span>Game Simulation</span>
         </div>
 
-        <div className="text-center py-6">
-          <h1 className="text-3xl font-black text-red-600 tracking-tighter uppercase">
+        {/* Header */}
+        <div className="text-center pt-8 pb-4 border-b-4 border-yellow-200/50">
+          <h1 className="text-4xl font-extrabold text-red-600 tracking-wider uppercase drop-shadow-sm">
             Round 5 – Supply Discipline
           </h1>
         </div>
 
-        <div className="px-8 pb-10 space-y-6">
-          <div className="text-center">
-            <p className="text-[11px] text-gray-700 font-medium">
+        {/* Content Area */}
+        <div className="p-8 sm:p-12">
+          
+          {/* Description */}
+          <div className="text-center mb-4">
+            <p className="text-lg text-gray-700 leading-relaxed max-w-2xl mx-auto">
               In this <span className="font-bold text-red-600">Competition Stock Out</span> phase, ensuring consistent supply to newly acquired retailers is key to building trust.
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="text-center mb-10">
+            <p className="text-md text-gray-600 italic">
+              Adjust the supply discipline policy to maintain a reliable supply chain.
+            </p>
+          </div>
+
+          {/* Controls */}
+          <div className="flex flex-col items-center max-w-2xl mx-auto space-y-6">
+            
             {/* Order Fulfilment Rate */}
-            <div className="bg-yellow-50 p-4 rounded-2xl border border-yellow-200 shadow-sm relative">
-              <h3 className="text-sm font-bold text-gray-800 mb-2">Order Fulfilment Rate:</h3>
-              <div className="flex items-center justify-center space-x-6">
-                <button onClick={() => setOrderFulfilmentRate(prev => Math.max(0, prev - 1))} className="bg-red-50 hover:bg-red-100 text-red-400 font-bold w-8 h-8 rounded-full border border-red-200 text-xl flex items-center justify-center">−</button>
-                <span className="text-3xl font-black text-emerald-700 min-w-[60px] text-center">{orderFulfilmentRate}%</span>
-                <button onClick={() => setOrderFulfilmentRate(prev => Math.min(100, prev + 1))} className="bg-green-50 hover:bg-green-100 text-green-400 font-bold w-8 h-8 rounded-full border border-green-200 text-xl flex items-center justify-center">+</button>
-                <span className="text-[10px] text-gray-500 absolute right-4 top-1/2 -translate-y-1/2">Percent</span>
+            <div className="w-full bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-800 mb-3">Order Fulfilment Rate:</h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => setOrderFulfilmentRate(prev => Math.max(0, prev - 1))}
+                    className="bg-red-100 hover:bg-red-200 text-red-700 font-bold w-12 h-12 rounded-xl border-2 border-red-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    −
+                  </button>
+                  <span className="text-4xl font-extrabold text-emerald-700 min-w-[100px] text-center">
+                    {orderFulfilmentRate}%
+                  </span>
+                  <button
+                    onClick={() => setOrderFulfilmentRate(prev => Math.min(100, prev + 1))}
+                    className="bg-green-100 hover:bg-green-200 text-green-700 font-bold w-12 h-12 rounded-xl border-2 border-green-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    +
+                  </button>
+                </div>
+                <p className="text-gray-600 font-bold text-right text-lg">%</p>
               </div>
             </div>
 
             {/* Delivery Frequency */}
-            <div className="bg-yellow-50 p-4 rounded-2xl border border-yellow-200 shadow-sm relative">
-              <h3 className="text-sm font-bold text-gray-800 mb-2">Delivery Frequency:</h3>
-              <div className="flex items-center justify-center space-x-6">
-                <button onClick={() => setDeliveryFrequency(prev => Math.max(1, prev - 1))} className="bg-red-50 hover:bg-red-100 text-red-400 font-bold w-8 h-8 rounded-full border border-red-200 text-xl flex items-center justify-center">−</button>
-                <span className="text-3xl font-black text-emerald-700 min-w-[60px] text-center">{deliveryFrequency}</span>
-                <button onClick={() => setDeliveryFrequency(prev => prev + 1)} className="bg-green-50 hover:bg-green-100 text-green-400 font-bold w-8 h-8 rounded-full border border-green-200 text-xl flex items-center justify-center">+</button>
-                <span className="text-[10px] text-gray-500 absolute right-4 top-1/2 -translate-y-1/2">Days</span>
+            <div className="w-full bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-800 mb-3">Delivery Frequency:</h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => setDeliveryFrequency(prev => Math.max(1, prev - 1))}
+                    className="bg-red-100 hover:bg-red-200 text-red-700 font-bold w-12 h-12 rounded-xl border-2 border-red-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    −
+                  </button>
+                  <span className="text-4xl font-extrabold text-emerald-700 min-w-[100px] text-center">
+                    {deliveryFrequency}
+                  </span>
+                  <button
+                    onClick={() => setDeliveryFrequency(prev => prev + 1)}
+                    className="bg-green-100 hover:bg-green-200 text-green-700 font-bold w-12 h-12 rounded-xl border-2 border-green-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    +
+                  </button>
+                </div>
+                <p className="text-gray-600 font-bold text-right text-lg">Days</p>
               </div>
             </div>
 
-            {/* Priority Supply Allocation (MATCHING PILL STYLE) */}
-            <div className="bg-yellow-50 p-4 rounded-2xl border border-yellow-200 shadow-sm">
-              <h3 className="text-sm font-bold text-gray-800 mb-2">Priority Supply Allocation:</h3>
-              <div className="flex flex-col items-center">
-                <div className="flex items-center space-x-6 mb-3">
-                  <button onClick={() => setPriorityAllocation(prev => Math.max(0, prev - 1))} className="bg-red-50 hover:bg-red-100 text-red-400 font-bold w-10 h-10 rounded-full border border-red-200 text-2xl flex items-center justify-center">−</button>
-                  <span className="text-2xl font-black text-emerald-700 min-w-[150px] text-center">{allocationLabels[priorityAllocation]}</span>
-                  <button onClick={() => setPriorityAllocation(prev => Math.min(2, prev + 1))} className="bg-green-50 hover:bg-green-100 text-green-400 font-bold w-10 h-10 rounded-full border border-green-200 text-2xl flex items-center justify-center">+</button>
-                  <span className="text-[10px] text-gray-500">Level</span>
+            {/* Priority Supply Allocation */}
+            <div className="w-full bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-800 mb-3">Priority Supply Allocation:</h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => setPriorityAllocation(prev => Math.max(0, prev - 1))}
+                    className="bg-red-100 hover:bg-red-200 text-red-700 font-bold w-12 h-12 rounded-xl border-2 border-red-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    −
+                  </button>
+                  <span className="text-3xl font-extrabold text-emerald-700 min-w-[180px] text-center">
+                    {allocationLabels[priorityAllocation]}
+                  </span>
+                  <button
+                    onClick={() => setPriorityAllocation(prev => Math.min(2, prev + 1))}
+                    className="bg-green-100 hover:bg-green-200 text-green-700 font-bold w-12 h-12 rounded-xl border-2 border-green-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    +
+                  </button>
                 </div>
-                <div className="flex justify-center space-x-2">
-                  {allocationLabels.map((label, idx) => (
-                    <button
-                      key={label}
-                      onClick={() => setPriorityAllocation(idx)}
-                      className={`px-4 py-1 rounded-full text-[9px] font-bold border transition-all
-                        ${priorityAllocation === idx
-                          ? 'bg-emerald-600 text-white border-emerald-700 shadow-md scale-105'
-                          : 'bg-yellow-50 text-gray-400 border-yellow-300 hover:border-emerald-200'
-                        }`}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
+                <p className="text-gray-600 font-bold text-right text-lg">Category</p>
+              </div>
+              <div className="flex justify-center space-x-6 mt-3">
+                {allocationLabels.map((label, idx) => (
+                  <span
+                    key={label}
+                    className={`px-4 py-1 rounded-full text-sm font-bold border-2 cursor-pointer transition-all
+                      ${priorityAllocation === idx
+                        ? 'bg-emerald-600 text-white border-emerald-700 shadow-md'
+                        : 'bg-yellow-100 text-gray-500 border-yellow-300 hover:border-emerald-300'
+                      }`}
+                    onClick={() => setPriorityAllocation(idx)}
+                  >
+                    {label}
+                  </span>
+                ))}
               </div>
             </div>
 
             {/* Stock Buffer Level */}
-            <div className="bg-yellow-50 p-4 rounded-2xl border border-yellow-200 shadow-sm relative">
-              <h3 className="text-sm font-bold text-gray-800 mb-2">Stock Buffer Level:</h3>
-              <div className="flex items-center justify-center space-x-6">
-                <button onClick={() => setStockBufferLevel(prev => Math.max(0, prev - 1))} className="bg-red-50 hover:bg-red-100 text-red-400 font-bold w-8 h-8 rounded-full border border-red-200 text-xl flex items-center justify-center">−</button>
-                <span className="text-3xl font-black text-emerald-700 min-w-[60px] text-center">{stockBufferLevel}%</span>
-                <button onClick={() => setStockBufferLevel(prev => prev + 1)} className="bg-green-50 hover:bg-green-100 text-green-400 font-bold w-8 h-8 rounded-full border border-green-200 text-xl flex items-center justify-center">+</button>
-                <span className="text-[10px] text-gray-500 absolute right-4 top-1/2 -translate-y-1/2">Percent</span>
+            <div className="w-full bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-800 mb-3">Stock Buffer Level:</h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => setStockBufferLevel(prev => Math.max(0, prev - 1))}
+                    className="bg-red-100 hover:bg-red-200 text-red-700 font-bold w-12 h-12 rounded-xl border-2 border-red-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    −
+                  </button>
+                  <span className="text-4xl font-extrabold text-emerald-700 min-w-[100px] text-center">
+                    {stockBufferLevel}%
+                  </span>
+                  <button
+                    onClick={() => setStockBufferLevel(prev => prev + 1)}
+                    className="bg-green-100 hover:bg-green-200 text-green-700 font-bold w-12 h-12 rounded-xl border-2 border-green-300 text-2xl transition-all active:translate-y-[2px]"
+                  >
+                    +
+                  </button>
+                </div>
+                <p className="text-gray-600 font-bold text-right text-lg">%</p>
               </div>
             </div>
+
           </div>
 
-          <div className="flex justify-between items-center gap-2 pt-4">
-            <button onClick={handleExit} className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg shadow-md text-xs">[ Exit Market ]</button>
-            <button onClick={handleOK} className="bg-emerald-500 hover:bg-emerald-600 text-white font-black py-3 px-16 rounded-xl shadow-lg text-2xl tracking-tighter">[ OK ]</button>
-            <button onClick={handleBack} className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg shadow-md text-xs">[ Back ]</button>
+          {/* Action Buttons Row */}
+          <div className="mt-10 flex flex-wrap justify-between items-center gap-4 max-w-2xl mx-auto px-4">
+            <button 
+              onClick={handleExit}
+              className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(153,27,27)] hover:shadow-[0_2px_0_rgb(153,27,27)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl"
+            >
+              [ Exit Market ]
+            </button>
+
+            <button 
+              onClick={handleOK}
+              className="bg-green-500 hover:bg-green-600 text-white font-extrabold py-4 px-16 rounded-xl shadow-[0_6px_0_rgb(21,128,61)] hover:shadow-[0_3px_0_rgb(21,128,61)] hover:translate-y-[3px] active:shadow-none active:translate-y-[6px] transition-all text-4xl transform scale-110 tracking-widest"
+            >
+              [ OK ]
+            </button>
+
+            <button 
+              onClick={handleBack}
+              className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(75,85,99)] hover:shadow-[0_2px_0_rgb(75,85,99)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl"
+            >
+              [ Back ]
+            </button>
+          </div>
+
+        </div>
+
+        {/* Footer Info Strip */}
+        <div className="bg-yellow-100 border-t-4 border-yellow-300 px-8 py-5 flex justify-between items-center text-lg font-bold text-gray-800">
+          <div className="flex flex-col space-y-1">
+            <span>Round: <span className="text-emerald-700">5</span> of 7</span>
           </div>
         </div>
 
-        <div className="bg-yellow-200/50 border-t-2 border-yellow-300 px-6 py-3 flex justify-center items-center text-[10px] font-bold text-gray-800 uppercase">
-          <span>Round: 5 of 7</span>
-        </div>
       </div>
     </div>
   );

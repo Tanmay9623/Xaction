@@ -13,10 +13,6 @@ const GameDistributionRound6Inventory = () => {
   const [inventory, setInventory] = useState(() => {
     const saved = localStorage.getItem("gameDistributionRound6Inventory");
     if (saved) return JSON.parse(saved);
-    
-    // Carry over from R5
-    const r5Saved = localStorage.getItem("gameDistributionRound5Inventory");
-    if (r5Saved) return JSON.parse(r5Saved);
 
     return {
       milk: { name: "Tedbury Milk Chocolate", price: 100, qty: 0 },

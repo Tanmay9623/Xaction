@@ -62,6 +62,8 @@ import Login from './pages/Login';
 import CorporateLogin from './pages/CorporateLogin';
 import SuperAdminDashboard from './pages/SuperAdminDashboard.jsx/SuperAdminDashboard';
 import Licenses from './pages/Licenses';
+import AdminLoginPage from './pages/AdminLoginPage';
+import GameSimulationResults from './pages/GameSimulationResults';
 import EnhancedQuizBuilder from './components/EnhancedQuizBuilder';
 import Reports from './components/Reports';
 import Settings from './components/Settings';
@@ -155,6 +157,8 @@ function App() {
         <Route path="/game-distribution/round7-result" element={<GameDistributionRound7Result />} />
         <Route path="/login" element={<Login />} />
         <Route path="/corporate-login" element={<CorporateLogin />} />
+        <Route path="/admin/login" element={<AdminLoginPage />} />
+        <Route path="/admin/game-results" element={<GameSimulationResults />} />
 
         {/* Protected Student Routes */}
         <Route path="/be/student/*" element={
