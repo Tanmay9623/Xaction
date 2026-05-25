@@ -5,21 +5,29 @@ import { saveFinalResult } from './dbUtils';
 const GameDistributionRound7Result = () => {
   const navigate = useNavigate();
 
-  // --- Round 7 Inventory + Opening Stock ---
+  // --- Round 7 Inventory (combined Opening Stock + new R7 purchases) ---
   const [inventory] = useState(() => {
     const savedPurchases = localStorage.getItem("gameDistributionRound7Inventory");
     const savedOpening = localStorage.getItem("gameDistributionR7OpeningStock");
-    
     const purchases = savedPurchases ? JSON.parse(savedPurchases) : null;
     const opening = savedOpening ? JSON.parse(savedOpening) : null;
-    
     return {
-      milk: { name: "Tedbury Milk Chocolate", qty: (purchases?.milk?.qty || 0) },
-      dark: { name: "Tedbury Dark Chocolate", qty: (purchases?.dark?.qty || 0) },
-      wafer: { name: "Tedbury Wafer Chocolate", qty: (purchases?.wafer?.qty || 0) },
-      gift: { name: "Tedbury Gift Packs", qty: (purchases?.gift?.qty || 0) }
+      milk: { name: "Tedbury Milk Chocolate", qty: (opening?.milk?.qty || 0) + (purchases?.milk?.qty || 0) },
+      dark: { name: "Tedbury Dark Chocolate", qty: (opening?.dark?.qty || 0) + (purchases?.dark?.qty || 0) },
+      wafer: { name: "Tedbury Wafer Chocolate", qty: (opening?.wafer?.qty || 0) + (purchases?.wafer?.qty || 0) },
+      gift: { name: "Tedbury Gift Packs", qty: (opening?.gift?.qty || 0) + (purchases?.gift?.qty || 0) }
     };
   });
+
+  // Separate reads for Monthly Data table
+  const openingStock = (() => {
+    const saved = localStorage.getItem("gameDistributionR7OpeningStock");
+    return saved ? JSON.parse(saved) : { milk: {qty:0}, dark: {qty:0}, wafer: {qty:0}, gift: {qty:0} };
+  })();
+  const purchasesOnly = (() => {
+    const saved = localStorage.getItem("gameDistributionRound7Inventory");
+    return saved ? JSON.parse(saved) : { milk: {qty:0}, dark: {qty:0}, wafer: {qty:0}, gift: {qty:0} };
+  })();
 
   // --- Round 6 Data ---
   const r6NetPaymentReceived = parseInt(localStorage.getItem("gameDistributionR6NetPaymentReceived") || "0", 10);
@@ -68,19 +76,40 @@ const GameDistributionRound7Result = () => {
 
   const totalSales = salesValues.reduce((sum, p) => sum + p.value, 0);
 
-  const closingStockValues = productRows.map(p => {
-    const closingUnits = Math.max(0, (p.key === 'milk' ? milkTotalStock : p.key === 'dark' ? darkTotalStock : p.key === 'wafer' ? waferTotalStock : giftTotalStock) - salesUnits[p.key]);
-    const closingValue = closingUnits * costPrices[p.key];
-    return { closingUnits, closingValue };
+  // --- Monthly Data rows: Purchase (R7 buys) / Sale (% of OS+Purchase) / Closing ---
+  const salesPercentagesR7 = { milk: 60, dark: 40, wafer: 50, gift: 60 };
+  const monthlyDataRows = productRows.map(p => {
+    const purchaseQty = purchasesOnly[p.key]?.qty || 0;
+    const purchaseValue = parseInt(
+      localStorage.getItem(`gameDistributionPurchaseAmount_r7_${p.key}`) || '0', 10
+    );
+    const purchaseUnitPrice = purchaseQty > 0 ? Math.round(purchaseValue / purchaseQty) : 0;
+
+    const osQty = openingStock[p.key]?.qty || 0;
+    const combinedQty = osQty + purchaseQty;
+    const saleQty = Math.round((salesPercentagesR7[p.key] / 100) * combinedQty);
+    const saleUnitPrice = sellingPrices[p.key];
+    const saleValue = Math.round(saleQty * saleUnitPrice);
+
+    const closingQty = osQty + purchaseQty - saleQty;
+    const closingValue = Math.round(closingQty * purchaseUnitPrice);
+
+    return { ...p, purchaseQty, purchaseUnitPrice, purchaseValue, saleQty, saleUnitPrice, saleValue, closingQty, closingValue };
   });
 
-  const totalClosingStockValue = closingStockValues.reduce((sum, v) => sum + v.closingValue, 0);
+  const totalPurchaseQty   = monthlyDataRows.reduce((s, r) => s + r.purchaseQty, 0);
+  const totalPurchaseValue = monthlyDataRows.reduce((s, r) => s + r.purchaseValue, 0);
+  const totalSaleQty       = monthlyDataRows.reduce((s, r) => s + r.saleQty, 0);
+  const totalSaleValue     = monthlyDataRows.reduce((s, r) => s + r.saleValue, 0);
+  const totalClosingQty    = monthlyDataRows.reduce((s, r) => s + r.closingQty, 0);
+  const totalClosingValue  = monthlyDataRows.reduce((s, r) => s + r.closingValue, 0);
 
-  // Round 7 Margin: 8% - Early Payment Discount
+  // Round 7 Margin: 8% - Early Payment Discount (per formula sheet)
   const marginPercent = 8 - earlyPaymentDiscount;
-  const grossMargin = marginPercent > 0 ? totalSales - (totalSales / (1 + marginPercent / 100)) : 0;
-
-  const netMargin = grossMargin * (1 - (earlyPaymentDiscount / 100) * (1 - creditDays / 30));
+  // Gross Margin = Total Sales × margin% (direct percentage as per formula sheet)
+  const grossMargin = marginPercent > 0 ? totalSales * (marginPercent / 100) : 0;
+  // Net Distributor Rupee Gross Margin = Gross Margin (no additional credit adjustment per formula)
+  const netMargin = grossMargin;
 
   const retailerOutstanding = (creditDays * totalSales) / 30;
   const netPaymentReceived = totalSales - retailerOutstanding;
@@ -92,7 +121,7 @@ const GameDistributionRound7Result = () => {
   const manpowerCost = totalManpower * 20000;
 
   // ROI Formula: (Net Gross Margin - Manpower - Delivery & Warehouse) / (20,00,000 + Net Inventory + Retailer Outstanding) * 100
-  const roiDenominator = 2000000 + totalClosingStockValue + retailerOutstanding;
+  const roiDenominator = 2000000 + totalClosingValue + retailerOutstanding;
   const distributorROI = roiDenominator > 0
     ? ((netMargin - manpowerCost - warehouseCost) / roiDenominator) * 100
     : 0;
@@ -193,30 +222,55 @@ const GameDistributionRound7Result = () => {
             ))}
           </div>
 
-          <div className="mb-8">
-            <h2 className="text-2xl font-black text-gray-800 mb-4 text-center italic uppercase underline decoration-yellow-400">Year-End Sales Performance</h2>
-            <div className="bg-yellow-50 rounded-2xl border-2 border-yellow-200 overflow-hidden shadow-inner">
-              <table className="w-full text-left">
+          {/* Monthly Data Table */}
+          <div className="mb-8 overflow-x-auto">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center underline decoration-yellow-400">Monthly Data</h2>
+            <div className="bg-yellow-50 rounded-2xl border-2 border-yellow-200 overflow-hidden">
+              <table className="w-full text-sm text-center">
                 <thead>
-                  <tr className="border-b-2 border-yellow-200 bg-yellow-100 uppercase text-xs">
-                    <th className="px-5 py-3 text-gray-700 font-black italic">Product Line</th>
-                    <th className="px-5 py-3 text-gray-700 font-black text-right italic">Units Moved</th>
-                    <th className="px-5 py-3 text-gray-700 font-black text-right italic">Total Value</th>
+                  <tr className="bg-yellow-200 border-b-2 border-yellow-300">
+                    <th className="px-3 py-2 text-gray-700 font-bold text-left" rowSpan={2}>Product</th>
+                    <th className="px-3 py-2 text-blue-800 font-bold border-l-2 border-yellow-300" colSpan={3}>Purchase</th>
+                    <th className="px-3 py-2 text-emerald-800 font-bold border-l-2 border-yellow-300" colSpan={3}>Sale</th>
+                    <th className="px-3 py-2 text-red-800 font-bold border-l-2 border-yellow-300" colSpan={2}>Closing</th>
+                  </tr>
+                  <tr className="bg-yellow-100 border-b-2 border-yellow-300 text-xs">
+                    <th className="px-3 py-2 text-blue-700 font-semibold border-l-2 border-yellow-300">Quantity</th>
+                    <th className="px-3 py-2 text-blue-700 font-semibold">Unit Price</th>
+                    <th className="px-3 py-2 text-blue-700 font-semibold">Value</th>
+                    <th className="px-3 py-2 text-emerald-700 font-semibold border-l-2 border-yellow-300">Quantity</th>
+                    <th className="px-3 py-2 text-emerald-700 font-semibold">Unit Price</th>
+                    <th className="px-3 py-2 text-emerald-700 font-semibold">Value</th>
+                    <th className="px-3 py-2 text-red-700 font-semibold border-l-2 border-yellow-300">Quantity</th>
+                    <th className="px-3 py-2 text-red-700 font-semibold">Value</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {salesValues.map(p => (
-                    <tr key={p.key} className="border-b border-yellow-100 hover:bg-yellow-100/50 transition-colors">
-                      <td className="px-5 py-3 font-bold text-gray-800 uppercase text-sm tracking-tighter">{p.label}</td>
-                      <td className="px-5 py-3 text-right text-emerald-700 font-black italic text-lg">{p.units.toLocaleString('en-IN')}</td>
-                      <td className="px-5 py-3 text-right font-black text-gray-800 text-lg">{formatCurrency(p.value)}</td>
+                  {monthlyDataRows.map(r => (
+                    <tr key={r.key} className="border-b border-yellow-100 hover:bg-yellow-100/50">
+                      <td className="px-3 py-2 font-medium text-gray-800 text-left">{r.label}</td>
+                      <td className="px-3 py-2 text-blue-700 font-bold border-l-2 border-yellow-200">{r.purchaseQty.toLocaleString('en-IN')}</td>
+                      <td className="px-3 py-2 text-blue-600">{r.purchaseQty > 0 ? formatCurrency(r.purchaseUnitPrice) : '—'}</td>
+                      <td className="px-3 py-2 text-blue-700 font-bold">{formatCurrency(r.purchaseValue)}</td>
+                      <td className="px-3 py-2 text-emerald-700 font-bold border-l-2 border-yellow-200">{r.saleQty.toLocaleString('en-IN')}</td>
+                      <td className="px-3 py-2 text-emerald-600">{formatCurrency(r.saleUnitPrice)}</td>
+                      <td className="px-3 py-2 text-emerald-700 font-bold">{formatCurrency(r.saleValue)}</td>
+                      <td className="px-3 py-2 text-red-700 font-bold border-l-2 border-yellow-200">{r.closingQty.toLocaleString('en-IN')}</td>
+                      <td className="px-3 py-2 text-red-700 font-bold">{formatCurrency(r.closingValue)}</td>
                     </tr>
                   ))}
                 </tbody>
                 <tfoot>
-                  <tr className="bg-emerald-50 border-t-4 border-emerald-200">
-                    <td className="px-5 py-3 font-black text-gray-900 text-2xl italic uppercase underline tracking-widest" colSpan={2}>Grand Total Sales</td>
-                    <td className="px-5 py-3 text-right font-black text-emerald-700 text-3xl italic tracking-tighter">{formatCurrency(totalSales)}</td>
+                  <tr className="bg-yellow-200 border-t-2 border-yellow-400 font-extrabold text-gray-900">
+                    <td className="px-3 py-2 text-left">Total</td>
+                    <td className="px-3 py-2 text-blue-800 border-l-2 border-yellow-300">{totalPurchaseQty.toLocaleString('en-IN')}</td>
+                    <td className="px-3 py-2">—</td>
+                    <td className="px-3 py-2 text-blue-800">{formatCurrency(totalPurchaseValue)}</td>
+                    <td className="px-3 py-2 text-emerald-800 border-l-2 border-yellow-300">{totalSaleQty.toLocaleString('en-IN')}</td>
+                    <td className="px-3 py-2">—</td>
+                    <td className="px-3 py-2 text-emerald-800">{formatCurrency(totalSaleValue)}</td>
+                    <td className="px-3 py-2 text-red-800 border-l-2 border-yellow-300">{totalClosingQty.toLocaleString('en-IN')}</td>
+                    <td className="px-3 py-2 text-red-800">{formatCurrency(totalClosingValue)}</td>
                   </tr>
                 </tfoot>
               </table>
@@ -227,7 +281,7 @@ const GameDistributionRound7Result = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {[
                 { label: "Opening Cash", value: formatCurrency(cashInHand) },
-                { label: "Primary Push Investment", value: formatCurrency(totalClosingStockValue) },
+                { label: "Primary Push Investment", value: formatCurrency(totalClosingValue) },
                 { label: "Net Secondary Sales", value: formatCurrency(Math.round(netPaymentReceived)) },
                 { label: "Annual Net Margin", value: formatCurrency(Math.round(grossMargin)) },
               ].map(item => (

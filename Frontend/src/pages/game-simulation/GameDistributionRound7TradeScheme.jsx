@@ -79,44 +79,44 @@ const GameDistributionRound7TradeScheme = () => {
 
           <div className="flex flex-col items-center max-w-2xl mx-auto space-y-8">
             <div className="w-full bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 shadow-sm">
-              <h3 className="text-xl font-bold text-gray-800 mb-2 uppercase tracking-tighter italic">Quantity Discount:</h3>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">Quantity Discount:</h3>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
-                  <button onClick={() => handleDecrement("quantity")} className="bg-red-100 hover:bg-red-200 text-red-700 font-black w-12 h-12 rounded-xl border-2 border-red-300 text-2xl transition-all active:translate-y-[2px]">−</button>
-                  <span className="text-4xl font-black text-emerald-700 min-w-[80px] text-center italic tracking-tighter">{quantityDiscount}%</span>
-                  <button onClick={() => handleIncrement("quantity")} className={`font-black w-12 h-12 rounded-xl border-2 text-2xl transition-all active:translate-y-[2px] ${totalScheme < approvedScheme ? 'bg-green-100 hover:bg-green-200 text-green-700 border-green-300' : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'}`}>+</button>
+                  <button onClick={() => handleDecrement("quantity")} className="bg-red-100 hover:bg-red-200 text-red-700 font-bold w-12 h-12 rounded-xl border-2 border-red-300 text-2xl transition-all active:translate-y-[2px]">−</button>
+                  <span className="text-4xl font-extrabold text-emerald-700 min-w-[80px] text-center">{quantityDiscount}%</span>
+                  <button onClick={() => handleIncrement("quantity")} className={`font-bold w-12 h-12 rounded-xl border-2 text-2xl transition-all active:translate-y-[2px] ${totalScheme < approvedScheme ? 'bg-green-100 hover:bg-green-200 text-green-700 border-green-300' : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'}`}>+</button>
                 </div>
-                <p className="text-gray-600 font-black uppercase text-[10px]">Discount on Bulk Orders</p>
+                <p className="text-gray-600 font-bold text-lg">Discount on Bulk Orders</p>
               </div>
             </div>
 
             <div className="w-full bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 shadow-sm">
-              <h3 className="text-xl font-bold text-gray-800 mb-2 uppercase tracking-tighter italic">Retail Display Incentive:</h3>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">Retail Display Incentive:</h3>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
-                  <button onClick={() => handleDecrement("retail")} className="bg-red-100 hover:bg-red-200 text-red-700 font-black w-12 h-12 rounded-xl border-2 border-red-300 text-2xl transition-all active:translate-y-[2px]">−</button>
-                  <span className="text-4xl font-black text-emerald-700 min-w-[80px] text-center italic tracking-tighter">{retailDisplayIncentive}%</span>
-                  <button onClick={() => handleIncrement("retail")} className={`font-black w-12 h-12 rounded-xl border-2 text-2xl transition-all active:translate-y-[2px] ${totalScheme < approvedScheme ? 'bg-green-100 hover:bg-green-200 text-green-700 border-green-300' : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'}`}>+</button>
+                  <button onClick={() => handleDecrement("retail")} className="bg-red-100 hover:bg-red-200 text-red-700 font-bold w-12 h-12 rounded-xl border-2 border-red-300 text-2xl transition-all active:translate-y-[2px]">−</button>
+                  <span className="text-4xl font-extrabold text-emerald-700 min-w-[80px] text-center">{retailDisplayIncentive}%</span>
+                  <button onClick={() => handleIncrement("retail")} className={`font-bold w-12 h-12 rounded-xl border-2 text-2xl transition-all active:translate-y-[2px] ${totalScheme < approvedScheme ? 'bg-green-100 hover:bg-green-200 text-green-700 border-green-300' : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'}`}>+</button>
                 </div>
-                <p className="text-gray-600 font-black uppercase text-[10px]">Display Support</p>
+                <p className="text-gray-600 font-bold text-lg">Display Support</p>
               </div>
             </div>
 
             <div className="w-full bg-emerald-50 p-4 rounded-xl border-2 border-emerald-200 text-center">
-              <p className="text-lg font-bold text-gray-800 uppercase tracking-tighter">
-                Total Scheme Used: <span className="text-emerald-700 font-black">{totalScheme}%</span> / <span className="text-emerald-700 font-black">{approvedScheme}%</span>
+              <p className="text-lg font-bold text-gray-800">
+                Total Scheme Used: <span className="text-emerald-700 font-extrabold">{totalScheme}%</span> / <span className="text-emerald-700 font-extrabold">{approvedScheme}%</span>
               </p>
             </div>
           </div>
 
           <div className="mt-10 flex flex-wrap justify-between items-center gap-4 max-w-2xl mx-auto px-4">
-            <button onClick={handleExit} className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(153,27,27)] text-xl uppercase tracking-tighter">[ Exit Market ]</button>
-            <button onClick={handleOK} className="bg-green-500 hover:bg-green-600 text-white font-extrabold py-4 px-16 rounded-xl shadow-[0_6px_0_rgb(21,128,61)] text-4xl transform scale-110 tracking-widest uppercase">[ OK ]</button>
-            <button onClick={handleBack} className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(75,85,99)] text-xl uppercase tracking-tighter">[ Back ]</button>
+            <button onClick={handleExit} className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(153,27,27)] hover:shadow-[0_2px_0_rgb(153,27,27)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl">[ Exit Market ]</button>
+            <button onClick={handleOK} className="bg-green-500 hover:bg-green-600 text-white font-extrabold py-4 px-16 rounded-xl shadow-[0_6px_0_rgb(21,128,61)] hover:shadow-[0_3px_0_rgb(21,128,61)] hover:translate-y-[3px] active:shadow-none active:translate-y-[6px] transition-all text-4xl transform scale-110 tracking-widest">[ OK ]</button>
+            <button onClick={handleBack} className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(75,85,99)] hover:shadow-[0_2px_0_rgb(75,85,99)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl">[ Back ]</button>
           </div>
         </div>
 
-        <div className="bg-yellow-100 border-t-4 border-yellow-300 px-8 py-5 flex justify-between items-center text-lg font-bold text-gray-800 uppercase italic">
+        <div className="bg-yellow-100 border-t-4 border-yellow-300 px-8 py-5 flex justify-between items-center text-lg font-bold text-gray-800 uppercase">
           <div className="flex flex-col space-y-1">
             <span>Round: 7 of 7</span>
             <span>Available Scheme: {remainingScheme}%</span>

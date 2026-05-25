@@ -68,16 +68,9 @@ const GameDistributionRoundResult = () => {
 
   // Monthly Sales Table: Units = Sales - Inventory, Value = Sales/(1+Margin%) - Inventory Value
   const salesValues = productRows.map(p => {
-    const salesUnits = monthlySales[p.key].units;
+    // Use fixed Round 1 admin sales data (not user's purchased qty)
+    const units = monthlySales[p.key].units;
     const sellingPrice = monthlySales[p.key].sellingPrice;
-    const invQty = inventory[p.key].qty;
-    const costPrice = costPrices[p.key];
-
-    // Units sold = min(inventory purchased, market demand) — can't sell more than you stocked or market wants
-    const units = Math.min(invQty, salesUnits);
-    // Total Sales from admin data (₹), scaled to actual units sold
-    const sales = units * sellingPrice;
-    // Value = Units × Selling Price
     const value = units * sellingPrice;
 
     return {
@@ -88,13 +81,50 @@ const GameDistributionRoundResult = () => {
     };
   });
 
-  // Table total should match the Value column sum in Monthly Sales.
-  const monthlySalesTableTotal = salesValues.reduce((sum, p) => sum + p.value, 0);
+  // Table total — use admin's pre-defined totalSales to match Excel exactly
+  const monthlySalesTableTotal = productRows.reduce((sum, p) => sum + monthlySales[p.key].totalSales, 0);
 
-  // Total Sales (gross) = sum of product-level Total Sales — used in financial formulas
-  const totalSales = productRows.reduce(
-    (sum, p) => sum + (monthlySales[p.key].totalSales ?? (monthlySales[p.key].units * monthlySales[p.key].sellingPrice)), 0
-  );
+  // Total Sales (gross) — used in financial formulas
+  const totalSales = monthlySalesTableTotal;
+
+  // Monthly Data rows: Purchase (player) / Sale (admin) / Closing (Purchase - Sale)
+  const monthlyDataRows = productRows.map(p => {
+    const purchaseQty = inventory[p.key].qty;
+
+    // Purchase Value = actual amount paid by the player (from Acquisition screen tiered pricing)
+    const purchaseValue = parseInt(
+      localStorage.getItem(`gameDistributionPurchaseAmount_${p.key}`) || '0', 10
+    );
+
+    // Purchase Unit Price = Value / Quantity (derived — e.g. ₹8,50,000 ÷ 20,000 = ₹42.5/unit)
+    const purchaseUnitPrice = purchaseQty > 0
+      ? Math.round(purchaseValue / purchaseQty)
+      : 0;
+
+    const saleQty = monthlySales[p.key].units;
+    const saleUnitPrice = monthlySales[p.key].sellingPrice;
+    // Use admin's exact totalSales value (matches Excel sheet)
+    const saleValue = monthlySales[p.key].totalSales;
+
+    // Closing = Opening(0 in R1) + Purchase - Sale
+    const closingQty = purchaseQty - saleQty;
+    // Closing Value = Closing Qty × Purchase Unit Price
+    const closingValue = Math.round(closingQty * purchaseUnitPrice);
+
+    return {
+      ...p,
+      purchaseQty, purchaseUnitPrice, purchaseValue,
+      saleQty, saleUnitPrice, saleValue,
+      closingQty, closingValue
+    };
+  });
+
+  const totalPurchaseQty   = monthlyDataRows.reduce((s, r) => s + r.purchaseQty, 0);
+  const totalPurchaseValue = monthlyDataRows.reduce((s, r) => s + r.purchaseValue, 0);
+  const totalSaleQty       = monthlyDataRows.reduce((s, r) => s + r.saleQty, 0);
+  const totalSaleValue     = monthlyDataRows.reduce((s, r) => s + r.saleValue, 0);
+  const totalClosingQty    = monthlyDataRows.reduce((s, r) => s + r.closingQty, 0);
+  const totalClosingValue  = monthlyDataRows.reduce((s, r) => s + r.closingValue, 0);
 
   // Distributor Rupee Gross Margin = Sales - Sales/(1 + Distributor Margin%)
   const distributorRupeeGrossMargin = totalSales - totalSales / (1 + distributorMarginPercent / 100);
@@ -192,12 +222,12 @@ const GameDistributionRoundResult = () => {
 
   const handleExit = () => {
     // Calculate ending inventory after sales (Carry Forward: Opening Stock + Purchase - Sales)
-    const getSoldUnits = (key) => salesValues.find(p => p.key === key).units;
+    // Round 1 Opening Stock is 0
     const carryForwardInventory = {
-      milk: { ...inventory.milk, qty: inventory.milk.qty - getSoldUnits('milk') },
-      dark: { ...inventory.dark, qty: inventory.dark.qty - getSoldUnits('dark') },
-      wafer: { ...inventory.wafer, qty: inventory.wafer.qty - getSoldUnits('wafer') },
-      gift: { ...inventory.gift, qty: inventory.gift.qty - getSoldUnits('gift') }
+      milk: { ...inventory.milk, qty: 0 + inventory.milk.qty - monthlySales.milk.units },
+      dark: { ...inventory.dark, qty: 0 + inventory.dark.qty - monthlySales.dark.units },
+      wafer: { ...inventory.wafer, qty: 0 + inventory.wafer.qty - monthlySales.wafer.units },
+      gift: { ...inventory.gift, qty: 0 + inventory.gift.qty - monthlySales.gift.units }
     };
     const emptyInventory = {
       milk: { ...inventory.milk, qty: 0 },
@@ -205,10 +235,10 @@ const GameDistributionRoundResult = () => {
       wafer: { ...inventory.wafer, qty: 0 },
       gift: { ...inventory.gift, qty: 0 }
     };
-    
+
     // Calculate closing cash: Purchase Remainder ONLY (as requested)
     const closingCash = currentCash;
-    
+
     localStorage.setItem("gameDistributionCash", Math.round(closingCash).toString());
     localStorage.setItem("gameDistributionR2OpeningStock", JSON.stringify(carryForwardInventory));
     localStorage.setItem("gameDistributionRound2Inventory", JSON.stringify(emptyInventory));
@@ -222,10 +252,10 @@ const GameDistributionRoundResult = () => {
 
   return (
     <div className="min-h-screen bg-emerald-50 flex items-center justify-center p-4 font-sans">
-      
+
       {/* Main Game Container */}
       <div className="w-full max-w-5xl bg-yellow-100 rounded-3xl shadow-2xl overflow-hidden border-8 border-yellow-200">
-        
+
         <div className="bg-emerald-700 text-emerald-50 px-6 py-3 flex justify-between items-center text-sm font-bold tracking-widest uppercase border-b-4 border-emerald-800">
           <span>Game Simulation</span>
         </div>
@@ -256,35 +286,96 @@ const GameDistributionRoundResult = () => {
             ))}
           </div>
 
-          {/* Monthly Sales Table */}
-          <div className="mb-8">
+          {/* Monthly Data Table */}
+          <div className="mb-8 overflow-x-auto">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center underline decoration-yellow-400">
-              Monthly Sales
+              Monthly Data
             </h2>
             <div className="bg-yellow-50 rounded-2xl border-2 border-yellow-200 overflow-hidden">
-              <table className="w-full text-left">
+              <table className="w-full text-sm text-center">
                 <thead>
-                  <tr className="border-b-2 border-yellow-200 bg-yellow-100">
-                    <th className="px-5 py-3 text-gray-700 font-bold">Product</th>
-                    <th className="px-5 py-3 text-gray-700 font-bold text-right">Units</th>
-                    <th className="px-5 py-3 text-gray-700 font-bold text-right">Selling Price</th>
-                    <th className="px-5 py-3 text-gray-700 font-bold text-right">Value</th>
+                  {/* Section header row */}
+                  <tr className="bg-yellow-200 border-b-2 border-yellow-300">
+                    <th className="px-3 py-2 text-gray-700 font-bold text-left" rowSpan={2}>Product</th>
+                    <th className="px-3 py-2 text-blue-800 font-bold border-l-2 border-yellow-300" colSpan={3}>Purchase</th>
+                    <th className="px-3 py-2 text-emerald-800 font-bold border-l-2 border-yellow-300" colSpan={3}>Sale</th>
+                    <th className="px-3 py-2 text-red-800 font-bold border-l-2 border-yellow-300" colSpan={2}>Closing</th>
+                  </tr>
+                  {/* Sub-header row */}
+                  <tr className="bg-yellow-100 border-b-2 border-yellow-300 text-xs">
+                    {/* Purchase: Qty → Value → Unit Price (Unit Price = Value / Qty) */}
+                    <th className="px-3 py-2 text-blue-700 font-semibold border-l-2 border-yellow-300">Quantity</th>
+                    <th className="px-3 py-2 text-blue-700 font-semibold">Value</th>
+                    <th className="px-3 py-2 text-blue-700 font-semibold">Unit Price</th>
+                    {/* Sale: fixed from Excel */}
+                    <th className="px-3 py-2 text-emerald-700 font-semibold border-l-2 border-yellow-300">Quantity</th>
+                    <th className="px-3 py-2 text-emerald-700 font-semibold">Unit Price</th>
+                    <th className="px-3 py-2 text-emerald-700 font-semibold">Value</th>
+                    {/* Closing: Qty = OS+P-S, Value = Closing Qty × Purchase Unit Price */}
+                    <th className="px-3 py-2 text-red-700 font-semibold border-l-2 border-yellow-300">Quantity</th>
+                    <th className="px-3 py-2 text-red-700 font-semibold">Value</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {salesValues.map(p => (
-                    <tr key={p.key} className="border-b border-yellow-100">
-                      <td className="px-5 py-3 font-medium text-gray-800">{p.label}</td>
-                      <td className="px-5 py-3 text-right text-emerald-700 font-bold">{p.units.toLocaleString('en-IN')}</td>
-                      <td className="px-5 py-3 text-right text-gray-600">{formatCurrency(p.sellingPrice)}</td>
-                      <td className="px-5 py-3 text-right font-bold text-gray-800">{formatCurrency(p.value)}</td>
+                  {monthlyDataRows.map(r => (
+                    <tr key={r.key} className="border-b border-yellow-100 hover:bg-yellow-100/50">
+                      <td className="px-3 py-2 font-medium text-gray-800 text-left">{r.label}</td>
+                      {/* Purchase: Quantity | Value | Unit Price (Unit Price = Value ÷ Qty) */}
+                      <td className="px-3 py-2 text-blue-700 font-bold border-l-2 border-yellow-200">
+                        {r.purchaseQty.toLocaleString('en-IN')}
+                      </td>
+                      <td className="px-3 py-2 text-blue-700 font-bold">
+                        {formatCurrency(r.purchaseValue)}
+                      </td>
+                      <td className="px-3 py-2 text-blue-600">
+                        {r.purchaseQty > 0 ? formatCurrency(r.purchaseUnitPrice) : '—'}
+                      </td>
+                      {/* Sale */}
+                      <td className="px-3 py-2 text-emerald-700 font-bold border-l-2 border-yellow-200">
+                        {r.saleQty.toLocaleString('en-IN')}
+                      </td>
+                      <td className="px-3 py-2 text-emerald-600">
+                        {formatCurrency(r.saleUnitPrice)}
+                      </td>
+                      <td className="px-3 py-2 text-emerald-700 font-bold">
+                        {formatCurrency(r.saleValue)}
+                      </td>
+                      {/* Closing */}
+                      <td className="px-3 py-2 text-red-700 font-bold border-l-2 border-yellow-200">
+                        {r.closingQty.toLocaleString('en-IN')}
+                      </td>
+                      <td className="px-3 py-2 text-red-700 font-bold">
+                        {formatCurrency(r.closingValue)}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
                 <tfoot>
-                  <tr className="bg-emerald-50 border-t-2 border-emerald-200">
-                    <td className="px-5 py-3 font-extrabold text-gray-900 text-lg" colSpan={3}>Total Sales</td>
-                    <td className="px-5 py-3 text-right font-extrabold text-emerald-700 text-lg">{formatCurrency(monthlySalesTableTotal)}</td>
+                  <tr className="bg-yellow-200 border-t-2 border-yellow-400 font-extrabold text-gray-900">
+                    <td className="px-3 py-2 text-left">Total</td>
+                    {/* Purchase totals: Qty | Value | Unit Price (—) */}
+                    <td className="px-3 py-2 text-blue-800 border-l-2 border-yellow-300">
+                      {totalPurchaseQty.toLocaleString('en-IN')}
+                    </td>
+                    <td className="px-3 py-2 text-blue-800">
+                      {formatCurrency(totalPurchaseValue)}
+                    </td>
+                    <td className="px-3 py-2">—</td>
+                    {/* Sale totals */}
+                    <td className="px-3 py-2 text-emerald-800 border-l-2 border-yellow-300">
+                      {totalSaleQty.toLocaleString('en-IN')}
+                    </td>
+                    <td className="px-3 py-2">—</td>
+                    <td className="px-3 py-2 text-emerald-800">
+                      {formatCurrency(totalSaleValue)}
+                    </td>
+                    {/* Closing totals */}
+                    <td className="px-3 py-2 text-red-800 border-l-2 border-yellow-300">
+                      {totalClosingQty.toLocaleString('en-IN')}
+                    </td>
+                    <td className="px-3 py-2 text-red-800">
+                      {formatCurrency(totalClosingValue)}
+                    </td>
                   </tr>
                 </tfoot>
               </table>
@@ -351,10 +442,9 @@ const GameDistributionRoundResult = () => {
               {/* Retailer Satisfaction */}
               <div className="bg-amber-50 p-6 rounded-2xl border-2 border-amber-300 text-center shadow-sm">
                 <p className="text-gray-600 font-medium text-sm mb-1">Retailer Satisfaction</p>
-                <p className={`text-5xl font-extrabold ${
-                  getRetailerSatisfaction() === 'High' ? 'text-emerald-700' :
-                  getRetailerSatisfaction() === 'Medium' ? 'text-amber-600' : 'text-red-600'
-                }`}>
+                <p className={`text-5xl font-extrabold ${getRetailerSatisfaction() === 'High' ? 'text-emerald-700' :
+                    getRetailerSatisfaction() === 'Medium' ? 'text-amber-600' : 'text-red-600'
+                  }`}>
                   {getRetailerSatisfaction()}
                 </p>
                 <p className="text-gray-500 text-xs mt-2 italic">
@@ -366,14 +456,14 @@ const GameDistributionRoundResult = () => {
 
           {/* Action Buttons Row */}
           <div className="mt-10 flex justify-between items-center max-w-2xl mx-auto px-4">
-            <button 
+            <button
               onClick={handleBack}
               className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-10 rounded-xl shadow-[0_4px_0_rgb(75,85,99)] hover:shadow-[0_2px_0_rgb(75,85,99)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl"
             >
               [ Back ]
             </button>
 
-            <button 
+            <button
               onClick={handleExit}
               className="bg-green-500 hover:bg-green-600 text-white font-extrabold py-4 px-12 rounded-xl shadow-[0_6px_0_rgb(21,128,61)] hover:shadow-[0_3px_0_rgb(21,128,61)] hover:translate-y-[3px] active:shadow-none active:translate-y-[6px] transition-all text-2xl transform scale-110 tracking-widest"
             >

@@ -65,14 +65,14 @@ const GameDistributionRound7Inventory = () => {
 
         <div className="p-8 sm:p-12">
           <div className="bg-white border-4 border-yellow-300 rounded-xl p-6 sm:p-8 mb-10 shadow-sm max-w-4xl mx-auto space-y-6">
-            <div className="text-gray-800 text-lg sm:text-xl font-medium leading-relaxed text-center italic">
-              Available Capital: <span className="font-bold text-emerald-700 underline decoration-yellow-400">{formatCurrency(cash)}</span>
+            <div className="text-gray-800 text-lg sm:text-xl font-medium leading-relaxed text-center">
+              Available Capital: <span className="font-bold text-emerald-700">{formatCurrency(cash)}</span>
             </div>
             <div className="bg-red-50 border-l-4 border-red-500 p-4">
-              <h3 className="font-bold text-red-800 text-xl flex items-center mb-2 uppercase tracking-tighter">
+              <h3 className="font-bold text-red-800 text-xl flex items-center mb-2">
                 Year-End Pressure:
               </h3>
-              <p className="text-gray-700 leading-relaxed font-bold uppercase text-xs">
+              <p className="text-gray-700 leading-relaxed font-medium">
                 Company has pushed 20% additional primary billing. Your stock levels have increased. You must decide whether to take even more to smash the annual targets or focus on ROI.
               </p>
             </div>
@@ -82,9 +82,9 @@ const GameDistributionRound7Inventory = () => {
             {Object.keys(inventory).map((key) => (
               <div key={key} className="flex w-full items-center justify-between bg-yellow-50 p-4 rounded-lg border border-yellow-200 shadow-sm">
                 <div className="flex-1">
-                  <span className="text-2xl font-black text-gray-800 tracking-tighter">{inventory[key].qty} Units – {inventory[key].name}</span>
+                  <span className="text-2xl font-bold text-gray-800">{inventory[key].qty} Units – {inventory[key].name}</span>
                 </div>
-                <button onClick={() => handleBuy(key)} className="bg-white hover:bg-gray-50 text-gray-800 font-bold py-3 px-6 rounded-xl border border-gray-300 shadow-[0_4px_0_rgb(209,213,219)] hover:translate-y-[2px] transition-all text-lg min-w-[220px]">
+                <button onClick={() => handleBuy(key)} className="bg-white hover:bg-gray-50 text-gray-800 font-bold py-3 px-6 rounded-xl border border-gray-300 shadow-[0_4px_0_rgb(209,213,219)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-lg min-w-[220px]">
                   Buy {inventory[key].name.replace('Tedbury ', '')}
                 </button>
               </div>
@@ -92,13 +92,13 @@ const GameDistributionRound7Inventory = () => {
           </div>
 
           <div className="mt-16 flex flex-wrap justify-between items-center gap-4 max-w-3xl mx-auto">
-            <button onClick={handleExit} className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(153,27,27)] text-xl uppercase tracking-tighter">Exit Market</button>
-            <button onClick={handleOK} className="bg-green-500 hover:bg-green-600 text-white font-extrabold py-4 px-16 rounded-xl shadow-[0_6px_0_rgb(21,128,61)] text-4xl transform scale-110 tracking-widest uppercase">[ OK ]</button>
-            <button onClick={handleBack} className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(75,85,99)] text-xl uppercase tracking-tighter">Back</button>
+            <button onClick={handleExit} className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(153,27,27)] text-xl">Exit Market</button>
+            <button onClick={handleOK} className="bg-green-500 hover:bg-green-600 text-white font-extrabold py-4 px-16 rounded-xl shadow-[0_6px_0_rgb(21,128,61)] text-4xl transform scale-110">OK</button>
+            <button onClick={handleBack} className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-xl shadow-[0_4px_0_rgb(75,85,99)] text-xl">Back</button>
           </div>
         </div>
 
-        <div className="bg-yellow-100 border-t-2 border-yellow-300 px-8 py-4 flex justify-between items-center text-lg font-bold text-gray-800 uppercase italic">
+        <div className="bg-yellow-100 border-t-2 border-yellow-300 px-8 py-4 flex justify-between items-center text-lg font-bold text-gray-800 uppercase">
           <span>Round: 7 of 7</span>
           <span>Target Progress: 95% YTD</span>
         </div>

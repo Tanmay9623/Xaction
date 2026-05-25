@@ -13,7 +13,7 @@ const GameDistributionRound7Intro = () => {
   // --- Round 7 Forced Opening Stock logic ---
   // "Opening stock of Round 7 = Opening stock x 120%"
   const [inventory, setInventory] = useState(() => {
-    const r6Saved = localStorage.getItem("gameDistributionRound6Inventory");
+    const r6Saved = localStorage.getItem("gameDistributionR7OpeningStock") || localStorage.getItem("gameDistributionRound7Inventory");
     let baseInventory = r6Saved ? JSON.parse(r6Saved) : { milk: { qty: 0 }, dark: { qty: 0 }, wafer: { qty: 0 }, gift: { qty: 0 } };
     
     // Apply the 120% push (20% increase in stock)
@@ -63,24 +63,27 @@ const GameDistributionRound7Intro = () => {
 
           {/* Carried Forward Block */}
           <div className="bg-white border-4 border-emerald-300 rounded-xl p-6 shadow-sm">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-emerald-200 pb-2 flex items-center uppercase tracking-tighter italic">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-emerald-200 pb-2 flex items-center uppercase">
                Carried Forward & Forced Primary Push
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
-                { label: "Opening Stock (R6 Base x 120%)", value: `${openingStockUnits} Units` },
+                { 
+                  label: "Opening Stock (R6 Base x 120%)", 
+                  value: `Milk: ${inventory.milk.qty} | Dark: ${inventory.dark.qty} | Wafer: ${inventory.wafer.qty} | Gift: ${inventory.gift.qty}` 
+                },
                 { label: "Last Round Sale (Value)", value: formatCurrency(r6TotalSales) },
                 { label: "Retailer Outstanding", value: formatCurrency(r6RetailerOutstanding) },
                 { label: "Company Reimbursed Scheme", value: formatCurrency(r6TradeSchemeSpend) },
                 { label: "Opening Cash in Hand", value: formatCurrency(cashInHand) },
               ].map((item, idx) => (
                 <div key={idx} className="bg-emerald-50 p-4 rounded-lg border border-emerald-100 flex flex-col justify-center">
-                  <span className="text-[10px] text-gray-500 font-black uppercase tracking-wider mb-1">{item.label}</span>
-                  <span className="text-xl font-black text-emerald-800">{item.value}</span>
+                  <span className="text-sm text-gray-600 font-bold uppercase mb-1">{item.label}</span>
+                  <span className="text-xl font-bold text-emerald-800">{item.value}</span>
                 </div>
               ))}
             </div>
-            <p className="text-[10px] text-red-600 mt-2 font-bold uppercase underline">
+            <p className="text-sm text-red-600 mt-2 font-semibold">
               * Note: Opening stock includes a forced 20% primary push to meet year-end targets.
             </p>
           </div>
@@ -88,8 +91,8 @@ const GameDistributionRound7Intro = () => {
           {/* Market Situation */}
           <div className="bg-white border-4 border-red-300 rounded-xl p-6 shadow-sm">
             <p className="text-gray-800 text-lg font-medium text-center">
-              Tedbury is at <span className="text-red-600 font-bold">95% of its YTD target</span>. Strong pressure to exceed targets before closing. 
-              Company has pushed <span className="font-bold underline italic text-red-600">20% additional primary stock</span> into your warehouse.
+              Tedbury is at 95% of its YTD target. Strong pressure to exceed targets before closing. 
+              Company has pushed 20% additional primary stock into your warehouse.
             </p>
           </div>
 
@@ -98,56 +101,56 @@ const GameDistributionRound7Intro = () => {
             
             <div className="bg-amber-50 rounded-xl border-2 border-amber-200 p-6 flex flex-col">
               <h2 className="text-lg font-bold text-amber-800 mb-4 border-b-2 border-amber-200 pb-2 flex items-center uppercase">
-                ⚠️ Key Situation
+                Key Situation
               </h2>
-              <ul className="space-y-2 text-gray-700 font-bold text-xs uppercase tracking-tighter">
-                <li className="flex items-start"><span className="text-red-500 mr-2">▶</span> 95% Achievement of Annual Target</li>
-                <li className="flex items-start"><span className="text-red-500 mr-2">▶</span> Required Push: 20% Addl. Primary</li>
-                <li className="flex items-start"><span className="text-red-500 mr-2">▶</span> Mandatory Buffer: Min 20% Inventory</li>
+              <ul className="space-y-2 text-gray-700 font-medium text-sm">
+                <li className="flex items-start">▶ 95% Achievement of Annual Target</li>
+                <li className="flex items-start">▶ Required Push: 20% Addl. Primary</li>
+                <li className="flex items-start">▶ Mandatory Buffer: Min 20% Inventory</li>
               </ul>
             </div>
 
             <div className="bg-blue-50 rounded-xl border-2 border-blue-200 p-6 flex flex-col">
               <h2 className="text-lg font-bold text-blue-800 mb-4 border-b-2 border-blue-200 pb-2 flex items-center uppercase">
-                🌍 Market Reality
+                Market Reality
               </h2>
-              <ul className="space-y-2 text-gray-700 font-bold text-xs uppercase tracking-tighter">
-                <li className="flex items-start"><span className="text-blue-500 mr-2">▶</span> Aggressive Primary Billing</li>
-                <li className="flex items-start"><span className="text-blue-500 mr-2">▶</span> Secondary demand may not match push</li>
-                <li className="flex items-start"><span className="text-blue-500 mr-2">▶</span> Inventory levels will spike</li>
+              <ul className="space-y-2 text-gray-700 font-medium text-sm">
+                <li className="flex items-start">▶ Aggressive Primary Billing</li>
+                <li className="flex items-start">▶ Secondary demand may not match push</li>
+                <li className="flex items-start">▶ Inventory levels will spike</li>
               </ul>
             </div>
 
             <div className="bg-purple-50 rounded-xl border-2 border-purple-200 p-6 flex flex-col">
-              <h2 className="text-lg font-bold text-purple-800 mb-4 border-b-2 border-purple-200 pb-2 flex items-center uppercase text-[12px]">
-                💹 Business Impact
+              <h2 className="text-lg font-bold text-purple-800 mb-4 border-b-2 border-purple-200 pb-2 flex items-center uppercase">
+                Business Impact
               </h2>
-              <ul className="space-y-2 text-gray-700 font-bold text-[10px] uppercase">
-                <li className="flex items-start"><span className="text-purple-500 mr-2">▶</span> Additional Capital Investment Needed</li>
-                <li className="flex items-start"><span className="text-purple-500 mr-2">▶</span> Higher holding stock risk</li>
-                <li className="flex items-start"><span className="text-purple-500 mr-2">▶</span> Possible ROI compression</li>
+              <ul className="space-y-2 text-gray-700 font-medium text-sm">
+                <li className="flex items-start">▶ Additional Capital Investment Needed</li>
+                <li className="flex items-start">▶ Higher holding stock risk</li>
+                <li className="flex items-start">▶ Possible ROI compression</li>
               </ul>
             </div>
 
             <div className="bg-emerald-50 rounded-xl border-2 border-emerald-200 p-6 flex flex-col">
               <h2 className="text-lg font-bold text-emerald-800 mb-4 border-b-2 border-emerald-200 pb-2 flex items-center uppercase">
-                ⚖️ Trade-Off
+                Trade-Off
               </h2>
-              <ul className="space-y-2 text-gray-700 font-bold text-[10px] uppercase">
-                <li className="flex items-start"><span className="text-emerald-500 mr-2">▶</span> <strong>Higher Primary:</strong> Meets targets & strengthens relationship</li>
-                <li className="flex items-start"><span className="text-emerald-500 mr-2">▶</span> <strong>Controlled Primary:</strong> Protects ROI but risks target miss</li>
+              <ul className="space-y-2 text-gray-700 font-medium text-sm">
+                <li className="flex items-start">▶ Higher Primary: Meets targets & strengthens relationship</li>
+                <li className="flex items-start">▶ Controlled Primary: Protects ROI but risks target miss</li>
               </ul>
             </div>
 
           </div>
 
           <div className="bg-orange-50 rounded-xl border-2 border-orange-200 p-6 flex flex-col shadow-sm">
-            <h2 className="text-lg font-bold text-orange-800 mb-4 border-b-2 border-orange-200 pb-2 flex items-center uppercase tracking-tighter italic">
-              🎯 What’s at Stake
+            <h2 className="text-lg font-bold text-orange-800 mb-4 border-b-2 border-orange-200 pb-2 flex items-center uppercase">
+              🎯 What's at Stake
             </h2>
             <div className="flex flex-wrap gap-2">
               {["Distributor ROI", "Cash Flow Health", "Inventory Levels", "Final Performance Score"].map(tag => (
-                <span key={tag} className="bg-white px-3 py-1 rounded-full border border-orange-200 font-black text-orange-700 shadow-sm text-[10px] uppercase">
+                <span key={tag} className="bg-white px-3 py-1 rounded-full border border-orange-200 font-bold text-orange-700 shadow-sm text-sm">
                   {tag}
                 </span>
               ))}
@@ -155,13 +158,13 @@ const GameDistributionRound7Intro = () => {
           </div>
 
           <div className="mt-12 flex justify-between items-center max-w-2xl mx-auto px-4">
-            <button onClick={handleBack} className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-10 rounded-xl shadow-[0_4px_0_rgb(75,85,99)] hover:translate-y-[2px] active:translate-y-[4px] transition-all text-xl uppercase tracking-tighter">[ Back ]</button>
-            <button onClick={handleNext} className="bg-green-500 hover:bg-green-600 text-white font-black py-4 px-16 rounded-xl shadow-[0_6px_0_rgb(21,128,61)] hover:translate-y-[3px] active:translate-y-[6px] transition-all text-2xl transform scale-105 uppercase tracking-widest">[ Next ]</button>
+            <button onClick={handleBack} className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-10 rounded-xl shadow-[0_4px_0_rgb(75,85,99)] hover:shadow-[0_2px_0_rgb(75,85,99)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl">[ Back ]</button>
+            <button onClick={handleNext} className="bg-green-500 hover:bg-green-600 text-white font-extrabold py-4 px-16 rounded-xl shadow-[0_6px_0_rgb(21,128,61)] hover:shadow-[0_3px_0_rgb(21,128,61)] hover:translate-y-[3px] active:shadow-none active:translate-y-[6px] transition-all text-2xl transform scale-110 tracking-widest">[ Next ]</button>
           </div>
 
         </div>
 
-        <div className="bg-yellow-100 border-t-2 border-yellow-300 px-8 py-4 flex justify-between items-center text-lg font-bold text-gray-800 uppercase italic">
+        <div className="bg-yellow-100 border-t-2 border-yellow-300 px-8 py-4 flex justify-between items-center text-lg font-bold text-gray-800 uppercase">
           <span>Round: 7 of 7</span>
           <span>Market Condition: Year-End Pressure</span>
         </div>

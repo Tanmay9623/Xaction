@@ -90,6 +90,14 @@ const GameDistributionAcquisition = () => {
           qty: prev[productKey].qty + option.qty
         }
       }));
+      // Generic key (Round 1 backward compat)
+      const amtKey = `gameDistributionPurchaseAmount_${productKey}`;
+      const existing = parseInt(localStorage.getItem(amtKey) || '0', 10);
+      localStorage.setItem(amtKey, (existing + option.price).toString());
+      // Round-specific key so each round's result reads its own purchase value
+      const roundAmtKey = `gameDistributionPurchaseAmount_r${round}_${productKey}`;
+      const existingRound = parseInt(localStorage.getItem(roundAmtKey) || '0', 10);
+      localStorage.setItem(roundAmtKey, (existingRound + option.price).toString());
     } else {
       alert("Not enough cash!");
     }
