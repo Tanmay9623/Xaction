@@ -27,11 +27,16 @@ const GameDistributionCreditControl = () => {
 
   // Save to localStorage whenever state changes
   useEffect(() => {
-    localStorage.setItem("gameDistributionCreditDays", creditDays.toString());
+    // In Round 2: credit days are frozen at 30 base, but each 1% early payment discount
+    // reduces credit days by 5. Save the effective value so the result page is correct.
+    const effectiveCreditDays = currentRound === 2
+      ? Math.max(0, 30 - earlyPaymentDiscount * 5)
+      : creditDays;
+    localStorage.setItem("gameDistributionCreditDays", effectiveCreditDays.toString());
     localStorage.setItem("gameDistributionMaxCreditLimit", maxCreditLimit.toString());
     localStorage.setItem("gameDistributionEarlyPaymentDiscount", earlyPaymentDiscount.toString());
     localStorage.setItem("gameDistributionEnforcementLevel", enforcementLevel.toString());
-  }, [creditDays, maxCreditLimit, earlyPaymentDiscount, enforcementLevel]);
+  }, [creditDays, maxCreditLimit, earlyPaymentDiscount, enforcementLevel, currentRound]);
 
   const handleOK = () => {
     navigate("/game-distribution/sales-team");
@@ -120,7 +125,7 @@ const GameDistributionCreditControl = () => {
                     −
                   </button>
                   <span className={`text-4xl font-extrabold min-w-[100px] text-center ${currentRound === 2 ? 'text-red-700' : 'text-emerald-700'}`}>
-                    {currentRound === 2 ? 30 : creditDays}
+                    {currentRound === 2 ? Math.max(0, 30 - earlyPaymentDiscount * 5) : creditDays}
                   </span>
                   <button
                     onClick={() => setCreditDays(prev => prev + 1)}

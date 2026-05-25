@@ -4,21 +4,29 @@ import { useNavigate } from "react-router-dom";
 const GameDistributionRound5Result = () => {
   const navigate = useNavigate();
 
-  // --- Round 5 Inventory + Opening Stock ---
+  // --- Round 5 Inventory (combined Opening Stock + new R5 purchases) ---
   const [inventory] = useState(() => {
     const savedPurchases = localStorage.getItem("gameDistributionRound5Inventory");
     const savedOpening = localStorage.getItem("gameDistributionR5OpeningStock");
-    
     const purchases = savedPurchases ? JSON.parse(savedPurchases) : null;
     const opening = savedOpening ? JSON.parse(savedOpening) : null;
-    
     return {
-      milk: { name: "Tedbury Milk Chocolate", qty: (purchases?.milk?.qty || 0) },
-      dark: { name: "Tedbury Dark Chocolate", qty: (purchases?.dark?.qty || 0) },
-      wafer: { name: "Tedbury Wafer Chocolate", qty: (purchases?.wafer?.qty || 0) },
-      gift: { name: "Tedbury Gift Packs", qty: (purchases?.gift?.qty || 0) }
+      milk: { name: "Tedbury Milk Chocolate", qty: (opening?.milk?.qty || 0) + (purchases?.milk?.qty || 0) },
+      dark: { name: "Tedbury Dark Chocolate", qty: (opening?.dark?.qty || 0) + (purchases?.dark?.qty || 0) },
+      wafer: { name: "Tedbury Wafer Chocolate", qty: (opening?.wafer?.qty || 0) + (purchases?.wafer?.qty || 0) },
+      gift: { name: "Tedbury Gift Packs", qty: (opening?.gift?.qty || 0) + (purchases?.gift?.qty || 0) }
     };
   });
+
+  // Separate reads for Monthly Data table
+  const openingStock = (() => {
+    const saved = localStorage.getItem("gameDistributionR5OpeningStock");
+    return saved ? JSON.parse(saved) : { milk: {qty:0}, dark: {qty:0}, wafer: {qty:0}, gift: {qty:0} };
+  })();
+  const purchasesOnly = (() => {
+    const saved = localStorage.getItem("gameDistributionRound5Inventory");
+    return saved ? JSON.parse(saved) : { milk: {qty:0}, dark: {qty:0}, wafer: {qty:0}, gift: {qty:0} };
+  })();
 
   // --- Round 4 Data (for Cash flow) ---
   const r4NetPaymentReceived = parseInt(localStorage.getItem("gameDistributionR4NetPaymentReceived") || "0", 10);
@@ -40,12 +48,13 @@ const GameDistributionRound5Result = () => {
   const waferTotalStock = inventory.wafer.qty;
   const giftTotalStock = inventory.gift.qty;
 
-  // Sales Quantity (R5 Specific): Milk 85%, Dark 50%, Wafer 60%, Gift 70%
+  // Sales Quantity formula (per Round 5 sheet): % × (Opening Stock + Purchase)
+  // Milk: 100%, Dark: 90%, Wafer: 90%, Gift Packs: 80%
   const salesUnits = {
-    milk: Math.round(0.85 * milkTotalStock),
-    dark: Math.round(0.50 * darkTotalStock),
-    wafer: Math.round(0.60 * waferTotalStock),
-    gift: Math.round(0.70 * giftTotalStock)
+    milk: Math.round(1.00 * milkTotalStock),
+    dark: Math.round(0.90 * darkTotalStock),
+    wafer: Math.round(0.90 * waferTotalStock),
+    gift: Math.round(0.80 * giftTotalStock)
   };
 
   const sellingPrices = { milk: 54, dark: 77, wafer: 32.4, gift: 216 };
@@ -67,32 +76,54 @@ const GameDistributionRound5Result = () => {
 
   const totalSales = salesValues.reduce((sum, p) => sum + p.value, 0);
 
-  const closingStockValues = productRows.map(p => {
-    const closingUnits = Math.max(0, (p.key === 'milk' ? milkTotalStock : p.key === 'dark' ? darkTotalStock : p.key === 'wafer' ? waferTotalStock : giftTotalStock) - salesUnits[p.key]);
-    const closingValue = closingUnits * costPrices[p.key];
-    return { closingUnits, closingValue };
+  // --- Monthly Data rows: Purchase (R5 buys) / Sale (% of OS+Purchase) / Closing ---
+  const salesPercentagesR5 = { milk: 100, dark: 90, wafer: 90, gift: 80 };
+  const monthlyDataRows = productRows.map(p => {
+    const purchaseQty = purchasesOnly[p.key]?.qty || 0;
+    const purchaseValue = parseInt(
+      localStorage.getItem(`gameDistributionPurchaseAmount_r5_${p.key}`) || '0', 10
+    );
+    const purchaseUnitPrice = purchaseQty > 0 ? Math.round(purchaseValue / purchaseQty) : 0;
+
+    const osQty = openingStock[p.key]?.qty || 0;
+    const combinedQty = osQty + purchaseQty;
+    const saleQty = Math.round((salesPercentagesR5[p.key] / 100) * combinedQty);
+    const saleUnitPrice = sellingPrices[p.key];
+    const saleValue = Math.round(saleQty * saleUnitPrice);
+
+    const closingQty = osQty + purchaseQty - saleQty;
+    const closingValue = Math.round(closingQty * purchaseUnitPrice);
+
+    return { ...p, purchaseQty, purchaseUnitPrice, purchaseValue, saleQty, saleUnitPrice, saleValue, closingQty, closingValue };
   });
 
-  const totalClosingStockValue = closingStockValues.reduce((sum, v) => sum + v.closingValue, 0);
-
-  const marginPercent = 8 - earlyPaymentDiscount;
-  const grossMargin = marginPercent > 0 ? totalSales - (totalSales / (1 + marginPercent / 100)) : 0;
-  const netMargin = grossMargin * (1 - (earlyPaymentDiscount / 100) * (1 - creditDays / 30));
-  const retailerOutstanding = (creditDays * totalSales) / 30;
-  const netPaymentReceived = totalSales - retailerOutstanding;
-  const cashInHand = currentCash + r4NetPaymentReceived - r4TradeSchemeSpend;
+  const totalPurchaseQty   = monthlyDataRows.reduce((s, r) => s + r.purchaseQty, 0);
+  const totalPurchaseValue = monthlyDataRows.reduce((s, r) => s + r.purchaseValue, 0);
+  const totalSaleQty       = monthlyDataRows.reduce((s, r) => s + r.saleQty, 0);
+  const totalSaleValue     = monthlyDataRows.reduce((s, r) => s + r.saleValue, 0);
+  const totalClosingQty    = monthlyDataRows.reduce((s, r) => s + r.closingQty, 0);
+  const totalClosingValue  = monthlyDataRows.reduce((s, r) => s + r.closingValue, 0);
 
   const quantityDiscount = parseInt(localStorage.getItem("gameDistributionR5QuantityDiscount") || "0", 10);
   const retailDisplay = parseInt(localStorage.getItem("gameDistributionR5RetailDisplay") || "0", 10);
   const totalSchemePercent = quantityDiscount + retailDisplay;
   const totalTradeSchemeSpend = totalSales - (totalSales / (1 + totalSchemePercent / 100));
 
+  // Distributor Margin = 8% - Early Payment Discount
+  const marginPercent = Math.max(0, 8 - earlyPaymentDiscount);
+  const grossMargin = marginPercent > 0 ? totalSales - (totalSales / (1 + marginPercent / 100)) : 0;
+  const netMargin = grossMargin;
+  const retailerOutstanding = (creditDays * totalSales) / 30;
+  const netPaymentReceived = totalSales - retailerOutstanding;
+  const cashInHand = currentCash + r4NetPaymentReceived - r4TradeSchemeSpend;
+
+
   const totalCoverage = 2350; // Updated for R5
   const warehouseCost = 125000;
   const totalManpower = retailersToVisit > 0 ? Math.round(totalCoverage / retailersToVisit) : 0;
   const manpowerCost = totalManpower * 20000;
 
-  const roiDenominator = 2000000 + totalClosingStockValue + retailerOutstanding;
+  const roiDenominator = 2000000 + totalClosingValue + retailerOutstanding;
   const distributorROI = roiDenominator > 0
     ? ((netMargin - manpowerCost - warehouseCost) / roiDenominator) * 100
     : 0;
@@ -141,10 +172,10 @@ const GameDistributionRound5Result = () => {
       wafer: { ...inventory.wafer, qty: 0 },
       gift: { ...inventory.gift, qty: 0 }
     };
-    
+
     // Calculate closing cash: Purchase Remainder ONLY (as requested)
     const closingCash = currentCash;
-    
+
     localStorage.setItem("gameDistributionCash", Math.round(closingCash).toString());
     localStorage.setItem("gameDistributionR6OpeningStock", JSON.stringify(carryForwardInventory));
     localStorage.setItem("gameDistributionRound6Inventory", JSON.stringify(emptyInventory));
@@ -184,32 +215,55 @@ const GameDistributionRound5Result = () => {
             ))}
           </div>
 
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center underline decoration-yellow-400">Monthly Sales</h2>
+          {/* Monthly Data Table */}
+          <div className="mb-8 overflow-x-auto">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center underline decoration-yellow-400">Monthly Data</h2>
             <div className="bg-yellow-50 rounded-2xl border-2 border-yellow-200 overflow-hidden">
-              <table className="w-full text-left">
+              <table className="w-full text-sm text-center">
                 <thead>
-                  <tr className="border-b-2 border-yellow-200 bg-yellow-100">
-                    <th className="px-5 py-3 text-gray-700 font-bold">Product</th>
-                    <th className="px-5 py-3 text-gray-700 font-bold text-right">Units</th>
-                    <th className="px-5 py-3 text-gray-700 font-bold text-right">Selling Price</th>
-                    <th className="px-5 py-3 text-gray-700 font-bold text-right">Value</th>
+                  <tr className="bg-yellow-200 border-b-2 border-yellow-300">
+                    <th className="px-3 py-2 text-gray-700 font-bold text-left" rowSpan={2}>Product</th>
+                    <th className="px-3 py-2 text-blue-800 font-bold border-l-2 border-yellow-300" colSpan={3}>Purchase</th>
+                    <th className="px-3 py-2 text-emerald-800 font-bold border-l-2 border-yellow-300" colSpan={3}>Sale</th>
+                    <th className="px-3 py-2 text-red-800 font-bold border-l-2 border-yellow-300" colSpan={2}>Closing</th>
+                  </tr>
+                  <tr className="bg-yellow-100 border-b-2 border-yellow-300 text-xs">
+                    <th className="px-3 py-2 text-blue-700 font-semibold border-l-2 border-yellow-300">Quantity</th>
+                    <th className="px-3 py-2 text-blue-700 font-semibold">Unit Price</th>
+                    <th className="px-3 py-2 text-blue-700 font-semibold">Value</th>
+                    <th className="px-3 py-2 text-emerald-700 font-semibold border-l-2 border-yellow-300">Quantity</th>
+                    <th className="px-3 py-2 text-emerald-700 font-semibold">Unit Price</th>
+                    <th className="px-3 py-2 text-emerald-700 font-semibold">Value</th>
+                    <th className="px-3 py-2 text-red-700 font-semibold border-l-2 border-yellow-300">Quantity</th>
+                    <th className="px-3 py-2 text-red-700 font-semibold">Value</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {salesValues.map(p => (
-                    <tr key={p.key} className="border-b border-yellow-100">
-                      <td className="px-5 py-3 font-medium text-gray-800">{p.label}</td>
-                      <td className="px-5 py-3 text-right text-emerald-700 font-bold">{p.units.toLocaleString('en-IN')}</td>
-                      <td className="px-5 py-3 text-right text-gray-600">{formatCurrency(p.sellingPrice)}</td>
-                      <td className="px-5 py-3 text-right font-bold text-gray-800">{formatCurrency(p.value)}</td>
+                  {monthlyDataRows.map(r => (
+                    <tr key={r.key} className="border-b border-yellow-100 hover:bg-yellow-100/50">
+                      <td className="px-3 py-2 font-medium text-gray-800 text-left">{r.label}</td>
+                      <td className="px-3 py-2 text-blue-700 font-bold border-l-2 border-yellow-200">{r.purchaseQty.toLocaleString('en-IN')}</td>
+                      <td className="px-3 py-2 text-blue-600">{r.purchaseQty > 0 ? formatCurrency(r.purchaseUnitPrice) : '—'}</td>
+                      <td className="px-3 py-2 text-blue-700 font-bold">{formatCurrency(r.purchaseValue)}</td>
+                      <td className="px-3 py-2 text-emerald-700 font-bold border-l-2 border-yellow-200">{r.saleQty.toLocaleString('en-IN')}</td>
+                      <td className="px-3 py-2 text-emerald-600">{formatCurrency(r.saleUnitPrice)}</td>
+                      <td className="px-3 py-2 text-emerald-700 font-bold">{formatCurrency(r.saleValue)}</td>
+                      <td className="px-3 py-2 text-red-700 font-bold border-l-2 border-yellow-200">{r.closingQty.toLocaleString('en-IN')}</td>
+                      <td className="px-3 py-2 text-red-700 font-bold">{formatCurrency(r.closingValue)}</td>
                     </tr>
                   ))}
                 </tbody>
                 <tfoot>
-                  <tr className="bg-emerald-50 border-t-2 border-emerald-200">
-                    <td className="px-5 py-3 font-extrabold text-gray-900 text-lg" colSpan={3}>Total Sales</td>
-                    <td className="px-5 py-3 text-right font-extrabold text-emerald-700 text-lg">{formatCurrency(totalSales)}</td>
+                  <tr className="bg-yellow-200 border-t-2 border-yellow-400 font-extrabold text-gray-900">
+                    <td className="px-3 py-2 text-left">Total</td>
+                    <td className="px-3 py-2 text-blue-800 border-l-2 border-yellow-300">{totalPurchaseQty.toLocaleString('en-IN')}</td>
+                    <td className="px-3 py-2">—</td>
+                    <td className="px-3 py-2 text-blue-800">{formatCurrency(totalPurchaseValue)}</td>
+                    <td className="px-3 py-2 text-emerald-800 border-l-2 border-yellow-300">{totalSaleQty.toLocaleString('en-IN')}</td>
+                    <td className="px-3 py-2">—</td>
+                    <td className="px-3 py-2 text-emerald-800">{formatCurrency(totalSaleValue)}</td>
+                    <td className="px-3 py-2 text-red-800 border-l-2 border-yellow-300">{totalClosingQty.toLocaleString('en-IN')}</td>
+                    <td className="px-3 py-2 text-red-800">{formatCurrency(totalClosingValue)}</td>
                   </tr>
                 </tfoot>
               </table>
@@ -251,7 +305,7 @@ const GameDistributionRound5Result = () => {
 
           <div className="mt-10 flex justify-between items-center max-w-2xl mx-auto px-4">
             <button onClick={handleBack} className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-10 rounded-xl shadow-[0_4px_0_rgb(75,85,99)] hover:shadow-[0_2px_0_rgb(75,85,99)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all text-xl">[ Back ]</button>
-            <button onClick={handleProceed} className="bg-green-500 hover:bg-green-600 text-white font-extrabold py-4 px-12 rounded-xl shadow-[0_6px_0_rgb(21,128,61)] hover:shadow-[0_3px_0_rgb(21,128,61)] hover:translate-y-[3px] active:shadow-none active:translate-y-[6px] transition-all text-2xl transform scale-110 tracking-widest">[ Proceed ]</button>
+            <button onClick={handleProceed} className="bg-green-500 hover:bg-green-600 text-white font-extrabold py-4 px-12 rounded-xl shadow-[0_6px_0_rgb(21,128,61)] hover:shadow-[0_3px_0_rgb(21,128,61)] hover:translate-y-[3px] active:shadow-none active:translate-y-[6px] transition-all text-2xl transform scale-110 tracking-widest">[ Proceed to Round 6 ]</button>
           </div>
         </div>
         <div className="bg-yellow-100 border-t-4 border-yellow-300 px-8 py-5 flex justify-center items-center text-lg font-bold text-gray-800">
