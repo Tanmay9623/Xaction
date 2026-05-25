@@ -12,7 +12,7 @@ const GameDistributionRound6Intro = () => {
 
   // --- Round 6 Opening Inventory ---
   const [inventory] = useState(() => {
-    const saved = localStorage.getItem("gameDistributionRound5Inventory");
+    const saved = localStorage.getItem("gameDistributionR6OpeningStock") || localStorage.getItem("gameDistributionRound6Inventory");
     if (saved) return JSON.parse(saved);
     return { milk: { qty: 0 }, dark: { qty: 0 }, wafer: { qty: 0 }, gift: { qty: 0 } };
   });
@@ -58,7 +58,10 @@ const GameDistributionRound6Intro = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
-                { label: "Opening Stock (From Last Screen)", value: `${openingStock} Units` },
+                { 
+                  label: "Opening Stock (From Last Screen)", 
+                  value: `Milk: ${inventory.milk.qty} | Dark: ${inventory.dark.qty} | Wafer: ${inventory.wafer.qty} | Gift: ${inventory.gift.qty}` 
+                },
                 { label: "Last Round Sale (Value)", value: formatCurrency(r5TotalSales) },
                 { label: "Retailer Outstanding (From Last Screen)", value: formatCurrency(r5RetailerOutstanding) },
                 { label: "Trade Scheme to be Reimbursed by the Company", value: formatCurrency(r5TradeSchemeSpend) },

@@ -70,7 +70,10 @@ const GameDistributionRound4Intro = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
-                { label: "Opening Stock (From Last Screen)", value: `${openingStock} Units` },
+                { 
+                  label: "Opening Stock (From Last Screen)", 
+                  value: `Milk: ${inventory.milk.qty} | Dark: ${inventory.dark.qty} | Wafer: ${inventory.wafer.qty} | Gift: ${inventory.gift.qty}` 
+                },
                 { label: "Last Round Sale (Value)", value: formatCurrency(r3TotalSales) },
                 { label: "Retailer Outstanding (From Last Screen)", value: formatCurrency(r3RetailerOutstanding) },
                 { label: "Trade Scheme to be Reimbursed by the Company (Company has reimbursed previous round scheme)", value: formatCurrency(r3TradeSchemeSpend) },
