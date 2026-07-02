@@ -10,12 +10,8 @@ const GameDistributionRound4SalesTeam = () => {
     return saved !== null ? parseInt(saved, 10) : 210;
   });
 
-  // Round 4: 2 salesmen have left. (Assuming starting was 5 in R3)
-  const [salesTeamAvailable] = useState(() => {
-    const saved = localStorage.getItem("gameDistributionSalesTeam");
-    const base = saved !== null ? parseInt(saved, 10) : 5;
-    return Math.max(0, base - 2);
-  });
+  // Round 4: 2 salesmen have left. (Remaining is 5)
+  const [salesTeamAvailable] = useState(5);
 
   const [retailersInTerritory] = useState(() => {
     const saved = localStorage.getItem("gameDistributionRetailersTerritory");
@@ -41,9 +37,8 @@ const GameDistributionRound4SalesTeam = () => {
 
   // Total Coverage = 1050 existing + 1000 new (from R3)
   const totalCoverage = 2050; 
-  const totalManpower = retailersToVisit > 0
-    ? Math.round(totalCoverage / retailersToVisit)
-    : 0;
+  // The total manpower is fixed to 5 as per admin requirement.
+  const totalManpower = 5;
 
   // Round 4: Company has taken away the 1 DSR subsidy (20,000)
   const reimbursedDSR = 0;
