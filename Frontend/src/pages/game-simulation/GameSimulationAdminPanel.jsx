@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "./supabaseClient";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 // Hardcoded admin credentials (only for game simulation admin panel)
 const ADMIN_USERNAME = "gamesimadmin";
@@ -71,6 +73,107 @@ const GameSimulationAdminPanel = ({ onClose }) => {
       console.error("Error fetching results:", error.message);
     }
     setLoading(false);
+  };
+
+  const downloadReport = (row) => {
+    const doc = new jsPDF();
+    const completedAt = row.completed_at
+      ? new Date(row.completed_at).toLocaleString("en-IN", {
+          day: "2-digit", month: "short", year: "numeric",
+          hour: "2-digit", minute: "2-digit",
+        })
+      : "N/A";
+
+    // Header bar
+    doc.setFillColor(6, 95, 70);  // emerald-800
+    doc.rect(0, 0, 210, 28, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text("Distribution Game Simulation", 14, 12);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Player Performance Report", 14, 21);
+
+    // Generated timestamp
+    doc.setTextColor(200, 200, 200);
+    doc.setFontSize(8);
+    doc.text(`Generated: ${new Date().toLocaleString("en-IN")}`, 140, 21);
+
+    // Player name section
+    doc.setTextColor(30, 30, 30);
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text(row.user_name || "Guest", 14, 42);
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Completed: ${completedAt}`, 14, 50);
+
+    // Divider
+    doc.setDrawColor(6, 95, 70);
+    doc.setLineWidth(0.5);
+    doc.line(14, 55, 196, 55);
+
+    // Results table
+    autoTable(doc, {
+      startY: 62,
+      head: [["Metric", "Value"]],
+      body: [
+        ["Cash In Hand", `\u20B9${Number(row.cash_in_hand || 0).toLocaleString("en-IN")}`],
+        ["Distributor ROI", `${Number(row.distributor_roi || 0).toFixed(2)}%`],
+        ["Retailer Satisfaction", row.retailer_satisfaction || "—"],
+        ["Cash Flow Health", row.cash_flow_health || "—"],
+        ["Market Share", row.market_share ? `${row.market_share}%` : "—"],
+      ],
+      headStyles: {
+        fillColor: [6, 95, 70],
+        textColor: 255,
+        fontStyle: "bold",
+        fontSize: 10,
+      },
+      bodyStyles: { fontSize: 10, cellPadding: 5 },
+      alternateRowStyles: { fillColor: [240, 253, 244] },
+      columnStyles: {
+        0: { fontStyle: "bold", cellWidth: 80 },
+        1: { cellWidth: 80 },
+      },
+      margin: { left: 14, right: 14 },
+    });
+
+    // Round breakdown (if final_state_data available)
+    if (row.final_state_data && Object.keys(row.final_state_data).length > 0) {
+      const yAfterTable = doc.lastAutoTable.finalY + 10;
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(30, 30, 30);
+      doc.text("Final Round Summary", 14, yAfterTable);
+      const stateRows = Object.entries(row.final_state_data).map(([k, v]) => [
+        k.replace(/([A-Z])/g, " $1").replace(/^./, s => s.toUpperCase()),
+        typeof v === "number" ? `\u20B9${v.toLocaleString("en-IN")}` : String(v),
+      ]);
+      autoTable(doc, {
+        startY: yAfterTable + 5,
+        head: [["Field", "Value"]],
+        body: stateRows,
+        headStyles: { fillColor: [52, 131, 100], textColor: 255, fontStyle: "bold", fontSize: 9 },
+        bodyStyles: { fontSize: 9, cellPadding: 4 },
+        alternateRowStyles: { fillColor: [240, 253, 244] },
+        margin: { left: 14, right: 14 },
+      });
+    }
+
+    // Footer
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(150, 150, 150);
+      doc.text("Xaction Game Simulation — Confidential", 14, 290);
+      doc.text(`Page ${i} of ${pageCount}`, 180, 290);
+    }
+
+    doc.save(`${(row.user_name || "player").replace(/\s+/g, "_")}_game_report.pdf`);
   };
 
   const handleLogout = () => {
@@ -322,12 +425,13 @@ const GameSimulationAdminPanel = ({ onClose }) => {
                       <tr className="bg-emerald-50 text-emerald-800">
                         <th className="text-left px-4 py-3 font-bold rounded-tl-lg border-b-2 border-emerald-200">#</th>
                         <th className="text-left px-4 py-3 font-bold border-b-2 border-emerald-200">User</th>
-                        <th className="text-right px-4 py-3 font-bold border-b-2 border-emerald-200">Total Sales</th>
+                        <th className="text-right px-4 py-3 font-bold border-b-2 border-emerald-200">Cash In Hand</th>
                         <th className="text-right px-4 py-3 font-bold border-b-2 border-emerald-200">ROI</th>
                         <th className="text-right px-4 py-3 font-bold border-b-2 border-emerald-200">Market Share</th>
                         <th className="text-center px-4 py-3 font-bold border-b-2 border-emerald-200">Satisfaction</th>
                         <th className="text-center px-4 py-3 font-bold border-b-2 border-emerald-200">Cash Flow</th>
-                        <th className="text-left px-4 py-3 font-bold rounded-tr-lg border-b-2 border-emerald-200">Completed At</th>
+                        <th className="text-left px-4 py-3 font-bold border-b-2 border-emerald-200">Completed At</th>
+                        <th className="text-center px-4 py-3 font-bold rounded-tr-lg border-b-2 border-emerald-200">Report</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -342,27 +446,29 @@ const GameSimulationAdminPanel = ({ onClose }) => {
                             <div className="text-xs text-gray-400 font-mono">{row.user_id}</div>
                           </td>
                           <td className="px-4 py-3 text-right font-bold text-gray-800">
-                            ₹{Number(row.total_score || 0).toLocaleString("en-IN")}
+                            ₹{Number(row.cash_in_hand || 0).toLocaleString("en-IN")}
                           </td>
                           <td className={`px-4 py-3 text-right font-bold ${Number(row.distributor_roi) >= 0 ? "text-emerald-600" : "text-red-500"}`}>
                             {Number(row.distributor_roi || 0).toFixed(2)}%
                           </td>
                           <td className="px-4 py-3 text-right text-gray-700 font-medium">{row.market_share || "—"}%</td>
                           <td className="px-4 py-3 text-center">
-                            <span className={`px-2 py-1 rounded-full text-xs font-bold ${row.retailer_satisfaction >= 2.5
+                            <span className={`px-2 py-1 rounded-full text-xs font-bold ${
+                              row.retailer_satisfaction === "High"
                                 ? "bg-emerald-100 text-emerald-700"
-                                : row.retailer_satisfaction >= 1.5
+                                : row.retailer_satisfaction === "Medium"
                                   ? "bg-amber-100 text-amber-700"
                                   : "bg-red-100 text-red-700"
-                              }`}>
-                              {Number(row.retailer_satisfaction || 0).toFixed(2)}
+                            }`}>
+                              {row.retailer_satisfaction || "—"}
                             </span>
                           </td>
                           <td className="px-4 py-3 text-center">
-                            <span className={`px-2 py-1 rounded-full text-xs font-bold ${row.cash_flow_health === "Healthy"
+                            <span className={`px-2 py-1 rounded-full text-xs font-bold ${
+                              row.cash_flow_health === "Positive"
                                 ? "bg-emerald-100 text-emerald-700"
                                 : "bg-red-100 text-red-700"
-                              }`}>
+                            }`}>
                               {row.cash_flow_health || "—"}
                             </span>
                           </td>
@@ -373,6 +479,15 @@ const GameSimulationAdminPanel = ({ onClose }) => {
                                 hour: "2-digit", minute: "2-digit",
                               })
                               : "—"}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <button
+                              onClick={() => downloadReport(row)}
+                              title={`Download report for ${row.user_name}`}
+                              className="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors shadow-sm hover:shadow-md"
+                            >
+                              ⬇ PDF
+                            </button>
                           </td>
                         </tr>
                       ))}

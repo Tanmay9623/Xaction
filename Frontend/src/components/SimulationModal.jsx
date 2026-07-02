@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const SimulationModal = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
+  const [showCaseStudyOptions, setShowCaseStudyOptions] = useState(false);
 
   if (!isOpen) return null;
 
@@ -12,7 +13,6 @@ const SimulationModal = ({ isOpen, onClose }) => {
   };
 
   const handleCorporateSimulation = () => {
-    // Navigate to corporate simulation route
     navigate('/corporate-simulations');
     onClose();
   };
@@ -63,74 +63,69 @@ const SimulationModal = ({ isOpen, onClose }) => {
 
           {/* Buttons */}
           <div className="modal-buttons">
-            <button 
-              className="modal-option-btn mba-btn"
-              onClick={handleMBASimulation}
+
+            {/* ── Case Study Simulation (expandable) ── */}
+            <button
+              className={`modal-option-btn mba-btn ${showCaseStudyOptions ? 'expanded' : ''}`}
+              onClick={() => setShowCaseStudyOptions(prev => !prev)}
             >
               <div className="btn-icon">
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="32" 
-                  height="32" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
                   <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
                 </svg>
               </div>
               <div className="btn-content">
-                <h3>Simulations for Students</h3>
-                <p>Sales & Distribution, Retail, Marketing, Operations, Organizational Behaviour Simulations</p>
+                <h3>Case Study Simulation</h3>
+                <p>Sales &amp; Distribution, Retail, Marketing, Operations, Organisational Behaviour, Need Gap Identification &amp; Capability Building Solutions</p>
               </div>
-            </button>
-
-            <button 
-              className="modal-option-btn corporate-btn"
-              onClick={handleCorporateSimulation}
-            >
-              <div className="btn-icon">
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="32" 
-                  height="32" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                >
-                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+              <div className="expand-arrow" style={{ transform: showCaseStudyOptions ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.25s ease', flexShrink: 0, color: '#6b7280' }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
               </div>
-              <div className="btn-content">
-                <h3>Simulations for Business</h3>
-                <p>Need Gap Identification, Capability Building Solutions (Industry & Role Agnostic)</p>
-              </div>
             </button>
 
-            <button 
+            {/* Sub-options — shown when Case Study Simulation is expanded */}
+            {showCaseStudyOptions && (
+              <div className="sub-options">
+                {/* Simulations for Students */}
+                <button className="modal-option-btn sub-btn students-sub-btn" onClick={handleMBASimulation}>
+                  <div className="btn-icon sub-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                      <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                    </svg>
+                  </div>
+                  <div className="btn-content">
+                    <h3>Case Study Simulation 1</h3>
+                    <p>Sales &amp; Distribution, Retail, Marketing, Operations, Organisational Behaviour</p>
+                  </div>
+                </button>
+
+                {/* Simulations for Business */}
+                <button className="modal-option-btn sub-btn business-sub-btn" onClick={handleCorporateSimulation}>
+                  <div className="btn-icon sub-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    </svg>
+                  </div>
+                  <div className="btn-content">
+                    <h3>Case Study Simulation 2</h3>
+                    <p>Need Gap Identification, Capability Building Solutions (Industry &amp; Role Agnostic)</p>
+                  </div>
+                </button>
+              </div>
+            )}
+
+            {/* ── Game Simulation ── */}
+            <button
               className="modal-option-btn game-btn"
               onClick={handleGameSimulation}
             >
               <div className="btn-icon">
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="32" 
-                  height="32" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="2" y="6" width="20" height="12" rx="3" ry="3"></rect>
                   <circle cx="8.5" cy="12" r="1.5"></circle>
                   <circle cx="15.5" cy="10" r="1"></circle>
@@ -141,7 +136,7 @@ const SimulationModal = ({ isOpen, onClose }) => {
               </div>
               <div className="btn-content">
                 <h3>Game Simulation</h3>
-                <p>Interactive game-based learning with immersive scenarios, challenges & real-time decision making</p>
+                <p>Interactive game-based learning with immersive scenarios, challenges &amp; real-time decision making</p>
               </div>
             </button>
           </div>
@@ -278,6 +273,72 @@ const SimulationModal = ({ isOpen, onClose }) => {
         .modal-option-btn:hover {
           transform: translateY(-4px);
           box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .mba-btn.expanded {
+          background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+          border-color: #2563eb;
+        }
+
+        /* Sub-options container */
+        .sub-options {
+          display: flex;
+          flex-direction: column;
+          gap: 0.625rem;
+          margin-left: 1.5rem;
+          padding-left: 1rem;
+          border-left: 3px solid #3b82f6;
+          animation: expandIn 0.2s ease-out;
+        }
+
+        @keyframes expandIn {
+          from { opacity: 0; transform: translateY(-8px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Sub-buttons */
+        .sub-btn {
+          min-height: 72px;
+          padding: 1rem 1.25rem;
+        }
+
+        .sub-btn .sub-icon {
+          width: 38px;
+          height: 38px;
+        }
+
+        .sub-btn .btn-content h3 {
+          font-size: 1rem;
+        }
+
+        .students-sub-btn {
+          border-color: #3b82f6;
+        }
+
+        .students-sub-btn:hover {
+          background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+          border-color: #2563eb;
+          box-shadow: 0 6px 18px rgba(37, 99, 235, 0.18);
+        }
+
+        .students-sub-btn .sub-icon {
+          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+          color: white;
+        }
+
+        .business-sub-btn {
+          border-color: #8b5cf6;
+        }
+
+        .business-sub-btn:hover {
+          background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+          border-color: #7c3aed;
+          box-shadow: 0 6px 18px rgba(124, 58, 237, 0.18);
+        }
+
+        .business-sub-btn .sub-icon {
+          background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+          color: white;
         }
 
         .mba-btn {

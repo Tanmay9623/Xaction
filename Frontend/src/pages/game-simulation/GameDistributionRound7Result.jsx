@@ -171,7 +171,6 @@ const GameDistributionRound7Result = () => {
   }, [totalSales, retailerOutstanding, netPaymentReceived, distributorROI, cashInHand]);
 
   const handleFinish = async () => {
-    // Ensure we use a stable ID (userEmail is used for the testgame45 bypass)
     const userId = localStorage.getItem("userId") || localStorage.getItem("userEmail") || "Guest_" + Date.now();
     const userName = localStorage.getItem("userName") || "Guest User";
 
@@ -179,28 +178,31 @@ const GameDistributionRound7Result = () => {
       user_name: userName,
       distributor_roi: parseFloat(distributorROI.toFixed(2)),
       retailer_satisfaction: getRetailerSatisfaction(),
-      cash_in_hand: Math.round(cashInHand)
+      cash_in_hand: Math.round(cashInHand),
+      cash_flow_health: Math.round(cashInHand) > 0 ? "Positive" : "Negative",
+      total_score: 0,
+      market_share: 0,
+      final_state_data: {
+        totalSales: Math.round(totalSales),
+        retailerOutstanding: Math.round(retailerOutstanding),
+        netPaymentReceived: Math.round(netPaymentReceived),
+      }
     };
 
-    // Assuming we use supabase directly here to bypass old dbUtils logic that checked user_id
     try {
-      // Need to import supabase if not already imported, let's check
-      // Actually we will call a custom insert directly to be safe.
-      const { supabase } = await import('./supabaseClient');
-
-      const { error } = await supabase
-        .from('user_game_results')
-        .insert([finalResults]);
-
-      if (error) {
-        console.error("Supabase Save Error:", error);
-        alert("Game completed! Note: There was an issue saving results to the cloud database. Please check Supabase RLS policies.");
+      const result = await saveFinalResult(userId, finalResults);
+      if (result.success) {
+        if (result.alreadyExists) {
+          console.log("Results already saved for this user.");
+        } else {
+          console.log("Game results saved successfully.");
+        }
       } else {
-        alert("Congratulations! Your game results have been saved successfully.");
+        // Log silently — don't block the user with an alert
+        console.warn("Could not save results to database:", result.error);
       }
     } catch (err) {
-      console.error("Supabase Save Error:", err);
-      alert("Game completed! Note: Could not connect to the database.");
+      console.error("Unexpected error saving game results:", err);
     }
 
     navigate("/game-distribution/summary");

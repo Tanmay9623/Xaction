@@ -27,39 +27,49 @@ export const saveGameState = async (userId, round, data) => {
 
 /**
  * Saves the final game result after Round 7.
- * Prevents multiple entries for the same user.
+ * Dual-write strategy:
+ *   1. `game_final_results` — full data for the Admin Panel to display
+ *   2. `user_game_results`  — just user_name, for GameLogin replay prevention
  */
 export const saveFinalResult = async (userId, resultData) => {
   try {
-    // Check if result already exists for this user
+    // ── Replay prevention check (GameLogin reads user_game_results) ──
     const { data: existing, error: checkError } = await supabase
-      .from('game_final_results')
-      .select('id')
-      .eq('user_id', userId)
+      .from('user_game_results')
+      .select('user_name')
+      .eq('user_name', resultData.user_name)
       .maybeSingle();
 
     if (checkError) throw checkError;
-    
+
     if (existing) {
       console.log('User has already submitted results, skipping save.');
       return { success: true, alreadyExists: true, data: existing };
     }
 
-    const { data, error } = await supabase
+    // ── Save full results to game_final_results (for Admin Panel) ──
+    const { data: savedResult, error: insertError } = await supabase
       .from('game_final_results')
-      .insert({
-        user_id: userId,
+      .insert([{
         user_name: resultData.user_name,
-        total_score: resultData.total_score,
         distributor_roi: resultData.distributor_roi,
-        market_share: resultData.market_share,
         retailer_satisfaction: resultData.retailer_satisfaction,
+        cash_in_hand: resultData.cash_in_hand,
         cash_flow_health: resultData.cash_flow_health,
-        final_state_data: resultData.final_state_data
-      });
+        total_score: resultData.total_score,
+        market_share: resultData.market_share,
+        final_state_data: resultData.final_state_data,
+        completed_at: new Date().toISOString(),
+      }]);
 
-    if (error) throw error;
-    return { success: true, data };
+    if (insertError) throw insertError;
+
+    // ── Mark in user_game_results to block replay ──
+    await supabase
+      .from('user_game_results')
+      .insert([{ user_name: resultData.user_name }]);
+
+    return { success: true, data: savedResult };
   } catch (error) {
     console.error('Error saving final game result:', error.message);
     return { success: false, error: error.message };
