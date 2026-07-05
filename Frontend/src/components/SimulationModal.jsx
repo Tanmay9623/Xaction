@@ -1,18 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const SimulationModal = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
+  const [isCaseStudyExpanded, setIsCaseStudyExpanded] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleMBASimulation = () => {
+  const handleCaseStudy1 = () => {
     navigate('/simulation');
     onClose();
   };
 
-  const handleCorporateSimulation = () => {
-    // Navigate to corporate simulation route
+  const handleCaseStudy2 = () => {
     navigate('/corporate-simulations');
     onClose();
   };
@@ -63,58 +63,101 @@ const SimulationModal = ({ isOpen, onClose }) => {
 
           {/* Buttons */}
           <div className="modal-buttons">
-            <button 
-              className="modal-option-btn mba-btn"
-              onClick={handleMBASimulation}
-            >
-              <div className="btn-icon">
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="32" 
-                  height="32" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                >
-                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                </svg>
-              </div>
-              <div className="btn-content">
-                <h3>Simulations for Students</h3>
-                <p>Sales & Distribution, Retail, Marketing, Operations, Organizational Behaviour Simulations</p>
-              </div>
-            </button>
 
-            <button 
-              className="modal-option-btn corporate-btn"
-              onClick={handleCorporateSimulation}
-            >
-              <div className="btn-icon">
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="32" 
-                  height="32" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                >
-                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                </svg>
-              </div>
-              <div className="btn-content">
-                <h3>Simulations for Business</h3>
-                <p>Need Gap Identification, Capability Building Solutions (Industry & Role Agnostic)</p>
-              </div>
-            </button>
+            {/* Case Study Simulation – accordion parent */}
+            <div className={`accordion-wrapper ${isCaseStudyExpanded ? 'accordion-open' : ''}`}>
+              <button 
+                className="modal-option-btn mba-btn accordion-trigger"
+                onClick={() => setIsCaseStudyExpanded(prev => !prev)}
+              >
+                <div className="btn-icon">
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width="32" 
+                    height="32" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  >
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                  </svg>
+                </div>
+                <div className="btn-content">
+                  <h3>Case Study Simulation</h3>
+                  <p>Sales &amp; Distribution, Retail, Marketing, Operations, Organisational Behaviour, Need Gap Identification &amp; Capability Building Solutions</p>
+                </div>
+                <span className={`accordion-chevron ${isCaseStudyExpanded ? 'chevron-up' : ''}`}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </span>
+              </button>
 
+              {/* Sub-options */}
+              <div className={`accordion-panel ${isCaseStudyExpanded ? 'accordion-panel-open' : ''}`}>
+                <div className="accordion-panel-inner">
+                  {/* Case Study Simulation 1 */}
+                  <button 
+                    className="modal-option-btn mba-btn sub-option-btn"
+                    onClick={handleCaseStudy1}
+                  >
+                    <div className="btn-icon">
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        width="28" 
+                        height="28" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                      >
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                        <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                      </svg>
+                    </div>
+                    <div className="btn-content">
+                      <h3>Case Study Simulation 1</h3>
+                      <p>Sales &amp; Distribution, Retail, Marketing, Operations, Organisational Behaviour</p>
+                    </div>
+                  </button>
+
+                  {/* Case Study Simulation 2 */}
+                  <button 
+                    className="modal-option-btn corporate-btn sub-option-btn"
+                    onClick={handleCaseStudy2}
+                  >
+                    <div className="btn-icon">
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        width="28" 
+                        height="28" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                      >
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                      </svg>
+                    </div>
+                    <div className="btn-content">
+                      <h3>Case Study Simulation 2</h3>
+                      <p>Need Gap Identification, Capability Building Solutions (Industry &amp; Role Agnostic)</p>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Game Simulation */}
             <button 
               className="modal-option-btn game-btn"
               onClick={handleGameSimulation}
@@ -141,9 +184,10 @@ const SimulationModal = ({ isOpen, onClose }) => {
               </div>
               <div className="btn-content">
                 <h3>Game Simulation</h3>
-                <p>Interactive game-based learning with immersive scenarios, challenges & real-time decision making</p>
+                <p>Interactive game-based learning with immersive scenarios, challenges &amp; real-time decision making</p>
               </div>
             </button>
+
           </div>
         </div>
       </div>
@@ -360,6 +404,53 @@ const SimulationModal = ({ isOpen, onClose }) => {
           line-height: 1.4;
         }
 
+        /* ── Accordion styles ── */
+        .accordion-wrapper {
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+        }
+
+        .accordion-trigger {
+          position: relative;
+        }
+
+        .accordion-chevron {
+          flex-shrink: 0;
+          color: #6b7280;
+          display: flex;
+          align-items: center;
+          transition: transform 0.3s ease;
+        }
+
+        .chevron-up {
+          transform: rotate(180deg);
+        }
+
+        .accordion-panel {
+          max-height: 0;
+          overflow: hidden;
+          transition: max-height 0.35s ease;
+        }
+
+        .accordion-panel-open {
+          max-height: 500px;
+        }
+
+        .accordion-panel-inner {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+          padding: 0.75rem 0 0 1.5rem;
+          border-left: 3px solid #3b82f6;
+          margin-left: 0.5rem;
+          margin-top: 0.5rem;
+        }
+
+        .sub-option-btn {
+          min-height: 80px;
+        }
+
         /* Responsive Design */
         
         /* Mobile: 320px - 767px */
@@ -384,6 +475,11 @@ const SimulationModal = ({ isOpen, onClose }) => {
             padding: 1.25rem;
             gap: 1rem;
             min-height: auto;
+          }
+
+          .accordion-trigger {
+            flex-direction: row;
+            text-align: left;
           }
 
           .btn-icon {
